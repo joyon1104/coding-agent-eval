@@ -1,0 +1,290 @@
+# CAPE-Eval
+
+**CLI AI Coding Agent Performance Evaluation System**
+
+SWE-bench 데이터셋 기반으로 CLI AI 코딩 에이전트(Claude Code, Codex, OpenCode 등)의 성능을 자동 평가하고, 7개 지표에 대한 비교 리포트를 생성합니다.
+
+## 프로젝트 구조
+
+```
+cape-eval/
+├── config/
+│   ├── eval_config.yaml              # 티어별 설정, 실행 제한, 모델 가격표
+│   ├── agents/
+│   │   └── claude_code.yaml          # 에이전트별 설정
+│   └── environments/
+│       ├── common.yaml               # 공통 설정
+│       ├── wsl.yaml                  # WSL2 환경 설정
+│       └── native_linux.yaml         # 네이티브 Linux 설정
+│
+├── src/
+│   ├── core/
+│   │   ├── models.py                 # AgentResult, EvalTask, TokenUsage 등 데이터 모델
+│   │   ├── config.py                 # 환경별 YAML 로드 + .env 병합
+│   │   └── env_detect.py             # OS/네트워크/디스크/Docker 자동 감지
+│   │
+│   ├── dataset/
+│   │   ├── loader.py                 # HuggingFace 온라인 / 로컬 JSONL 오프라인 로더
+│   │   └── sampler.py                # Micro(10) / Mini(50) / Full(500) 티어별 샘플러
+│   │
+│   ├── adapters/
+│   │   ├── base.py                   # AgentAdapter 베이스 클래스
+│   │   └── claude_code.py            # Claude Code CLI 어댑터 (claude -p)
+│   │
+│   ├── runner/
+│   │   ├── orchestrator.py           # 태스크 실행 (중단/재개 지원)
+│   │   ├── sandbox.py                # 레포 클론 + 디스크 관리
+│   │   └── logger.py                 # 실행 로그 + 메타데이터 저장
+│   │
+│   ├── evaluator/
+│   │   ├── docker_evaluator.py       # SWE-bench Docker 이미지 기반 테스트 검증
+│   │   ├── swebench_harness.py       # SWE-bench 하네스 래핑 + EvalResult 모델
+│   │   └── patch_extractor.py        # git diff 패치 추출/검증
+│   │
+│   ├── metrics/
+│   │   ├── accuracy.py               # Task Resolution Rate, Regression Safety
+│   │   ├── cost.py                   # Token Efficiency, Cost per Resolved Task
+│   │   ├── latency.py                # E2E Time, Time to First Action
+│   │   └── process.py                # Convergence Steps
+│   │
+│   └── reporter/
+│       ├── scorer.py                 # 지표별 등급 산출 (S/A/B/C/D/F)
+│       ├── comparator.py             # 멀티 에이전트/환경 결과 병합
+│       └── formatter.py              # Markdown, JSON, CSV 리포트 포맷
+│
+├── scripts/
+│   ├── run_eval.py                   # 평가 실행 CLI
+│   ├── run_docker_eval.py            # Docker 기반 테스트 검증 CLI
+│   ├── generate_report.py            # 리포트 생성 CLI
+│   ├── create_test_data.py           # 합성 테스트 데이터 생성
+│   ├── export_dataset.py             # 오프라인용 데이터셋 내보내기
+│   ├── run_e2e_test.py               # Mock 에이전트 E2E 파이프라인 테스트
+│   └── setup_env.sh                  # 환경 자동 구축 스크립트
+│
+├── data/                             # 데이터셋 (gitignore)
+│   ├── swebench_micro.jsonl          # Micro 티어 (5-10개)
+│   └── swebench_mini.jsonl           # Mini 티어 (50개)
+│
+├── results/                          # 실행 결과 (gitignore)
+│   └── runs/{run_id}/
+│       ├── {agent_name}/*.json       # 태스크별 에이전트 결과
+│       ├── eval/*.json               # Docker 테스트 검증 결과
+│       ├── metadata.json             # 실행 메타데이터
+│       └── report_*.{md,json,csv}    # 리포트
+│
+├── pyproject.toml
+└── .env.example                      # API 키 템플릿
+```
+
+## 평가 워크플로우
+
+전체 파이프라인은 3단계로 구성됩니다:
+
+```
+Step 1: 에이전트 실행        Step 2: 테스트 검증           Step 3: 리포트 생성
+(run_eval.py)               (run_docker_eval.py)         (generate_report.py)
+
+ 데이터셋 로드                SWE-bench Docker 이미지       결과 로드
+      │                      pull (per-instance)              │
+ 티어별 샘플링                      │                     7개 지표 계산
+      │                      컨테이너 시작                     │
+ 레포 클론 +                  (/testbed에 환경 세팅됨)      등급 산출 (S~F)
+ base_commit checkout              │                          │
+      │                      test_patch 적용              비교 리포트 생성
+ 에이전트 실행                      │                    (Markdown/JSON/CSV)
+ (claude -p ...)             agent patch 적용
+      │                            │
+ git diff → 패치 추출         FAIL_TO_PASS 테스트 실행
+      │                      (버그 수정 검증)
+ 결과 저장                          │
+ (토큰, 비용, 시간)          PASS_TO_PASS 테스트 실행
+                              (회귀 검증)
+                                    │
+                              검증 결과 저장
+```
+
+## 측정 지표 (7개)
+
+| # | 지표 | 설명 | 등급 기준 (S) |
+|---|------|------|-------------|
+| 1 | Task Resolution Rate | 해결된 태스크 비율 | >= 60% |
+| 2 | Regression Safety | 기존 테스트 통과 유지 비율 | >= 98% |
+| 3 | Token Efficiency | 해결된 태스크당 평균 토큰 수 | <= 50K |
+| 4 | Cost per Resolved Task | 해결된 태스크당 평균 비용 | <= $0.50 |
+| 5 | E2E Completion Time | 태스크당 평균 실행 시간 | <= 60s |
+| 6 | Time to First Action | 첫 번째 동작까지의 시간 | <= 3s |
+| 7 | Convergence Steps | 해결까지 평균 스텝 수 | <= 5 |
+
+## 설치 및 환경 구축
+
+### 요구사항
+
+- Python 3.10+
+- Docker (테스트 검증용)
+- Claude Code CLI (`claude` 명령어)
+
+### 설치
+
+```bash
+# 1. 가상환경 생성
+python3 -m venv .venv
+source .venv/bin/activate
+
+# 2. 의존성 설치
+pip install pyyaml click rich python-dotenv datasets
+
+# 3. API 키 설정
+cp .env.example .env
+# .env 파일에 ANTHROPIC_API_KEY 입력
+```
+
+### 데이터셋 준비
+
+```bash
+# 방법 1: HuggingFace에서 다운로드 (온라인)
+# → run_eval.py 실행 시 자동 다운로드됨
+
+# 방법 2: REST API로 다운로드 (SSL 문제 시)
+curl -s "https://datasets-server.huggingface.co/rows?dataset=MariusHobbhahn%2Fswe-bench-verified-mini&config=default&split=test&offset=0&length=50" \
+  | python3 -c "import sys,json; rows=[r['row'] for r in json.load(sys.stdin)['rows']]; [open('data/swebench_mini.jsonl','w').write(json.dumps(r)+'\n') for r in rows]"
+
+# 방법 3: 테스트용 합성 데이터
+python scripts/create_test_data.py
+```
+
+## 실행 방법
+
+### 1. E2E 파이프라인 테스트 (Mock 에이전트)
+
+실제 에이전트 없이 전체 파이프라인이 동작하는지 확인합니다:
+
+```bash
+python scripts/create_test_data.py
+python scripts/run_e2e_test.py
+```
+
+### 2. 실제 에이전트로 평가 실행
+
+```bash
+# Dry run (실행 없이 계획만 확인)
+python scripts/run_eval.py --tier micro --agents claude-code --sample-size 3 --dry-run
+
+# 실제 실행 (Micro 3개)
+python scripts/run_eval.py --tier micro --agents claude-code --sample-size 3 --run-id eval-001
+
+# Mini 평가 (50개)
+python scripts/run_eval.py --tier mini --agents claude-code --run-id eval-mini-001
+```
+
+**run_eval.py 옵션:**
+
+| 옵션 | 설명 | 기본값 |
+|------|------|--------|
+| `--tier` | 데이터셋 티어 (micro/mini/full) | 자동 감지 |
+| `--agents` | 에이전트 이름 (쉼표 구분) | claude-code |
+| `--run-id` | 실행 식별자 | 자동 생성 |
+| `--sample-size` | 샘플 수 오버라이드 | 티어 기본값 |
+| `--offline` | 오프라인 모드 (로컬 데이터만) | false |
+| `--dry-run` | 실행 계획만 출력 | false |
+
+### 3. Docker 기반 테스트 검증
+
+에이전트가 생성한 패치가 실제로 버그를 수정하는지 SWE-bench Docker 이미지로 검증합니다:
+
+```bash
+python scripts/run_docker_eval.py --run-id eval-001 --agent claude-code
+```
+
+이 단계에서는 인스턴스별 Docker 이미지(`ghcr.io/epoch-research/swe-bench.eval.x86_64.{instance_id}:latest`)를 pull하여 테스트를 실행합니다. 이미지에는 해당 프로젝트의 정확한 Python 버전과 의존성이 사전 설치되어 있습니다.
+
+### 4. 리포트 생성
+
+```bash
+# Markdown + JSON 리포트
+python scripts/generate_report.py --run-id eval-001 --format markdown,json,csv
+
+# 여러 환경 결과 병합
+python scripts/generate_report.py --run-id eval-merged \
+    --merge-dirs results/runs/eval-external,results/runs/eval-internal
+```
+
+## 전체 실행 예시
+
+```bash
+# 1. 환경 준비
+source .venv/bin/activate
+
+# 2. 평가 실행 (3개 태스크, Claude Code)
+python scripts/run_eval.py \
+    --tier micro \
+    --agents claude-code \
+    --sample-size 3 \
+    --run-id my-eval
+
+# 3. 테스트 검증 (Docker)
+python scripts/run_docker_eval.py \
+    --run-id my-eval \
+    --agent claude-code
+
+# 4. 리포트 생성
+python scripts/generate_report.py \
+    --run-id my-eval \
+    --format markdown,json
+```
+
+## 데이터셋 티어
+
+디스크 여유 공간에 따라 3개 티어를 선택할 수 있습니다:
+
+| 티어 | 인스턴스 수 | Docker 이미지 | 용도 |
+|------|------------|--------------|------|
+| Micro | 5~10 | ~2GB | 개발, 디버깅, 스모크 테스트 |
+| Mini | 50 | ~5GB | 기본 평가 (SWE-bench Verified Mini) |
+| Full | 500 | ~130GB | 공식 벤치마크 |
+
+## 중단 후 재개
+
+오케스트레이터는 태스크 단위로 결과를 즉시 저장합니다. 실행이 중단되어도 동일한 `--run-id`로 다시 실행하면 완료된 태스크를 건너뛰고 나머지만 실행합니다:
+
+```bash
+# 중단된 평가 재개 (같은 run-id 사용)
+python scripts/run_eval.py --tier mini --agents claude-code --run-id eval-001
+```
+
+## 오프라인 실행 (사내망)
+
+```bash
+# [사외망] 데이터셋 + Docker 이미지 내보내기
+python scripts/export_dataset.py --tier mini --output data/
+docker save ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-12050:latest \
+    | gzip > data/docker_images/django-12050.tar.gz
+
+# [사내망] 오프라인 실행
+docker load < data/docker_images/django-12050.tar.gz
+python scripts/run_eval.py --tier mini --agents claude-code --offline --run-id eval-int
+```
+
+## 리포트 예시
+
+```
+# CAPE Eval Report
+
+- **Run ID**: eval-real-001
+- **Tier**: micro
+- **Tasks**: 3
+
+## Metric Comparison
+
+| Metric               | claude-code  |
+|----------------------|--------------|
+| task_resolution_rate | 100.0% (S)   |
+| regression_safety    | 100.0% (S)   |
+| token_efficiency     | 2106.3 (S)   |
+| cost_per_resolved    | $0.261 (S)   |
+| e2e_time             | 61.5s (A)    |
+| time_to_first_action | 6.2s (B)     |
+| convergence_steps    | 16.3 (B)     |
+
+## Grade Legend
+S = Excellent | A = Good | B = Average | C = Below Average | D = Poor | F = Failing
+```
