@@ -1,0 +1,187 @@
+"""Orchestrator: runs agents on tasks with resume support."""
+
+from __future__ import annotations
+
+import json
+import logging
+import time
+from datetime import datetime
+from pathlib import Path
+
+from rich.console import Console
+from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
+
+from src.adapters.base import AgentAdapter
+from src.core.config import Config, PROJECT_ROOT
+from src.core.models import AgentResult, EvalTask, TaskStatus
+from src.runner.logger import setup_logging, save_run_metadata
+from src.runner.sandbox import DiskAwareSandbox, DiskSpaceError
+
+console = Console()
+logger = logging.getLogger("cape-eval")
+
+
+class Orchestrator:
+    """Runs evaluation tasks with resume support."""
+
+    def __init__(self, config: Config, run_id: str):
+        self.config = config
+        self.run_id = run_id
+        self.results_dir = PROJECT_ROOT / "results" / "runs" / run_id
+        self.sandbox = DiskAwareSandbox(config)
+
+    def _result_path(self, agent_name: str, instance_id: str) -> Path:
+        return self.results_dir / agent_name / f"{instance_id}.json"
+
+    def _is_completed(self, agent_name: str, instance_id: str) -> bool:
+        path = self._result_path(agent_name, instance_id)
+        return path.exists()
+
+    def run(
+        self,
+        tasks: list[EvalTask],
+        agents: list[AgentAdapter],
+    ) -> dict[str, list[AgentResult]]:
+        """Run all tasks for all agents. Skips already completed tasks."""
+        setup_logging(self.run_id)
+
+        # Save run metadata
+        save_run_metadata(self.run_id, {
+            "run_id": self.run_id,
+            "tier": self.config.tier,
+            "started_at": datetime.now().isoformat(),
+            "num_tasks": len(tasks),
+            "agents": [a.name for a in agents],
+            "environment": self.config.env_info.summary(),
+        })
+
+        all_results: dict[str, list[AgentResult]] = {}
+
+        for agent in agents:
+            agent_results = self._run_agent(agent, tasks)
+            all_results[agent.name] = agent_results
+
+        # Update metadata with completion
+        save_run_metadata(self.run_id, {
+            "run_id": self.run_id,
+            "tier": self.config.tier,
+            "started_at": datetime.now().isoformat(),
+            "completed_at": datetime.now().isoformat(),
+            "num_tasks": len(tasks),
+            "agents": [a.name for a in agents],
+            "environment": self.config.env_info.summary(),
+            "results_summary": {
+                agent: {
+                    "total": len(results),
+                    "success": sum(1 for r in results if r.status == TaskStatus.SUCCESS),
+                    "error": sum(1 for r in results if r.status == TaskStatus.ERROR),
+                }
+                for agent, results in all_results.items()
+            },
+        })
+
+        return all_results
+
+    def _run_agent(
+        self, agent: AgentAdapter, tasks: list[EvalTask]
+    ) -> list[AgentResult]:
+        """Run all tasks for a single agent."""
+        results: list[AgentResult] = []
+        skipped = 0
+        total = len(tasks)
+
+        logger.info(f"\n{'='*60}")
+        logger.info(f"Agent: {agent.name} | Tasks: {total}")
+        logger.info(f"{'='*60}")
+
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[bold blue]{task.description}"),
+            BarColumn(),
+            TaskProgressColumn(),
+            console=console,
+        ) as progress:
+            ptask = progress.add_task(
+                f"{agent.name}", total=total
+            )
+
+            for i, task in enumerate(tasks):
+                # Check if already completed (resume support)
+                if self._is_completed(agent.name, task.instance_id):
+                    result = AgentResult.load(
+                        self._result_path(agent.name, task.instance_id)
+                    )
+                    results.append(result)
+                    skipped += 1
+                    progress.update(ptask, advance=1)
+                    continue
+
+                progress.update(
+                    ptask,
+                    description=f"{agent.name} [{i+1}/{total}] {task.instance_id}",
+                )
+
+                result = self._run_single(agent, task)
+                results.append(result)
+
+                # Save immediately
+                result.save(self._result_path(agent.name, task.instance_id))
+
+                progress.update(ptask, advance=1)
+
+        logger.info(
+            f"  Done: {total - skipped} run, {skipped} skipped"
+        )
+        return results
+
+    def _run_single(self, agent: AgentAdapter, task: EvalTask) -> AgentResult:
+        """Run a single task with a single agent."""
+        logger.info(f"  Running: {task.instance_id}")
+
+        # Check disk
+        try:
+            self.sandbox.check_disk()
+        except DiskSpaceError as e:
+            logger.error(f"  Disk error: {e}")
+            return AgentResult(
+                instance_id=task.instance_id,
+                agent_name=agent.name,
+                status=TaskStatus.ERROR,
+                error_message=str(e),
+            )
+
+        # Setup repo
+        try:
+            repo_path = self.sandbox.setup_repo(
+                task.instance_id, task.repo, task.base_commit
+            )
+        except Exception as e:
+            logger.error(f"  Repo setup failed: {e}")
+            return AgentResult(
+                instance_id=task.instance_id,
+                agent_name=agent.name,
+                status=TaskStatus.ERROR,
+                error_message=f"Repo setup failed: {e}",
+            )
+
+        # Run agent
+        try:
+            result = agent.run(task.problem_statement, repo_path, task.instance_id)
+            logger.info(
+                f"  Completed: {result.status.value} | "
+                f"Cost: ${result.total_cost_usd:.3f} | "
+                f"Time: {result.timestamps.e2e_time:.1f}s"
+            )
+        except Exception as e:
+            logger.error(f"  Agent error: {e}")
+            result = AgentResult(
+                instance_id=task.instance_id,
+                agent_name=agent.name,
+                status=TaskStatus.ERROR,
+                error_message=str(e),
+            )
+        finally:
+            if self.sandbox.clean_after:
+                self.sandbox.cleanup(task.instance_id)
+
+        return result

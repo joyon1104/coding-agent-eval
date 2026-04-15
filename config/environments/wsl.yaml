@@ -1,0 +1,10 @@
+extends: common.yaml
+
+environment:
+  os: wsl
+  label: "WSL2 Environment"
+
+docker:
+  memory_limit: "4g"
+  cpu_limit: 2
+  clean_after_run: true

@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wsl:*)",
+      "Bash(/usr/bin/ls -la)",
+      "Bash(.venv/bin/python *)",
+      "Bash(/usr/bin/python3 --version)",
+      "Bash(/usr/bin/env python3 *)",
+      "Bash(/home/going114kim/Coding-Agent-Eval/.venv/bin/python3 --version)",
+      "Bash(/usr/bin/bash *)",
+      "Bash(export PATH=\"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH\")",
+      "Bash(.venv/bin/pip install *)",
+      "Bash(cp /home/going114kim/Coding-Agent-Eval/data/swebench_mini_real.jsonl /home/going114kim/Coding-Agent-Eval/data/swebench_mini.jsonl)",
+      "Bash(python3 -c ' *)",
+      "Bash(git init *)",
+      "Bash(git add *)"
+    ]
+  }
+}

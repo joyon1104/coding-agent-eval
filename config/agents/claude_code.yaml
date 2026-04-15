@@ -1,0 +1,17 @@
+name: claude-code
+display_name: "Claude Code"
+command: claude
+args:
+  - "-p"
+  - "{prompt}"
+  - "--output-format"
+  - "json"
+  - "--max-turns"
+  - "{max_turns}"
+  - "--allowedTools"
+  - "Bash,Read,Write,Edit"
+  - "--cwd"
+  - "{repo_path}"
+output_format: json
+supports_cost_tracking: true
+supports_token_tracking: true

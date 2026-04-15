@@ -1,0 +1,43 @@
+tiers:
+  micro:
+    dataset_source: "local"
+    local_path: "data/swebench_micro.jsonl"
+    sample_size: 10
+    docker_images_budget_gb: 2
+  mini:
+    dataset_source: "auto"
+    huggingface_id: "MariusHobbhahn/swe-bench-verified-mini"
+    local_path: "data/swebench_mini.jsonl"
+    sample_size: 50
+    docker_images_budget_gb: 5
+  full:
+    dataset_source: "auto"
+    huggingface_id: "princeton-nlp/SWE-bench_Verified"
+    local_path: "data/swebench_full.jsonl"
+    sample_size: 500
+    docker_images_budget_gb: 130
+
+execution:
+  max_tokens_per_task: 1000000
+  max_time_per_task: 1800
+  max_turns_per_task: 50
+  max_budget_per_task: 5.0
+  temperature: 0
+
+pricing:
+  claude-sonnet-4-20250514:
+    input_per_1m: 3.0
+    output_per_1m: 15.0
+    cache_read_per_1m: 0.30
+  claude-opus-4-20250514:
+    input_per_1m: 15.0
+    output_per_1m: 75.0
+    cache_read_per_1m: 1.50
+  gpt-4o:
+    input_per_1m: 2.50
+    output_per_1m: 10.0
+    cache_read_per_1m: 1.25
+  o3:
+    input_per_1m: 2.0
+    output_per_1m: 8.0
+    cache_read_per_1m: 0.50

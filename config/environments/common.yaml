@@ -1,0 +1,14 @@
+environment:
+  os: auto
+  label: "Common"
+
+docker:
+  memory_limit: "8g"
+  cpu_limit: 4
+  clean_after_run: false
+  network_mode: "none"
+
+network:
+  proxy: null
+  connectivity_check_url: "https://api.anthropic.com"
+  connectivity_timeout: 5

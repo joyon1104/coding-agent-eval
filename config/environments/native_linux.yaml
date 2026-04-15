@@ -1,0 +1,10 @@
+extends: common.yaml
+
+environment:
+  os: native_linux
+  label: "Native Linux"
+
+docker:
+  memory_limit: "8g"
+  cpu_limit: 4
+  clean_after_run: false
