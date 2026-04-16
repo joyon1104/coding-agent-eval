@@ -132,8 +132,12 @@ def main(run_id, fmt, merge_dirs):
         meta = json.loads(metadata_path.read_text())
         tier = meta.get("tier", "unknown")
 
-    # Generate reports
-    output_dir = PROJECT_ROOT / "results" / "runs" / run_id
+    # Generate reports — use reports/ subdirectory if patches/ exists (new layout)
+    run_dir = PROJECT_ROOT / "results" / "runs" / run_id
+    if (run_dir / "patches").is_dir():
+        output_dir = run_dir / "reports"
+    else:
+        output_dir = run_dir
     formats = [f.strip() for f in fmt.split(",")]
 
     for f in formats:

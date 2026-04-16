@@ -15,6 +15,7 @@ from rich.console import Console
 
 from src.core.config import Config, PROJECT_ROOT
 from src.core.env_detect import detect_environment
+from src.core.run_id import generate_run_id
 from src.dataset.loader import load_dataset_for_tier, load_from_jsonl
 from src.dataset.sampler import sample_tasks
 from src.adapters.claude_code import ClaudeCodeAdapter
@@ -62,9 +63,12 @@ def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry
     config = Config(tier=tier, offline=offline)
     console.print(f"Tier: [bold]{config.tier}[/bold]")
 
+    # Determine primary agent for run-id generation
+    primary_agent = [a.strip() for a in agents.split(",")][0]
+
     # Run ID
     if not run_id:
-        run_id = f"eval-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+        run_id = generate_run_id(primary_agent, model)
     console.print(f"Run ID: [bold]{run_id}[/bold]")
 
     # Load dataset
@@ -117,7 +121,7 @@ def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry
 
     # ── Step 1: Run agents ──
     console.print(f"\n[bold]Step 1: Agent Evaluation[/bold]")
-    orchestrator = Orchestrator(config, run_id)
+    orchestrator = Orchestrator(config, run_id, model=model)
     results = orchestrator.run(sampled, agent_instances)
 
     console.print(f"\n[bold green]Agent evaluation complete![/bold green]")
@@ -187,7 +191,7 @@ def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry
     from src.metrics.latency import avg_e2e_time, avg_time_to_first_action
     from src.metrics.process import avg_convergence_steps
     from src.reporter.scorer import score_agent
-    from src.reporter.formatter import format_markdown, format_json, save_report
+    from src.reporter.formatter import format_markdown, format_json, save_report, save_summary
     from src.reporter.comparator import load_run_results
 
     run_dir = PROJECT_ROOT / "results" / "runs" / run_id
@@ -259,14 +263,26 @@ def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry
         meta = json.loads(metadata_path.read_text())
         report_tier = meta.get("tier", "unknown")
 
-    # Save reports
+    # Save reports to reports/ subdirectory
+    reports_dir = run_dir / "reports"
     md_report = format_markdown(agent_scores, run_id, report_tier, num_tasks)
-    md_path = save_report(md_report, run_id, "markdown", run_dir)
+    md_path = save_report(md_report, run_id, "markdown", reports_dir)
     console.print(f"\n  Markdown: {md_path}")
 
     json_report = format_json(agent_scores, run_id, report_tier, num_tasks)
-    json_path = save_report(json_report, run_id, "json", run_dir)
+    json_path = save_report(json_report, run_id, "json", reports_dir)
     console.print(f"  JSON: {json_path}")
+
+    # Save summary.json for dashboard
+    meta = {}
+    if metadata_path.exists():
+        meta = json.loads(metadata_path.read_text())
+    summary_path = save_summary(
+        run_dir, meta, agent_scores,
+        agent_results=all_results,
+        eval_results=all_eval_results or None,
+    )
+    console.print(f"  Summary: {summary_path}")
 
     # Print report
     console.print(f"\n{'=' * 60}")

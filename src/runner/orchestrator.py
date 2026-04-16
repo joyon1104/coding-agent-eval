@@ -24,18 +24,39 @@ logger = logging.getLogger("cape-eval")
 class Orchestrator:
     """Runs evaluation tasks with resume support."""
 
-    def __init__(self, config: Config, run_id: str):
+    def __init__(self, config: Config, run_id: str, model: str | None = None):
         self.config = config
         self.run_id = run_id
+        self.model = model
         self.results_dir = PROJECT_ROOT / "results" / "runs" / run_id
         self.sandbox = DiskAwareSandbox(config)
 
-    def _result_path(self, agent_name: str, instance_id: str) -> Path:
-        return self.results_dir / agent_name / f"{instance_id}.json"
+    def _result_path(self, instance_id: str) -> Path:
+        return self.results_dir / "patches" / f"{instance_id}.json"
 
-    def _is_completed(self, agent_name: str, instance_id: str) -> bool:
-        path = self._result_path(agent_name, instance_id)
-        return path.exists()
+    def _is_completed(self, instance_id: str) -> bool:
+        # Check new layout first, then legacy
+        new_path = self.results_dir / "patches" / f"{instance_id}.json"
+        if new_path.exists():
+            return True
+        # Legacy: check agent-name subdirectories
+        for d in self.results_dir.iterdir():
+            if d.is_dir() and d.name not in ("patches", "eval", "reports"):
+                legacy = d / f"{instance_id}.json"
+                if legacy.exists():
+                    return True
+        return False
+
+    def _load_completed(self, instance_id: str) -> AgentResult:
+        new_path = self.results_dir / "patches" / f"{instance_id}.json"
+        if new_path.exists():
+            return AgentResult.load(new_path)
+        for d in self.results_dir.iterdir():
+            if d.is_dir() and d.name not in ("patches", "eval", "reports"):
+                legacy = d / f"{instance_id}.json"
+                if legacy.exists():
+                    return AgentResult.load(legacy)
+        raise FileNotFoundError(f"Result not found: {instance_id}")
 
     def run(
         self,
@@ -45,9 +66,13 @@ class Orchestrator:
         """Run all tasks for all agents. Skips already completed tasks."""
         setup_logging(self.run_id)
 
+        agent = agents[0]  # New layout: one agent per run
+
         # Save run metadata
         save_run_metadata(self.run_id, {
             "run_id": self.run_id,
+            "agent": agent.name,
+            "model": self.model or "",
             "tier": self.config.tier,
             "started_at": datetime.now().isoformat(),
             "num_tasks": len(tasks),
@@ -64,6 +89,8 @@ class Orchestrator:
         # Update metadata with completion
         save_run_metadata(self.run_id, {
             "run_id": self.run_id,
+            "agent": agents[0].name,
+            "model": self.model or "",
             "tier": self.config.tier,
             "started_at": datetime.now().isoformat(),
             "completed_at": datetime.now().isoformat(),
@@ -107,10 +134,8 @@ class Orchestrator:
 
             for i, task in enumerate(tasks):
                 # Check if already completed (resume support)
-                if self._is_completed(agent.name, task.instance_id):
-                    result = AgentResult.load(
-                        self._result_path(agent.name, task.instance_id)
-                    )
+                if self._is_completed(task.instance_id):
+                    result = self._load_completed(task.instance_id)
                     results.append(result)
                     skipped += 1
                     progress.update(ptask, advance=1)
@@ -125,7 +150,7 @@ class Orchestrator:
                 results.append(result)
 
                 # Save immediately
-                result.save(self._result_path(agent.name, task.instance_id))
+                result.save(self._result_path(task.instance_id))
 
                 progress.update(ptask, advance=1)
 

@@ -137,9 +137,92 @@ def format_csv(
 def save_report(
     content: str, run_id: str, fmt: str, output_dir: Path
 ):
-    """Save report to file."""
+    """Save report to file.
+
+    New layout: output_dir is run_dir/reports/, file is report.{ext}
+    Legacy: output_dir is run_dir, file is report_{run_id}.{ext}
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     ext = {"markdown": "md", "json": "json", "csv": "csv"}.get(fmt, fmt)
-    path = output_dir / f"report_{run_id}.{ext}"
+    # New layout: reports/ subdirectory with simple names
+    if output_dir.name == "reports":
+        path = output_dir / f"report.{ext}"
+    else:
+        path = output_dir / f"report_{run_id}.{ext}"
     path.write_text(content, encoding="utf-8")
+    return path
+
+
+def save_summary(
+    run_dir: Path,
+    metadata: dict,
+    agent_scores: dict[str, list[MetricScore]],
+    agent_results: dict[str, list] | None = None,
+    eval_results: list | None = None,
+):
+    """Save summary.json — a single dashboard-ready file.
+
+    Contains metadata, metrics/grades, and per-task details.
+    """
+    # Build metrics section
+    agents_data = {}
+    for agent_name, scores in agent_scores.items():
+        agents_data[agent_name] = {
+            "metrics": {
+                s.name: {
+                    "value": s.value if s.value != float("inf") else None,
+                    "unit": s.unit,
+                    "grade": s.grade,
+                }
+                for s in scores
+            }
+        }
+
+    # Build per-task section
+    per_task = []
+    if agent_results:
+        for agent_name, results in agent_results.items():
+            for r in results:
+                task_info = {
+                    "instance_id": r.instance_id,
+                    "agent": agent_name,
+                    "status": r.status.value if hasattr(r.status, "value") else r.status,
+                    "patch_generated": bool(r.patch),
+                    "cost_usd": r.total_cost_usd,
+                    "e2e_time": r.timestamps.e2e_time,
+                    "tokens": r.token_usage.total_tokens,
+                    "convergence_steps": r.convergence_steps,
+                    "model": r.model_name,
+                }
+
+                # Add eval info if available
+                if eval_results:
+                    er = next(
+                        (e for e in eval_results if e.instance_id == r.instance_id),
+                        None,
+                    )
+                    if er:
+                        task_info["resolved"] = er.resolved
+                        task_info["regression_safe"] = er.regression_safe
+                        task_info["fail_to_pass_rate"] = er.fail_to_pass_rate
+                        task_info["pass_to_pass_rate"] = er.pass_to_pass_rate
+
+                per_task.append(task_info)
+
+    summary = {
+        "run_id": metadata.get("run_id", ""),
+        "agent": metadata.get("agent", ""),
+        "model": metadata.get("model", ""),
+        "tier": metadata.get("tier", ""),
+        "num_tasks": metadata.get("num_tasks", 0),
+        "started_at": metadata.get("started_at", ""),
+        "completed_at": metadata.get("completed_at", ""),
+        "environment": metadata.get("environment", ""),
+        "agents": agents_data,
+        "per_task": per_task,
+        "generated_at": datetime.now().isoformat(),
+    }
+
+    path = run_dir / "summary.json"
+    path.write_text(json.dumps(summary, indent=2, ensure_ascii=False))
     return path
