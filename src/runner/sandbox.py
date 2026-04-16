@@ -3,13 +3,17 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 import shutil
 import subprocess
 import tempfile
+import time
 from pathlib import Path
 
 from src.core.config import Config
+
+logger = logging.getLogger("cape-eval")
 
 
 class DiskSpaceError(Exception):
@@ -41,31 +45,77 @@ class DiskAwareSandbox:
                     f"Disk space too low: {free_gb:.1f}GB (need {self.min_free_gb}GB)"
                 )
 
-    def setup_repo(self, instance_id: str, repo: str, base_commit: str) -> str:
-        """Clone repo and checkout base commit. Returns repo path."""
+    def setup_repo(
+        self, instance_id: str, repo: str, base_commit: str,
+        max_retries: int = 3, retry_delay: int = 10,
+    ) -> str:
+        """Clone repo and checkout base commit. Returns repo path.
+
+        Retries on network failures with increasing delay.
+        Uses shallow clone first, falls back to full clone if
+        base_commit is not reachable.
+        """
         workdir = Path(tempfile.mkdtemp(prefix=f"cape_{instance_id}_"))
         self._workdirs[instance_id] = workdir
 
         repo_url = f"https://github.com/{repo}.git"
         repo_path = workdir / "repo"
 
-        # Full clone to ensure base_commit is reachable
-        result = subprocess.run(
-            ["git", "clone", repo_url, str(repo_path)],
-            capture_output=True, timeout=600, text=True,
-        )
-        if result.returncode != 0:
-            raise RuntimeError(f"git clone failed: {result.stderr[:500]}")
+        last_error = ""
+        for attempt in range(1, max_retries + 1):
+            # Clean up failed attempt
+            if repo_path.exists():
+                shutil.rmtree(repo_path, ignore_errors=True)
 
-        result = subprocess.run(
-            ["git", "checkout", base_commit],
-            cwd=str(repo_path),
-            capture_output=True, timeout=60, text=True,
-        )
-        if result.returncode != 0:
-            raise RuntimeError(f"git checkout {base_commit} failed: {result.stderr[:500]}")
+            # Try shallow clone first (faster, less data)
+            logger.info(f"  Clone attempt {attempt}/{max_retries}: {repo}")
+            result = subprocess.run(
+                ["git", "clone", "--depth", "200", repo_url, str(repo_path)],
+                capture_output=True, timeout=600, text=True,
+            )
 
-        return str(repo_path)
+            if result.returncode != 0:
+                last_error = result.stderr[:500]
+                logger.warning(f"  Clone failed (attempt {attempt}): {last_error[:100]}")
+                if attempt < max_retries:
+                    delay = retry_delay * attempt
+                    logger.info(f"  Retrying in {delay}s...")
+                    time.sleep(delay)
+                continue
+
+            # Try checkout — shallow clone might not have the commit
+            result = subprocess.run(
+                ["git", "checkout", base_commit],
+                cwd=str(repo_path),
+                capture_output=True, timeout=60, text=True,
+            )
+            if result.returncode == 0:
+                return str(repo_path)
+
+            # Shallow clone doesn't have the commit — fetch full history
+            logger.info(f"  Shallow clone missing commit, fetching full history...")
+            subprocess.run(
+                ["git", "fetch", "--unshallow"],
+                cwd=str(repo_path),
+                capture_output=True, timeout=600, text=True,
+            )
+
+            result = subprocess.run(
+                ["git", "checkout", base_commit],
+                cwd=str(repo_path),
+                capture_output=True, timeout=60, text=True,
+            )
+            if result.returncode == 0:
+                return str(repo_path)
+
+            last_error = f"git checkout {base_commit} failed: {result.stderr[:500]}"
+            logger.warning(f"  Checkout failed (attempt {attempt}): {last_error[:100]}")
+            if attempt < max_retries:
+                delay = retry_delay * attempt
+                logger.info(f"  Retrying in {delay}s...")
+                time.sleep(delay)
+
+        raise RuntimeError(f"git clone failed after {max_retries} attempts: {last_error}")
 
     def cleanup(self, instance_id: str):
         """Clean up working directory for an instance."""
