@@ -291,12 +291,20 @@ python scripts/run_e2e_test.py
 # Dry run (실행 없이 계획만 확인)
 python scripts/run_eval.py --tier micro --agents claude-code --sample-size 3 --dry-run
 
-# 실제 실행 (Micro 3개)
+# 실제 실행 (Micro 3개, 기본 모델)
 python scripts/run_eval.py --tier micro --agents claude-code --sample-size 3 --run-id eval-001
+
+# 모델 지정 실행 (Sonnet)
+python scripts/run_eval.py --tier micro --agents claude-code --model sonnet --run-id eval-sonnet
+
+# 모델 지정 실행 (Opus)
+python scripts/run_eval.py --tier micro --agents claude-code --model opus --run-id eval-opus
 
 # Mini 평가 (50개)
 python scripts/run_eval.py --tier mini --agents claude-code --run-id eval-mini-001
 ```
+
+`--model` 옵션은 Claude Code CLI의 `--model` 플래그에 그대로 전달됩니다. `sonnet`, `opus` 같은 별칭이나 `claude-sonnet-4-6` 같은 전체 모델명을 사용할 수 있으며, 생략하면 Claude Code의 기본 모델이 사용됩니다.
 
 **run_eval.py 옵션:**
 
@@ -304,6 +312,7 @@ python scripts/run_eval.py --tier mini --agents claude-code --run-id eval-mini-0
 |------|------|--------|
 | `--tier` | 데이터셋 티어 (micro/mini/full) | 자동 감지 |
 | `--agents` | 에이전트 이름 (쉼표 구분) | claude-code |
+| `--model` | 사용할 모델 (sonnet, opus 등) | Claude Code 기본 모델 |
 | `--run-id` | 실행 식별자 | 자동 생성 |
 | `--sample-size` | 샘플 수 오버라이드 | 티어 기본값 |
 | `--offline` | 오프라인 모드 (로컬 데이터만) | false |
@@ -336,10 +345,11 @@ python scripts/generate_report.py --run-id eval-merged \
 # 1. 환경 준비
 source .venv/bin/activate
 
-# 2. 평가 실행 (3개 태스크, Claude Code)
+# 2. 평가 실행 (3개 태스크, Sonnet 모델)
 python scripts/run_eval.py \
     --tier micro \
     --agents claude-code \
+    --model sonnet \
     --sample-size 3 \
     --run-id my-eval
 
