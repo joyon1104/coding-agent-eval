@@ -16,12 +16,14 @@ from src.core.env_detect import detect_environment
 from src.dataset.loader import load_dataset_for_tier
 from src.dataset.sampler import sample_tasks
 from src.adapters.claude_code import ClaudeCodeAdapter
+from src.adapters.opencode import OpenCodeAdapter
 from src.runner.orchestrator import Orchestrator
 
 console = Console()
 
 AGENT_REGISTRY = {
     "claude-code": ClaudeCodeAdapter,
+    "opencode": OpenCodeAdapter,
 }
 
 

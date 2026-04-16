@@ -1,0 +1,11 @@
+name: opencode
+display_name: "OpenCode"
+command: opencode
+
+# 사용할 모델 (provider/model 형식)
+# 예: openai/gpt-4o, openai/gpt-4.1, openai/o3
+# model: openai/gpt-4o
+
+output_format: json
+supports_cost_tracking: true
+supports_token_tracking: true
