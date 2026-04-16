@@ -390,6 +390,31 @@ docker load < data/docker_images/django-12050.tar.gz
 python scripts/run_eval.py --tier mini --agents claude-code --offline --run-id eval-int
 ```
 
+## 대시보드
+
+평가 결과를 웹에서 조회할 수 있는 대시보드를 제공합니다. 외부 의존성 없이 Python 내장 HTTP 서버로 동작합니다.
+
+```bash
+python dashboard/server.py --port 8080
+# → http://localhost:8080
+```
+
+대시보드는 두 개의 화면으로 구성됩니다:
+
+- **리더보드** — 전체 평가 결과를 지표 순위로 정렬하여 보여줍니다. 컬럼 클릭으로 정렬 기준을 변경할 수 있고, agent/tier 필터로 원하는 결과만 볼 수 있습니다.
+- **상세 뷰** — 리더보드에서 항목을 클릭하면 해당 평가의 세부 정보를 확인할 수 있습니다. 평가 시작 시간, 환경 정보, 모델명, 7개 지표의 등급 카드, 태스크별 결과 테이블이 표시됩니다. 각 태스크의 View 버튼을 클릭하면 FAIL_TO_PASS / PASS_TO_PASS 개별 테스트의 pass/fail 결과를 모달로 확인할 수 있습니다.
+
+대시보드는 `results/runs/` 디렉토리의 JSON 파일들을 API로 제공합니다. 평가를 추가로 실행하면 브라우저 새로고침만으로 새 결과가 반영됩니다.
+
+```
+dashboard/
+├── server.py              # API 서버 (Python 내장 HTTP 서버)
+└── static/
+    ├── index.html          # 메인 페이지
+    ├── style.css           # 스타일 (다크 테마)
+    └── app.js              # 클라이언트 로직
+```
+
 ## 리포트 예시
 
 ```
