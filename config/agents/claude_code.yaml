@@ -1,17 +1,11 @@
 name: claude-code
 display_name: "Claude Code"
 command: claude
-args:
-  - "-p"
-  - "{prompt}"
-  - "--output-format"
-  - "json"
-  - "--max-turns"
-  - "{max_turns}"
-  - "--allowedTools"
-  - "Bash,Read,Write,Edit"
-  - "--cwd"
-  - "{repo_path}"
+
+# 사용할 모델 (생략 시 Claude Code 기본 모델 사용)
+# 예: sonnet, opus, claude-sonnet-4-6, claude-opus-4-6
+# model: sonnet
+
 output_format: json
 supports_cost_tracking: true
 supports_token_tracking: true

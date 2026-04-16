@@ -36,9 +36,11 @@ AGENT_REGISTRY = {
               help="Override sample size")
 @click.option("--offline", is_flag=True, default=False,
               help="Force offline mode (local dataset only)")
+@click.option("--model", default=None,
+              help="Model to use (e.g. sonnet, opus, claude-sonnet-4-6)")
 @click.option("--dry-run", is_flag=True, default=False,
               help="Show what would run without executing")
-def main(tier, agents, run_id, sample_size, offline, dry_run):
+def main(tier, agents, run_id, sample_size, offline, model, dry_run):
     """CAPE Eval — AI Coding Agent Performance Evaluation"""
 
     console.print("[bold blue]CAPE Eval[/bold blue] — AI Coding Agent Evaluation")
@@ -75,11 +77,14 @@ def main(tier, agents, run_id, sample_size, offline, dry_run):
             console.print(f"  [red]Unknown agent: {name}[/red]")
             continue
         adapter_cls = AGENT_REGISTRY[name]
-        adapter = adapter_cls(config={
+        agent_config = {
             "max_turns": config.execution_config.get("max_turns_per_task", 50),
             "max_budget": config.execution_config.get("max_budget_per_task", 5.0),
             "timeout": config.execution_config.get("max_time_per_task", 1800),
-        })
+        }
+        if model:
+            agent_config["model"] = model
+        adapter = adapter_cls(config=agent_config)
         if adapter.is_available():
             agent_instances.append(adapter)
             console.print(f"  [green]Agent ready: {name}[/green]")

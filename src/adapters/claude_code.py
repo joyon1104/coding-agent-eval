@@ -35,6 +35,10 @@ class ClaudeCodeAdapter(AgentAdapter):
             "--dangerously-skip-permissions",
         ]
 
+        model = self.config.get("model")
+        if model:
+            cmd.extend(["--model", model])
+
         env = os.environ.copy()
         if self.config.get("proxy"):
             env["HTTPS_PROXY"] = self.config["proxy"]
