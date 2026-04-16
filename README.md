@@ -137,15 +137,105 @@ proc = subprocess.run(cmd, cwd=repo_path, ...)
 
 ## 측정 지표 (7개)
 
-| # | 지표 | 설명 | 등급 기준 (S) |
-|---|------|------|-------------|
-| 1 | Task Resolution Rate | 해결된 태스크 비율 | >= 60% |
-| 2 | Regression Safety | 기존 테스트 통과 유지 비율 | >= 98% |
-| 3 | Token Efficiency | 해결된 태스크당 평균 토큰 수 | <= 50K |
-| 4 | Cost per Resolved Task | 해결된 태스크당 평균 비용 | <= $0.50 |
-| 5 | E2E Completion Time | 태스크당 평균 실행 시간 | <= 60s |
-| 6 | Time to First Action | 첫 번째 동작까지의 시간 | <= 3s |
-| 7 | Convergence Steps | 해결까지 평균 스텝 수 | <= 5 |
+7개 지표는 정확도, 비용, 속도, 프로세스의 네 가지 범주로 나뉩니다. 각 지표는 S/A/B/C/D/F 6단계로 등급이 매겨집니다.
+
+### 1. Task Resolution Rate (TRR)
+
+에이전트가 생성한 patch로 실제 버그가 해결된 비율입니다.
+
+```
+TRR = (FAIL_TO_PASS 테스트를 모두 통과한 태스크 수) / (전체 태스크 수)
+```
+
+Docker 컨테이너 안에서 patch를 적용한 후 SWE-bench의 FAIL_TO_PASS 테스트를 실행하여 판정합니다. 원래 실패하던 테스트가 patch 적용 후 모두 통과하면 해당 태스크는 "resolved"로 간주됩니다. Step 2(Docker 테스트 검증)를 수행하지 않으면 이 지표는 "patch 존재 여부"로 대체되며, 이 경우 실제 정확도와 차이가 있을 수 있습니다.
+
+| 등급 | S | A | B | C | D | F |
+|------|---|---|---|---|---|---|
+| 기준 | >= 60% | >= 45% | >= 30% | >= 20% | >= 10% | < 10% |
+
+### 2. Regression Safety
+
+patch 적용 후 기존에 통과하던 테스트가 여전히 통과하는 비율입니다.
+
+```
+Regression Safety = (PASS_TO_PASS 테스트가 전부 통과한 태스크 수) / (전체 태스크 수)
+```
+
+버그를 수정하면서 다른 기능을 깨뜨리지 않았는지 확인합니다. SWE-bench 데이터셋의 PASS_TO_PASS 목록에 포함된 테스트를 Docker 컨테이너에서 실행하고, 해당 테스트가 하나라도 실패하면 그 태스크는 regression이 발생한 것으로 판정합니다.
+
+| 등급 | S | A | B | C | D | F |
+|------|---|---|---|---|---|---|
+| 기준 | >= 98% | >= 95% | >= 90% | >= 85% | >= 75% | < 75% |
+
+### 3. Token Efficiency
+
+해결된 태스크당 평균 토큰 사용량입니다. 낮을수록 좋습니다.
+
+```
+Token Efficiency = sum(해결된 태스크의 total_tokens) / (해결된 태스크 수)
+```
+
+`total_tokens`는 `input_tokens + output_tokens`이며, input_tokens에는 cache read/write 토큰이 포함됩니다. Claude Code의 JSON 출력에서 `usage.input_tokens`, `usage.cache_read_input_tokens`, `usage.cache_creation_input_tokens`, `usage.output_tokens`를 합산하여 계산합니다. 해결되지 않은 태스크는 계산에서 제외됩니다 — 실패한 태스크에 소비된 토큰은 효율성 측정에 노이즈가 되기 때문입니다.
+
+| 등급 | S | A | B | C | D | F |
+|------|---|---|---|---|---|---|
+| 기준 | <= 50K | <= 100K | <= 200K | <= 400K | <= 800K | > 800K |
+
+### 4. Cost per Resolved Task (CRT)
+
+해결된 태스크당 평균 API 비용입니다. 낮을수록 좋습니다.
+
+```
+CRT = (전체 태스크의 총 비용) / (해결된 태스크 수)
+```
+
+비용은 Claude Code의 JSON 출력에 포함된 `total_cost_usd` 값을 사용합니다. 이 값이 없는 경우 `config/eval_config.yaml`의 모델별 토큰 단가표를 사용하여 토큰 수에서 역산합니다. Token Efficiency와 달리 분자에 전체 비용(실패 포함)을 사용합니다 — 실패한 시도에 들어간 비용도 실제 지출이기 때문입니다.
+
+| 등급 | S | A | B | C | D | F |
+|------|---|---|---|---|---|---|
+| 기준 | <= $0.50 | <= $1.00 | <= $2.00 | <= $5.00 | <= $10.00 | > $10.00 |
+
+### 5. E2E Completion Time
+
+태스크당 평균 종단간 실행 시간(초)입니다. 낮을수록 좋습니다.
+
+```
+E2E Time = avg(task_end - task_start)
+```
+
+에이전트에 프롬프트를 전달한 시점(`task_start`)부터 실행이 완전히 종료된 시점(`task_end`)까지의 시간입니다. 레포 클론이나 Docker 이미지 pull 시간은 포함되지 않고, 순수하게 에이전트가 문제를 풀고 코드를 수정하는 데 걸린 시간만 측정합니다.
+
+| 등급 | S | A | B | C | D | F |
+|------|---|---|---|---|---|---|
+| 기준 | <= 60s | <= 120s | <= 300s | <= 600s | <= 1200s | > 1200s |
+
+### 6. Time to First Action (TTFA)
+
+에이전트가 첫 번째 동작(파일 읽기, 코드 수정 등)을 수행하기까지 걸린 시간(초)입니다. 낮을수록 좋습니다.
+
+```
+TTFA = first_action - task_start
+```
+
+에이전트가 프롬프트를 받은 후 문제를 이해하고 첫 번째 도구 호출을 시작하기까지의 지연 시간을 나타냅니다. Claude Code의 JSON 출력에 `duration_api_ms`와 `num_turns`가 포함되어 있으면 `duration_api_ms / num_turns`로 추정하고, 없는 경우 전체 실행 시간의 10%로 근사합니다.
+
+| 등급 | S | A | B | C | D | F |
+|------|---|---|---|---|---|---|
+| 기준 | <= 3s | <= 5s | <= 10s | <= 20s | <= 30s | > 30s |
+
+### 7. Convergence Steps
+
+에이전트가 태스크를 완료하기까지 수행한 평균 턴(스텝) 수입니다. 낮을수록 좋습니다.
+
+```
+Convergence Steps = avg(num_turns)
+```
+
+Claude Code의 JSON 출력에 포함된 `num_turns` 값을 사용합니다. 한 턴은 에이전트가 모델을 한 번 호출하여 응답을 받고 도구를 실행하는 단위입니다. 적은 턴으로 문제를 해결할수록 에이전트가 효율적으로 문제를 파악하고 수정한 것으로 평가됩니다. 불필요한 시행착오 없이 정확한 수정을 할수록 이 지표가 좋아집니다.
+
+| 등급 | S | A | B | C | D | F |
+|------|---|---|---|---|---|---|
+| 기준 | <= 5 | <= 10 | <= 20 | <= 30 | <= 50 | > 50 |
 
 ## 설치 및 환경 구축
 
