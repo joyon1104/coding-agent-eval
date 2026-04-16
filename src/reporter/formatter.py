@@ -204,8 +204,11 @@ def save_summary(
                     if er:
                         task_info["resolved"] = er.resolved
                         task_info["regression_safe"] = er.regression_safe
-                        task_info["fail_to_pass_rate"] = er.fail_to_pass_rate
-                        task_info["pass_to_pass_rate"] = er.pass_to_pass_rate
+                        task_info["fail_to_pass_total"] = len(er.fail_to_pass_results)
+                        task_info["fail_to_pass_passed"] = sum(1 for v in er.fail_to_pass_results.values() if v)
+                        task_info["pass_to_pass_total"] = len(er.pass_to_pass_results)
+                        task_info["pass_to_pass_passed"] = sum(1 for v in er.pass_to_pass_results.values() if v)
+                        task_info["eval_detail"] = f"eval/{r.instance_id}.json"
 
                 per_task.append(task_info)
 
