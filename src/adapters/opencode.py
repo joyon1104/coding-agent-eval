@@ -106,7 +106,7 @@ class OpenCodeAdapter(AgentAdapter):
                 ),
                 total_cost_usd=cost,
                 convergence_steps=num_turns,
-                raw_output=proc.stdout[:10000],
+                raw_output=proc.stdout[:50000],
                 model_name=model_name,
             )
 
@@ -143,33 +143,49 @@ class OpenCodeAdapter(AgentAdapter):
         return ""
 
     def _extract_usage(self, events: list[dict]) -> tuple[TokenUsage, float, str]:
-        """Extract token usage and cost from OpenCode events."""
+        """Extract token usage and cost from OpenCode events.
+
+        OpenCode emits step-finish/step_done events with nested usage:
+          {"type": "step_done", "part": {"tokens": {"input":..., "output":...}, "cost":...}}
+        or in session export format:
+          {"type": "step-finish", "tokens": {"input":..., "output":...}, "cost":...}
+        """
         total_input = 0
         total_output = 0
+        cache_read = 0
         total_cost = 0.0
         model_name = ""
 
         for event in events:
-            if event.get("type") == "text_done":
-                usage = event.get("usage", {})
-                total_input += usage.get("inputTokens", 0) or usage.get("input_tokens", 0)
-                total_output += usage.get("outputTokens", 0) or usage.get("output_tokens", 0)
-                total_cost += usage.get("cost", 0.0)
-                if not model_name:
-                    model_name = event.get("model", "")
+            etype = event.get("type", "")
 
-            elif event.get("type") == "step_done":
-                part = event.get("part", {})
-                usage = part.get("usage", {})
-                total_input += usage.get("inputTokens", 0) or usage.get("input_tokens", 0)
-                total_output += usage.get("outputTokens", 0) or usage.get("output_tokens", 0)
-                total_cost += usage.get("cost", 0.0)
+            if etype in ("step_done", "step_finish", "step-finish"):
+                # tokens/cost can be at top level or inside "part"
+                source = event
+                if "part" in event and isinstance(event["part"], dict):
+                    part = event["part"]
+                    if "tokens" in part:
+                        source = part
+
+                tokens = source.get("tokens", {})
+                if isinstance(tokens, dict):
+                    total_input += tokens.get("input", 0)
+                    total_output += tokens.get("output", 0)
+                    cache = tokens.get("cache", {})
+                    if isinstance(cache, dict):
+                        cache_read += cache.get("read", 0)
+
+                cost = source.get("cost", 0.0)
+                if isinstance(cost, (int, float)):
+                    total_cost += cost
+
                 if not model_name:
-                    model_name = part.get("model", "")
+                    model_name = source.get("model", "")
 
         token_usage = TokenUsage(
             input_tokens=total_input,
             output_tokens=total_output,
+            cache_read_tokens=cache_read,
         )
 
         return token_usage, total_cost, model_name
