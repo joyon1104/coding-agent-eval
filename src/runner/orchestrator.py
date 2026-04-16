@@ -35,27 +35,32 @@ class Orchestrator:
         return self.results_dir / "patches" / f"{instance_id}.json"
 
     def _is_completed(self, instance_id: str) -> bool:
+        """Check if a task completed successfully. Error results are retried."""
+        result_file = self._find_result_file(instance_id)
+        if not result_file:
+            return False
+        try:
+            result = AgentResult.load(result_file)
+            return result.status == TaskStatus.SUCCESS
+        except Exception:
+            return False
+
+    def _find_result_file(self, instance_id: str) -> Path | None:
         # Check new layout first, then legacy
         new_path = self.results_dir / "patches" / f"{instance_id}.json"
         if new_path.exists():
-            return True
-        # Legacy: check agent-name subdirectories
+            return new_path
         for d in self.results_dir.iterdir():
             if d.is_dir() and d.name not in ("patches", "eval", "reports"):
                 legacy = d / f"{instance_id}.json"
                 if legacy.exists():
-                    return True
-        return False
+                    return legacy
+        return None
 
     def _load_completed(self, instance_id: str) -> AgentResult:
-        new_path = self.results_dir / "patches" / f"{instance_id}.json"
-        if new_path.exists():
-            return AgentResult.load(new_path)
-        for d in self.results_dir.iterdir():
-            if d.is_dir() and d.name not in ("patches", "eval", "reports"):
-                legacy = d / f"{instance_id}.json"
-                if legacy.exists():
-                    return AgentResult.load(legacy)
+        result_file = self._find_result_file(instance_id)
+        if result_file:
+            return AgentResult.load(result_file)
         raise FileNotFoundError(f"Result not found: {instance_id}")
 
     def run(
