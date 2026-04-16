@@ -285,83 +285,77 @@ python scripts/create_test_data.py
 python scripts/run_e2e_test.py
 ```
 
-### 2. 실제 에이전트로 평가 실행
+### 2. 전체 평가 실행 (한 번에)
+
+`--verify` 옵션을 사용하면 에이전트 실행 → Docker 테스트 검증 → 리포트 생성까지 한 명령어로 수행됩니다:
 
 ```bash
-# Dry run (실행 없이 계획만 확인)
-python scripts/run_eval.py --tier micro --agents claude-code --sample-size 3 --dry-run
+# Claude Code (Sonnet) — 전체 평가
+python scripts/run_eval.py \
+    --tier micro --agents claude-code --model sonnet \
+    --sample-size 3 --run-id eval-claude --verify
 
-# 실제 실행 (Micro 3개, 기본 모델)
-python scripts/run_eval.py --tier micro --agents claude-code --sample-size 3 --run-id eval-001
-
-# 모델 지정 실행 (Sonnet)
-python scripts/run_eval.py --tier micro --agents claude-code --model sonnet --run-id eval-sonnet
-
-# 모델 지정 실행 (Opus)
-python scripts/run_eval.py --tier micro --agents claude-code --model opus --run-id eval-opus
-
-# Mini 평가 (50개)
-python scripts/run_eval.py --tier mini --agents claude-code --run-id eval-mini-001
+# OpenCode (Gemini 2.5 Flash) — 전체 평가
+python scripts/run_eval.py \
+    --tier micro --agents opencode --model google/gemini-2.5-flash \
+    --sample-size 3 --run-id eval-opencode --verify
 ```
 
-`--model` 옵션은 Claude Code CLI의 `--model` 플래그에 그대로 전달됩니다. `sonnet`, `opus` 같은 별칭이나 `claude-sonnet-4-6` 같은 전체 모델명을 사용할 수 있으며, 생략하면 Claude Code의 기본 모델이 사용됩니다.
+`--verify` 없이 실행하면 에이전트 실행(패치 생성)만 수행되고, Docker 검증과 리포트는 별도 명령어로 나중에 실행할 수 있습니다.
+
+### 3. 단계별 분리 실행
+
+각 단계를 개별적으로 실행할 수도 있습니다:
+
+```bash
+# Step 1: 에이전트 실행 (패치 생성만)
+python scripts/run_eval.py \
+    --tier micro --agents claude-code --model sonnet \
+    --sample-size 3 --run-id eval-001
+
+# Step 2: Docker 테스트 검증 (기존 결과에 대해)
+python scripts/run_docker_eval.py --run-id eval-001 --agent claude-code
+
+# Step 3: 리포트 생성
+python scripts/generate_report.py --run-id eval-001 --format markdown,json
+```
+
+이 방식은 Step 1 실행 후 결과를 확인하고 선택적으로 검증을 진행하거나, 여러 환경의 결과를 병합하여 리포트를 생성할 때 유용합니다.
+
+```bash
+# 여러 환경 결과 병합 리포트
+python scripts/generate_report.py --run-id eval-merged \
+    --merge-dirs results/runs/eval-external,results/runs/eval-internal
+```
 
 **run_eval.py 옵션:**
 
 | 옵션 | 설명 | 기본값 |
 |------|------|--------|
 | `--tier` | 데이터셋 티어 (micro/mini/full) | 자동 감지 |
-| `--agents` | 에이전트 이름 (쉼표 구분) | claude-code |
-| `--model` | 사용할 모델 (sonnet, opus 등) | Claude Code 기본 모델 |
+| `--agents` | 에이전트 이름 (claude-code, opencode) | claude-code |
+| `--model` | 사용할 모델 | 에이전트 기본 모델 |
 | `--run-id` | 실행 식별자 | 자동 생성 |
 | `--sample-size` | 샘플 수 오버라이드 | 티어 기본값 |
+| `--verify` | Docker 검증 + 리포트까지 한번에 실행 | false |
 | `--offline` | 오프라인 모드 (로컬 데이터만) | false |
 | `--dry-run` | 실행 계획만 출력 | false |
 
-### 3. Docker 기반 테스트 검증
-
-에이전트가 생성한 패치가 실제로 버그를 수정하는지 SWE-bench Docker 이미지로 검증합니다:
-
-```bash
-python scripts/run_docker_eval.py --run-id eval-001 --agent claude-code
-```
-
-각 인스턴스마다 대응하는 SWE-bench Docker 이미지를 pull하여 컨테이너를 시작하고, 내부의 `/testbed` 디렉토리(이미 의존성이 설치된 레포)에 patch를 적용한 뒤 테스트를 실행합니다. Docker 이미지에는 해당 프로젝트의 정확한 Python 버전, 의존성, conda 환경이 사전 설치되어 있으므로 호스트 환경에 관계없이 일관된 검증이 가능합니다.
-
-### 4. 리포트 생성
-
-```bash
-# Markdown + JSON 리포트
-python scripts/generate_report.py --run-id eval-001 --format markdown,json,csv
-
-# 여러 환경 결과 병합
-python scripts/generate_report.py --run-id eval-merged \
-    --merge-dirs results/runs/eval-external,results/runs/eval-internal
-```
+`--model` 값은 에이전트 CLI에 그대로 전달됩니다. Claude Code는 `sonnet`, `opus` 같은 별칭이나 `claude-sonnet-4-6` 같은 전체 모델명을, OpenCode는 `google/gemini-2.5-flash`, `openai/gpt-4o` 같은 provider/model 형식을 사용합니다.
 
 ## 전체 실행 예시
 
 ```bash
-# 1. 환경 준비
 source .venv/bin/activate
 
-# 2. 평가 실행 (3개 태스크, Sonnet 모델)
+# 전체 평가 한 번에 실행 (패치 생성 → Docker 검증 → 리포트)
 python scripts/run_eval.py \
     --tier micro \
     --agents claude-code \
     --model sonnet \
     --sample-size 3 \
-    --run-id my-eval
-
-# 3. 테스트 검증 (Docker)
-python scripts/run_docker_eval.py \
     --run-id my-eval \
-    --agent claude-code
-
-# 4. 리포트 생성
-python scripts/generate_report.py \
-    --run-id my-eval \
-    --format markdown,json
+    --verify
 ```
 
 ## 데이터셋 티어
