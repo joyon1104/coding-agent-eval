@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAPE-Eval Dashboard</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <h1>CAPE-Eval</h1>
+        <p class="subtitle">AI Coding Agent Performance Evaluation</p>
+    </header>
+
+    <main>
+        <!-- Leaderboard View -->
+        <section id="leaderboard-view">
+            <h2>Leaderboard</h2>
+            <div class="filters">
+                <select id="filter-agent">
+                    <option value="">All Agents</option>
+                </select>
+                <select id="filter-tier">
+                    <option value="">All Tiers</option>
+                    <option value="micro">Micro</option>
+                    <option value="mini">Mini</option>
+                    <option value="full">Full</option>
+                </select>
+            </div>
+            <div id="leaderboard-table-wrap">
+                <table id="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th class="rank">#</th>
+                            <th class="sortable" data-sort="agent">Agent</th>
+                            <th class="sortable" data-sort="model">Model</th>
+                            <th class="sortable" data-sort="trr">TRR</th>
+                            <th class="sortable" data-sort="safety">Safety</th>
+                            <th class="sortable" data-sort="cost">Cost/Task</th>
+                            <th class="sortable" data-sort="time">E2E Time</th>
+                            <th class="sortable" data-sort="steps">Steps</th>
+                            <th>Tier</th>
+                            <th>Tasks</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body"></tbody>
+                </table>
+            </div>
+            <p id="no-results" class="empty-state" style="display:none;">No evaluation results found.</p>
+        </section>
+
+        <!-- Detail View -->
+        <section id="detail-view" style="display:none;">
+            <button id="back-btn" class="btn-back">&larr; Back to Leaderboard</button>
+
+            <div id="detail-header">
+                <h2 id="detail-title"></h2>
+                <div id="detail-meta" class="meta-grid"></div>
+            </div>
+
+            <div id="detail-metrics">
+                <h3>Metrics</h3>
+                <div id="metrics-cards" class="metrics-grid"></div>
+            </div>
+
+            <div id="detail-tasks">
+                <h3>Per-Task Results</h3>
+                <table id="tasks-table">
+                    <thead>
+                        <tr>
+                            <th>Instance ID</th>
+                            <th>Status</th>
+                            <th>Resolved</th>
+                            <th>Cost</th>
+                            <th>Time</th>
+                            <th>Steps</th>
+                            <th>F2P</th>
+                            <th>P2P</th>
+                            <th>Detail</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tasks-body"></tbody>
+                </table>
+            </div>
+
+            <!-- Test Detail Modal -->
+            <div id="test-modal" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="modal-title"></h3>
+                        <button id="modal-close" class="btn-close">&times;</button>
+                    </div>
+                    <div id="modal-body"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/app.js"></script>
+</body>
+</html>
