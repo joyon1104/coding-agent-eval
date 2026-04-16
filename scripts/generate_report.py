@@ -3,6 +3,7 @@
 
 import sys
 import os
+import json
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -83,11 +84,40 @@ def main(run_id, fmt, merge_dirs):
     agent_scores = {}
     num_tasks = 0
 
+    # Load Docker eval results if available
+    eval_dir = PROJECT_ROOT / "results" / "runs" / run_id / "eval"
+    eval_results_map: dict[str, list[EvalResult]] = {}
+    if eval_dir.exists():
+        for f in eval_dir.glob("*.json"):
+            try:
+                data = json.loads(f.read_text())
+                er = EvalResult(
+                    instance_id=data["instance_id"],
+                    agent_name=data.get("agent_name", ""),
+                    resolved=data.get("resolved", False),
+                    fail_to_pass_results=data.get("fail_to_pass_results", {}),
+                    pass_to_pass_results=data.get("pass_to_pass_results", {}),
+                    error=data.get("error", ""),
+                )
+                eval_results_map.setdefault(er.agent_name, []).append(er)
+            except (json.JSONDecodeError, KeyError):
+                continue
+        if eval_results_map:
+            console.print(f"[dim]Docker eval results loaded: {sum(len(v) for v in eval_results_map.values())} instances[/dim]")
+
     for agent_name, results in all_results.items():
         console.print(f"\n[bold]{agent_name}[/bold]: {len(results)} results")
         num_tasks = max(num_tasks, len(results))
 
-        metrics = compute_metrics(results)
+        # Use Docker eval results if available for this agent
+        agent_eval = eval_results_map.get(agent_name)
+        if not agent_eval:
+            # Try matching by instance_id regardless of agent_name
+            all_evals = [er for evals in eval_results_map.values() for er in evals]
+            result_ids = {r.instance_id for r in results}
+            agent_eval = [er for er in all_evals if er.instance_id in result_ids] or None
+
+        metrics = compute_metrics(results, agent_eval)
         scores = score_agent(metrics)
         agent_scores[agent_name] = scores
 
@@ -99,7 +129,6 @@ def main(run_id, fmt, merge_dirs):
     metadata_path = PROJECT_ROOT / "results" / "runs" / run_id / "metadata.json"
     tier = "unknown"
     if metadata_path.exists():
-        import json
         meta = json.loads(metadata_path.read_text())
         tier = meta.get("tier", "unknown")
 

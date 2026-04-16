@@ -83,7 +83,8 @@ class OpenCodeAdapter(AgentAdapter):
             patch = self._extract_patch(repo_path)
 
             # Extract usage info from events
-            token_usage, cost, model_name = self._extract_usage(events)
+            token_usage, cost, event_model = self._extract_usage(events)
+            model_name = model or event_model
             num_turns = self._count_turns(events)
 
             # Estimate first action time

@@ -41,7 +41,7 @@ def load_run_results(run_dir: Path) -> dict[str, list[AgentResult]]:
     results: dict[str, list[AgentResult]] = {}
 
     for agent_dir in run_dir.iterdir():
-        if not agent_dir.is_dir() or agent_dir.name.startswith("."):
+        if not agent_dir.is_dir() or agent_dir.name.startswith(".") or agent_dir.name == "eval":
             continue
         agent_name = agent_dir.name
         results[agent_name] = []
