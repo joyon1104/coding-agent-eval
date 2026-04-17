@@ -5,10 +5,10 @@ __pycache__/
 *.egg-info/
 
 # Data (large files, downloaded separately)
-# data/
+data/
 
 # Results (generated per run)
-# results/
+results/
 
 # Repo cache (cloned repos for evaluation)
 .repo_cache/
