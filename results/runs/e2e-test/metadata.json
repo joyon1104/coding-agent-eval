@@ -1,0 +1,10 @@
+{
+  "run_id": "e2e-test",
+  "tier": "micro",
+  "num_tasks": 5,
+  "agents": [
+    "mock-claude-code",
+    "mock-codex"
+  ],
+  "mode": "e2e-test (mock)"
+}

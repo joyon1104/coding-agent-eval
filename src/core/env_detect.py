@@ -16,7 +16,7 @@ class EnvironmentInfo:
     available_disk_gb: float
     total_ram_gb: float
     docker_available: bool
-    recommended_tier: str  # "micro" | "mini" | "full"
+    recommended_tier: str  # "local" | "lite" | "verified" | "full" | "multi" (auto-pick never returns "local")
 
     def summary(self) -> str:
         return (
@@ -95,10 +95,10 @@ def detect_environment(path: str = ".") -> EnvironmentInfo:
 
     if disk >= 120:
         tier = "full"
-    elif disk >= 15:
-        tier = "mini"
+    elif disk >= 30:
+        tier = "verified"
     else:
-        tier = "micro"
+        tier = "lite"
 
     return EnvironmentInfo(
         os_type=os_type,

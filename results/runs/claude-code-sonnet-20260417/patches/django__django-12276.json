@@ -1,0 +1,22 @@
+{
+  "instance_id": "django__django-12276",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/django/forms/widgets.py b/django/forms/widgets.py\nindex 338d54d72f..f3ca19c964 100644\n--- a/django/forms/widgets.py\n+++ b/django/forms/widgets.py\n@@ -384,6 +384,9 @@ class FileInput(Input):\n         \"File widgets take data from FILES, not POST\"\n         return files.get(name)\n \n+    def use_required_attribute(self, initial_value):\n+        return super().use_required_attribute(initial_value) and not initial_value\n+\n     def value_omitted_from_data(self, data, files, name):\n         return name not in files\n \n@@ -451,9 +454,6 @@ class ClearableFileInput(FileInput):\n             return False\n         return upload\n \n-    def use_required_attribute(self, initial):\n-        return super().use_required_attribute(initial) and not initial\n-\n     def value_omitted_from_data(self, data, files, name):\n         return (\n             super().value_omitted_from_data(data, files, name) and\ndiff --git a/tests/forms_tests/widget_tests/test_fileinput.py b/tests/forms_tests/widget_tests/test_fileinput.py\nindex bbd7c7fe52..53f4cc1aa6 100644\n--- a/tests/forms_tests/widget_tests/test_fileinput.py\n+++ b/tests/forms_tests/widget_tests/test_fileinput.py\n@@ -15,6 +15,12 @@ class FileInputTest(WidgetTest):\n         self.check_html(self.widget, 'email', '', html='<input type=\"file\" name=\"email\">')\n         self.check_html(self.widget, 'email', None, html='<input type=\"file\" name=\"email\">')\n \n+    def test_use_required_attribute(self):\n+        # False when initial data exists. The file input is left blank by the\n+        # user to keep the existing, initial value.\n+        self.assertIs(self.widget.use_required_attribute(None), True)\n+        self.assertIs(self.widget.use_required_attribute('resume.txt'), False)\n+\n     def test_value_omitted_from_data(self):\n         self.assertIs(self.widget.value_omitted_from_data({}, {}, 'field'), True)\n         self.assertIs(self.widget.value_omitted_from_data({}, {'field': 'value'}, 'field'), False)",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 464012,
+    "output_tokens": 2684,
+    "cache_read_tokens": 445168,
+    "cache_write_tokens": 18825
+  },
+  "timestamps": {
+    "task_start": 1776382489.9116395,
+    "task_end": 1776382544.8462281,
+    "first_action": 1776382492.7959728
+  },
+  "total_cost_usd": 0.24504915000000002,
+  "convergence_steps": 18,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":52346,\"duration_api_ms\":51918,\"num_turns\":18,\"result\":\"All 15 tests pass. Here's what was done:\\n\\n1. **`django/forms/widgets.py`**: Moved `use_required_attribute()` from `ClearableFileInput` to `FileInput`. The logic (`super().use_required_attribute(initial) and not initial`) is identical — it just now lives in the base class so plain `FileInput` also suppresses the `required` attribute when initial data exists.\\n\\n2. **`tests/forms_tests/widget_tests/test_fileinput.py`**: Added `test_use_required_attribute` to cover the new behavior on `FileInput`.\",\"stop_reason\":\"end_turn\",\"session_id\":\"858633a3-9eef-42c5-b871-df59672f26fb\",\"total_cost_usd\":0.24504915000000002,\"usage\":{\"input_tokens\":19,\"cache_creation_input_tokens\":18825,\"cache_read_input_tokens\":445168,\"output_tokens\":2684,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":18825,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":144,\"cache_read_input_tokens\":29123,\"cache_creation_input_tokens\":743,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":743},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":508,\"outputTokens\":16,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000588,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":19,\"outputTokens\":2684,\"cacheReadInputTokens\":445168,\"cacheCreationInputTokens\":18825,\"webSearchRequests\":0,\"costUSD\":0.24446115,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"6fd3085f-29cc-4ed7-9934-a1034916edf3\"}\n",
+  "model_name": ""
+}

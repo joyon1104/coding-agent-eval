@@ -1,0 +1,22 @@
+{
+  "instance_id": "django__django-12276",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/django/forms/widgets.py b/django/forms/widgets.py\nindex 338d54d72f..f3ca19c964 100644\n--- a/django/forms/widgets.py\n+++ b/django/forms/widgets.py\n@@ -384,6 +384,9 @@ class FileInput(Input):\n         \"File widgets take data from FILES, not POST\"\n         return files.get(name)\n \n+    def use_required_attribute(self, initial_value):\n+        return super().use_required_attribute(initial_value) and not initial_value\n+\n     def value_omitted_from_data(self, data, files, name):\n         return name not in files\n \n@@ -451,9 +454,6 @@ class ClearableFileInput(FileInput):\n             return False\n         return upload\n \n-    def use_required_attribute(self, initial):\n-        return super().use_required_attribute(initial) and not initial\n-\n     def value_omitted_from_data(self, data, files, name):\n         return (\n             super().value_omitted_from_data(data, files, name) and",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 280274,
+    "output_tokens": 2024,
+    "cache_read_tokens": 267888,
+    "cache_write_tokens": 12371
+  },
+  "timestamps": {
+    "task_start": 1776404616.9409072,
+    "task_end": 1776404661.273431,
+    "first_action": 1776404619.97155
+  },
+  "total_cost_usd": 0.15775065,
+  "convergence_steps": 14,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":42850,\"duration_api_ms\":42429,\"num_turns\":14,\"result\":\"The fix moves `use_required_attribute` from `ClearableFileInput` up to `FileInput`. Now both `FileInput` and `ClearableFileInput` (via inheritance) suppress the `required` attribute when `initial_value` is set — meaning a file input editing an existing model instance won't incorrectly render `required`.\",\"stop_reason\":\"end_turn\",\"session_id\":\"f429d22f-9f7e-482f-b977-88903db9a859\",\"total_cost_usd\":0.15775065,\"usage\":{\"input_tokens\":15,\"cache_creation_input_tokens\":12371,\"cache_read_input_tokens\":267888,\"output_tokens\":2024,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":12371,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":78,\"cache_read_input_tokens\":22175,\"cache_creation_input_tokens\":392,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":392},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":508,\"outputTokens\":16,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000588,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":15,\"outputTokens\":2024,\"cacheReadInputTokens\":267888,\"cacheCreationInputTokens\":12371,\"webSearchRequests\":0,\"costUSD\":0.15716265000000001,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"1b3f9f36-9848-4e84-936c-72659bd7e631\"}\n",
+  "model_name": ""
+}

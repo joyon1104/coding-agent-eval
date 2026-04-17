@@ -1,0 +1,82 @@
+{
+  "run_id": "e2e-test",
+  "tier": "micro",
+  "num_tasks": 5,
+  "generated_at": "2026-04-15T16:08:16.098115",
+  "agents": {
+    "mock-claude-code": {
+      "task_resolution_rate": {
+        "value": 0.8,
+        "unit": "%",
+        "grade": "S"
+      },
+      "regression_safety": {
+        "value": 1.0,
+        "unit": "%",
+        "grade": "S"
+      },
+      "token_efficiency": {
+        "value": 106805.75,
+        "unit": "tokens/task",
+        "grade": "B"
+      },
+      "cost_per_resolved_task": {
+        "value": 0.70579875,
+        "unit": "USD",
+        "grade": "A"
+      },
+      "e2e_time": {
+        "value": 153.90486831665038,
+        "unit": "sec",
+        "grade": "B"
+      },
+      "time_to_first_action": {
+        "value": 5.2435746669769285,
+        "unit": "sec",
+        "grade": "B"
+      },
+      "convergence_steps": {
+        "value": 22.2,
+        "unit": "steps",
+        "grade": "C"
+      }
+    },
+    "mock-codex": {
+      "task_resolution_rate": {
+        "value": 0.4,
+        "unit": "%",
+        "grade": "B"
+      },
+      "regression_safety": {
+        "value": 1.0,
+        "unit": "%",
+        "grade": "S"
+      },
+      "token_efficiency": {
+        "value": 82530.0,
+        "unit": "tokens/task",
+        "grade": "A"
+      },
+      "cost_per_resolved_task": {
+        "value": 0.729837,
+        "unit": "USD",
+        "grade": "A"
+      },
+      "e2e_time": {
+        "value": 121.40107951164245,
+        "unit": "sec",
+        "grade": "B"
+      },
+      "time_to_first_action": {
+        "value": 2.7640650272369385,
+        "unit": "sec",
+        "grade": "S"
+      },
+      "convergence_steps": {
+        "value": 21.6,
+        "unit": "steps",
+        "grade": "C"
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "instance_id": "django__django-16527",
+  "agent_name": "mock-claude-code",
+  "patch": "",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 118236,
+    "output_tokens": 11698,
+    "cache_read_tokens": 6078,
+    "cache_write_tokens": 0
+  },
+  "timestamps": {
+    "task_start": 1776236896.08977,
+    "task_end": 1776237017.9574096,
+    "first_action": 1776236899.333606
+  },
+  "total_cost_usd": 0.530178,
+  "convergence_steps": 27,
+  "error_message": "",
+  "raw_output": "",
+  "model_name": "claude-sonnet-4-20250514"
+}

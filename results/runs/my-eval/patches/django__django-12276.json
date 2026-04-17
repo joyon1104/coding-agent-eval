@@ -1,0 +1,22 @@
+{
+  "instance_id": "django__django-12276",
+  "agent_name": "claude-code",
+  "patch": "",
+  "status": "error",
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 0
+  },
+  "timestamps": {
+    "task_start": 0.0,
+    "task_end": 0.0,
+    "first_action": 0.0
+  },
+  "total_cost_usd": 0.0,
+  "convergence_steps": 0,
+  "error_message": "Repo setup failed: git clone failed: Cloning into '/tmp/cape_django__django-12276_gb4ypjej/repo'...\nfatal: unable to access 'https://github.com/django/django.git/': Recv failure: Connection reset by peer\n",
+  "raw_output": "",
+  "model_name": ""
+}

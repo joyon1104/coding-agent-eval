@@ -1,0 +1,23 @@
+2026-04-16 17:38:30,720 [INFO] 
+============================================================
+2026-04-16 17:38:30,720 [INFO] Agent: claude-code | Tasks: 3
+2026-04-16 17:38:30,720 [INFO] ============================================================
+2026-04-16 17:38:30,721 [INFO]   Running: django__django-12276
+2026-04-16 17:38:36,011 [ERROR]   Repo setup failed: git clone failed: Cloning into '/tmp/cape_django__django-12276_gb4ypjej/repo'...
+fatal: unable to access 'https://github.com/django/django.git/': Recv failure: Connection reset by peer
+
+2026-04-16 17:38:36,012 [INFO]   Running: django__django-12308
+2026-04-16 17:38:41,011 [ERROR]   Repo setup failed: git clone failed: Cloning into '/tmp/cape_django__django-12308_q540y5be/repo'...
+fatal: unable to access 'https://github.com/django/django.git/': Recv failure: Connection reset by peer
+
+2026-04-16 17:38:41,012 [INFO]   Running: django__django-12050
+2026-04-16 17:38:46,598 [ERROR]   Repo setup failed: git clone failed: Cloning into '/tmp/cape_django__django-12050_mvdhyven/repo'...
+fatal: unable to access 'https://github.com/django/django.git/': Recv failure: Connection reset by peer
+
+2026-04-16 17:38:46,600 [INFO]   Done: 3 run, 0 skipped
+2026-04-16 17:38:46,609 [INFO] Evaluating: django__django-12276
+2026-04-16 17:38:46,609 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-04-16 17:38:46,609 [INFO] Evaluating: django__django-12308
+2026-04-16 17:38:46,609 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-04-16 17:38:46,609 [INFO] Evaluating: django__django-12050
+2026-04-16 17:38:46,609 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%

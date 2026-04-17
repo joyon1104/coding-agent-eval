@@ -31,7 +31,7 @@ AGENT_REGISTRY = {
 
 
 @click.command()
-@click.option("--tier", type=click.Choice(["micro", "mini", "full"]), default=None,
+@click.option("--tier", type=click.Choice(["local", "lite", "verified", "full", "multi"]), default=None,
               help="Dataset tier (auto-detected if omitted)")
 @click.option("--agents", default="claude-code",
               help="Comma-separated agent names")
@@ -66,10 +66,15 @@ def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry
     # Determine primary agent for run-id generation
     primary_agent = [a.strip() for a in agents.split(",")][0]
 
-    # Run ID
+    # Run ID — auto-generated if omitted; if provided and results/runs/<run-id>/
+    # already exists, the orchestrator resumes from where it left off.
     if not run_id:
         run_id = generate_run_id(primary_agent, model)
     console.print(f"Run ID: [bold]{run_id}[/bold]")
+
+    run_dir = PROJECT_ROOT / "results" / "runs" / run_id
+    if run_dir.exists():
+        console.print(f"[dim]Existing run directory found; resuming from saved results[/dim]")
 
     # Load dataset
     console.print("\nLoading dataset...")
@@ -297,19 +302,17 @@ def _find_dataset(dataset_arg, config):
     if dataset_arg:
         return PROJECT_ROOT / dataset_arg
 
-    # Try mini_real first (has full test_patch/F2P/P2P data)
-    candidates = [
-        PROJECT_ROOT / "data" / "swebench_mini_real.jsonl",
-        PROJECT_ROOT / "data" / "swebench_mini.jsonl",
-        PROJECT_ROOT / "data" / "swebench_micro.jsonl",
-    ]
-    for path in candidates:
+    # Prefer the current tier's local JSONL, then fall back to any other tier file.
+    tier_path = PROJECT_ROOT / config.tier_config.get("local_path", "")
+    if tier_path.exists():
+        return tier_path
+
+    for name in ("verified", "lite", "multi", "full", "local"):
+        path = PROJECT_ROOT / "data" / f"swebench_{name}.jsonl"
         if path.exists():
             return path
 
-    # Fall back to tier config
-    local_path = config.tier_config.get("local_path", "")
-    return PROJECT_ROOT / local_path
+    return tier_path
 
 
 if __name__ == "__main__":

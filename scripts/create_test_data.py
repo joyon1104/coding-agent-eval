@@ -85,21 +85,13 @@ def main():
     data_dir = PROJECT_ROOT / "data"
     data_dir.mkdir(exist_ok=True)
 
-    # Save micro dataset (5 instances for quick testing)
-    micro_path = data_dir / "swebench_micro.jsonl"
-    with open(micro_path, "w") as f:
+    # Synthetic dataset written under the "local" tier path for offline tests
+    local_path = data_dir / "swebench_local.jsonl"
+    with open(local_path, "w") as f:
         for item in INSTANCES:
             f.write(json.dumps(item, ensure_ascii=False) + "\n")
 
-    print(f"Created test micro dataset: {micro_path} ({len(INSTANCES)} instances)")
-
-    # Also create a mini-like dataset (same data, for testing loader)
-    mini_path = data_dir / "swebench_mini.jsonl"
-    with open(mini_path, "w") as f:
-        for item in INSTANCES:
-            f.write(json.dumps(item, ensure_ascii=False) + "\n")
-
-    print(f"Created test mini dataset: {mini_path} ({len(INSTANCES)} instances)")
+    print(f"Created test dataset: {local_path} ({len(INSTANCES)} instances)")
 
 
 if __name__ == "__main__":

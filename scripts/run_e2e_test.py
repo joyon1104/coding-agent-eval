@@ -124,7 +124,7 @@ def main():
 
     # Step 1: Environment detection
     console.print("[bold]Step 1: Environment Detection[/bold]")
-    config = Config(tier="micro", offline=True)
+    config = Config(tier="local", offline=True)
     console.print(f"  {config.env_info.summary()}")
     console.print(f"  Tier: {config.tier}")
 
@@ -139,7 +139,7 @@ def main():
         tasks = load_dataset_for_tier(config)
         console.print(f"  Loaded: {len(tasks)} instances")
 
-    sampled = sample_tasks(tasks, "micro", sample_size=5)
+    sampled = sample_tasks(tasks, "local", sample_size=5)
     console.print(f"  Sampled: {len(sampled)} instances")
     for t in sampled:
         console.print(f"    - {t.instance_id} ({t.difficulty})")
@@ -194,7 +194,7 @@ def main():
     # Save metadata
     save_run_metadata(run_id, {
         "run_id": run_id,
-        "tier": "micro",
+        "tier": "local",
         "num_tasks": len(sampled),
         "agents": [a.name for a in agents],
         "mode": "e2e-test (mock)",
@@ -249,11 +249,11 @@ def main():
     # Step 6: Generate reports
     console.print("\n[bold]Step 6: Generate Reports[/bold]")
 
-    md_report = format_markdown(agent_scores, run_id, "micro", len(sampled))
+    md_report = format_markdown(agent_scores, run_id, "local", len(sampled))
     md_path = save_report(md_report, run_id, "markdown", results_dir)
     console.print(f"  Markdown: {md_path}")
 
-    json_report = format_json(agent_scores, run_id, "micro", len(sampled))
+    json_report = format_json(agent_scores, run_id, "local", len(sampled))
     json_path = save_report(json_report, run_id, "json", results_dir)
     console.print(f"  JSON: {json_path}")
 

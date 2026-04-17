@@ -1,0 +1,12 @@
+{
+  "run_id": "opencode-gemini-2.5-flash-20260417",
+  "agent": "opencode",
+  "model": "google/gemini-2.5-flash",
+  "tier": "micro",
+  "started_at": "2026-04-17T11:58:40.782120",
+  "num_tasks": 3,
+  "agents": [
+    "opencode"
+  ],
+  "environment": "OS: wsl | Network: external | Disk: 946.4GB | RAM: 15.5GB | Docker: Yes | Tier: full"
+}

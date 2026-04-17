@@ -1,0 +1,45 @@
+{
+  "run_id": "eval-real-001",
+  "tier": "micro",
+  "num_tasks": 3,
+  "generated_at": "2026-04-15T16:43:53.017191",
+  "agents": {
+    "claude-code": {
+      "task_resolution_rate": {
+        "value": 1.0,
+        "unit": "%",
+        "grade": "S"
+      },
+      "regression_safety": {
+        "value": 1.0,
+        "unit": "%",
+        "grade": "S"
+      },
+      "token_efficiency": {
+        "value": 2106.3333333333335,
+        "unit": "tokens/task",
+        "grade": "S"
+      },
+      "cost_per_resolved_task": {
+        "value": 0.26113533333333333,
+        "unit": "USD",
+        "grade": "S"
+      },
+      "e2e_time": {
+        "value": 61.51896905899048,
+        "unit": "sec",
+        "grade": "A"
+      },
+      "time_to_first_action": {
+        "value": 6.151896874109904,
+        "unit": "sec",
+        "grade": "B"
+      },
+      "convergence_steps": {
+        "value": 16.333333333333332,
+        "unit": "steps",
+        "grade": "B"
+      }
+    }
+  }
+}

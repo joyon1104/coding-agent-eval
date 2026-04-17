@@ -1,0 +1,22 @@
+{
+  "instance_id": "django__django-12276",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/django/forms/widgets.py b/django/forms/widgets.py\nindex 338d54d72f..40ac1d3162 100644\n--- a/django/forms/widgets.py\n+++ b/django/forms/widgets.py\n@@ -387,6 +387,9 @@ class FileInput(Input):\n     def value_omitted_from_data(self, data, files, name):\n         return name not in files\n \n+    def use_required_attribute(self, initial):\n+        return super().use_required_attribute(initial) and not initial\n+\n \n FILE_INPUT_CONTRADICTION = object()\n \n@@ -451,9 +454,6 @@ class ClearableFileInput(FileInput):\n             return False\n         return upload\n \n-    def use_required_attribute(self, initial):\n-        return super().use_required_attribute(initial) and not initial\n-\n     def value_omitted_from_data(self, data, files, name):\n         return (\n             super().value_omitted_from_data(data, files, name) and",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 154911,
+    "output_tokens": 1318,
+    "cache_read_tokens": 143015,
+    "cache_write_tokens": 11886
+  },
+  "timestamps": {
+    "task_start": 1776402669.8215163,
+    "task_end": 1776402691.4266372,
+    "first_action": 1776402673.3125162
+  },
+  "total_cost_usd": 0.179383,
+  "convergence_steps": 6,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":19951,\"duration_api_ms\":20946,\"num_turns\":6,\"result\":\"The change is applied. `use_required_attribute` now lives on `FileInput` (so plain `FileInput` won't emit `required` when an initial file exists), and `ClearableFileInput` inherits it.\",\"stop_reason\":\"end_turn\",\"session_id\":\"91d7e452-4b91-44e6-ad76-55e0c2c9bc7a\",\"total_cost_usd\":0.179383,\"usage\":{\"input_tokens\":10,\"cache_creation_input_tokens\":11886,\"cache_read_input_tokens\":143015,\"output_tokens\":1318,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":11886,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":70,\"cache_read_input_tokens\":26584,\"cache_creation_input_tokens\":1405,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":1405},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":508,\"outputTokens\":16,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000588,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-7[1m]\":{\"inputTokens\":10,\"outputTokens\":1318,\"cacheReadInputTokens\":143015,\"cacheCreationInputTokens\":11886,\"webSearchRequests\":0,\"costUSD\":0.17879499999999998,\"contextWindow\":1000000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"ef5cfec5-c4c4-486c-a8be-8b48e93c059d\"}\n",
+  "model_name": ""
+}

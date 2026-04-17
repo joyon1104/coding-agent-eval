@@ -1,0 +1,130 @@
+2026-04-17 09:12:42,830 [INFO] 
+============================================================
+2026-04-17 09:12:42,830 [INFO] Agent: opencode | Tasks: 3
+2026-04-17 09:12:42,830 [INFO] ============================================================
+2026-04-17 09:12:42,832 [INFO]   Running: django__django-12276
+2026-04-17 09:12:42,833 [INFO]   Clone attempt 1/3: django/django
+2026-04-17 09:12:55,592 [INFO]   Shallow clone missing commit, fetching full history...
+2026-04-17 09:16:47,139 [INFO]   Completed: success | Cost: $0.025 | Time: 68.4s
+2026-04-17 09:16:47,364 [INFO]   Running: django__django-12308
+2026-04-17 09:16:47,365 [INFO]   Clone attempt 1/3: django/django
+2026-04-17 09:16:57,628 [INFO]   Shallow clone missing commit, fetching full history...
+2026-04-17 09:49:21,464 [INFO]   Completed: error | Cost: $0.000 | Time: 1800.0s
+2026-04-17 09:49:22,482 [INFO]   Running: django__django-12050
+2026-04-17 09:49:22,482 [INFO]   Clone attempt 1/3: django/django
+2026-04-17 09:49:35,092 [INFO]   Shallow clone missing commit, fetching full history...
+2026-04-17 10:22:17,499 [INFO]   Completed: error | Cost: $0.000 | Time: 1800.1s
+2026-04-17 10:22:18,509 [INFO]   Done: 3 run, 0 skipped
+2026-04-17 10:22:18,516 [INFO] Evaluating: django__django-12276
+2026-04-17 10:22:18,690 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-12276:latest
+2026-04-17 10:22:18,690 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-12276:latest
+2026-04-17 10:22:19,137 [INFO]   Container started: 3885eb96515f
+2026-04-17 10:22:19,840 [INFO]   Patch applied successfully
+2026-04-17 10:22:19,840 [INFO]   Running FAIL_TO_PASS tests (2)...
+2026-04-17 10:22:20,502 [INFO]   Test exit code: 1
+2026-04-17 10:22:20,502 [INFO]   Test output (last 500 chars): t fields
+  File "/testbed/django/db/models/fields/__init__.py", line 11, in <module>
+    from django import forms
+  File "/testbed/django/forms/__init__.py", line 6, in <module>
+    from django.forms.boundfield import *  # NOQA
+  File "/testbed/django/forms/boundfield.py", line 4, in <module>
+    from django.forms.widgets import Textarea, TextInput
+  File "/testbed/django/forms/widgets.py", line 281, in <module>
+    class ClearableFileInput(FileInput):
+NameError: name 'FileInput' is not defined
+
+2026-04-17 10:22:20,503 [INFO]   Running PASS_TO_PASS tests (117)...
+2026-04-17 10:22:20,916 [INFO]   Test exit code: 1
+2026-04-17 10:22:20,916 [INFO]   Test output (last 500 chars): t fields
+  File "/testbed/django/db/models/fields/__init__.py", line 11, in <module>
+    from django import forms
+  File "/testbed/django/forms/__init__.py", line 6, in <module>
+    from django.forms.boundfield import *  # NOQA
+  File "/testbed/django/forms/boundfield.py", line 4, in <module>
+    from django.forms.widgets import Textarea, TextInput
+  File "/testbed/django/forms/widgets.py", line 281, in <module>
+    class ClearableFileInput(FileInput):
+NameError: name 'FileInput' is not defined
+
+2026-04-17 10:22:21,206 [INFO]   Container removed
+2026-04-17 10:22:21,206 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 0%
+2026-04-17 10:22:21,206 [INFO] Evaluating: django__django-12308
+2026-04-17 10:22:21,206 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-04-17 10:22:21,207 [INFO] Evaluating: django__django-12050
+2026-04-17 10:22:21,207 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-04-17 10:38:11,018 [INFO] 
+============================================================
+2026-04-17 10:38:11,018 [INFO] Re-run started at 2026-04-17T10:38:11.018680
+2026-04-17 10:38:11,018 [INFO] ============================================================
+2026-04-17 10:38:11,018 [INFO] 
+============================================================
+2026-04-17 10:38:11,019 [INFO] Agent: opencode | Tasks: 3
+2026-04-17 10:38:11,019 [INFO] ============================================================
+2026-04-17 10:38:11,021 [INFO]   Running: django__django-12308
+2026-04-17 10:38:11,021 [INFO]   Clone attempt 1/3: django/django
+2026-04-17 10:38:22,497 [INFO]   Shallow clone missing commit, fetching full history...
+2026-04-17 11:10:52,950 [INFO]   Completed: error | Cost: $0.000 | Time: 1800.1s
+2026-04-17 11:10:53,949 [INFO]   Running: django__django-12050
+2026-04-17 11:10:53,949 [INFO]   Clone attempt 1/3: django/django
+2026-04-17 11:11:06,484 [INFO]   Shallow clone missing commit, fetching full history...
+2026-04-17 11:43:33,895 [INFO]   Completed: error | Cost: $0.000 | Time: 1800.1s
+2026-04-17 11:43:34,867 [INFO]   Done: 2 run, 1 skipped
+2026-04-17 11:43:34,878 [INFO] Evaluating: django__django-12276
+2026-04-17 11:43:35,051 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-12276:latest
+2026-04-17 11:43:35,051 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-12276:latest
+2026-04-17 11:43:35,458 [INFO]   Container started: 7a56488a0017
+2026-04-17 11:43:36,085 [INFO]   Patch applied successfully
+2026-04-17 11:43:36,085 [INFO]   Running FAIL_TO_PASS tests (2)...
+2026-04-17 11:43:36,688 [INFO]   Test exit code: 1
+2026-04-17 11:43:36,689 [INFO]   Test output (last 500 chars): t fields
+  File "/testbed/django/db/models/fields/__init__.py", line 11, in <module>
+    from django import forms
+  File "/testbed/django/forms/__init__.py", line 6, in <module>
+    from django.forms.boundfield import *  # NOQA
+  File "/testbed/django/forms/boundfield.py", line 4, in <module>
+    from django.forms.widgets import Textarea, TextInput
+  File "/testbed/django/forms/widgets.py", line 281, in <module>
+    class ClearableFileInput(FileInput):
+NameError: name 'FileInput' is not defined
+
+2026-04-17 11:43:36,689 [INFO]   Running PASS_TO_PASS tests (117)...
+2026-04-17 11:43:37,046 [INFO]   Test exit code: 1
+2026-04-17 11:43:37,046 [INFO]   Test output (last 500 chars): t fields
+  File "/testbed/django/db/models/fields/__init__.py", line 11, in <module>
+    from django import forms
+  File "/testbed/django/forms/__init__.py", line 6, in <module>
+    from django.forms.boundfield import *  # NOQA
+  File "/testbed/django/forms/boundfield.py", line 4, in <module>
+    from django.forms.widgets import Textarea, TextInput
+  File "/testbed/django/forms/widgets.py", line 281, in <module>
+    class ClearableFileInput(FileInput):
+NameError: name 'FileInput' is not defined
+
+2026-04-17 11:43:37,317 [INFO]   Container removed
+2026-04-17 11:43:37,317 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 0%
+2026-04-17 11:43:37,317 [INFO] Evaluating: django__django-12308
+2026-04-17 11:43:37,317 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-04-17 11:43:37,317 [INFO] Evaluating: django__django-12050
+2026-04-17 11:43:37,317 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-04-17 11:58:39,528 [INFO] 
+============================================================
+2026-04-17 11:58:39,529 [INFO] Re-run started at 2026-04-17T11:58:39.529048
+2026-04-17 11:58:39,529 [INFO] ============================================================
+2026-04-17 11:58:40,603 [INFO]   Cleaned up 8 stale temp directories
+2026-04-17 11:58:40,782 [INFO]   Docker image cleanup: Total reclaimed space: 0B
+2026-04-17 11:58:40,782 [INFO] 
+============================================================
+2026-04-17 11:58:40,782 [INFO] Agent: opencode | Tasks: 3
+2026-04-17 11:58:40,782 [INFO] ============================================================
+2026-04-17 11:58:40,784 [INFO]   Running: django__django-12308
+2026-04-17 11:58:40,785 [INFO]   Caching repo (attempt 1/3): django/django
+2026-04-17 11:58:45,880 [WARNING]   Cache clone failed (attempt 1): Cloning into bare repository '/home/going114kim/Coding-Agent-Eval/.repo_cache/django__django'...
+fatal: unable to access 'https://github.com/django/django.git/': Recv failure: Connection reset by peer
+2026-04-17 11:58:45,880 [INFO]   Retrying in 10s...
+2026-04-17 11:58:55,881 [INFO]   Caching repo (attempt 2/3): django/django
+2026-04-17 12:02:06,121 [INFO]   Repo cached: /home/going114kim/Coding-Agent-Eval/.repo_cache/django__django
+2026-04-17 12:02:06,121 [INFO]   Copying cached repo for django__django-12308...
+2026-04-17 13:02:07,279 [INFO]   Completed: error | Cost: $0.000 | Time: 3600.1s
+2026-04-17 13:02:08,350 [INFO]   Running: django__django-12050
+2026-04-17 13:02:08,350 [INFO]   Using cached repo: /home/going114kim/Coding-Agent-Eval/.repo_cache/django__django
+2026-04-17 13:02:08,350 [INFO]   Copying cached repo for django__django-12050...

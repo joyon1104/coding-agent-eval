@@ -1,0 +1,24 @@
+{
+  "instance_id": "django__django-12050",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "fail_to_pass_results": {
+    "test_iterable_lookup_value (queries.test_query.TestQuery)": true
+  },
+  "pass_to_pass_results": {
+    "test_clone_select_related (queries.test_query.TestQuery)": true,
+    "test_complex_query (queries.test_query.TestQuery)": true,
+    "test_foreign_key (queries.test_query.TestQuery)": true,
+    "test_foreign_key_exclusive (queries.test_query.TestQuery)": true,
+    "test_foreign_key_f (queries.test_query.TestQuery)": true,
+    "test_multiple_fields (queries.test_query.TestQuery)": true,
+    "test_negated_nullable (queries.test_query.TestQuery)": true,
+    "test_simple_query (queries.test_query.TestQuery)": true,
+    "test_simplecol_query (queries.test_query.TestQuery)": true,
+    "test_transform (queries.test_query.TestQuery)": true
+  },
+  "regression_safe": true,
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

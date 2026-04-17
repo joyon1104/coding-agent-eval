@@ -25,7 +25,7 @@ coding-agent-eval/
 │   │
 │   ├── dataset/
 │   │   ├── loader.py                 # HuggingFace 온라인 / 로컬 JSONL 오프라인 로더
-│   │   └── sampler.py                # Micro(10) / Mini(50) / Full(500) 티어별 샘플러
+│   │   └── sampler.py                # Lite / Verified / Full / Multi 티어별 샘플러
 │   │
 │   ├── adapters/
 │   │   ├── base.py                   # AgentAdapter 베이스 클래스
@@ -62,8 +62,11 @@ coding-agent-eval/
 │   └── setup_env.sh                  # 환경 자동 구축 스크립트
 │
 ├── data/                             # 데이터셋 (gitignore)
-│   ├── swebench_micro.jsonl          # Micro 티어 (5-10개)
-│   └── swebench_mini.jsonl           # Mini 티어 (50개)
+│   ├── swebench_local.jsonl          # Local 티어 (로컬 전용 합성/커스텀 데이터)
+│   ├── swebench_lite.jsonl           # Lite 티어 (300개)
+│   ├── swebench_verified.jsonl       # Verified 티어 (500개)
+│   ├── swebench_full.jsonl           # Full 티어 (2,294개)
+│   └── swebench_multi.jsonl          # Multi(Multilingual) 티어 (300개)
 │
 ├── results/                          # 실행 결과 (gitignore)
 │   └── runs/{run_id}/
@@ -253,9 +256,14 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 # 2. 의존성 설치
-pip install pyyaml click rich python-dotenv datasets
+pip install -r requirements.txt
+# 개발(테스트 도구 포함) 환경이라면:
+# pip install -r requirements-dev.txt
 
-# 3. API 키 설정
+# 3. (선택) 프로젝트를 editable 모드로 설치 — 어느 경로에서든 `src.*` 임포트 가능
+pip install -e .
+
+# 4. API 키 설정
 cp .env.example .env
 # .env 파일에 ANTHROPIC_API_KEY 입력
 ```
@@ -267,8 +275,8 @@ cp .env.example .env
 # → run_eval.py 실행 시 자동 다운로드됨
 
 # 방법 2: REST API로 다운로드 (SSL 문제 시)
-curl -s "https://datasets-server.huggingface.co/rows?dataset=MariusHobbhahn%2Fswe-bench-verified-mini&config=default&split=test&offset=0&length=50" \
-  | python3 -c "import sys,json; rows=[r['row'] for r in json.load(sys.stdin)['rows']]; [open('data/swebench_mini.jsonl','w').write(json.dumps(r)+'\n') for r in rows]"
+curl -s "https://datasets-server.huggingface.co/rows?dataset=princeton-nlp%2FSWE-bench_Verified&config=default&split=test&offset=0&length=500" \
+  | python3 -c "import sys,json; rows=[r['row'] for r in json.load(sys.stdin)['rows']]; open('data/swebench_verified.jsonl','w').write('\n'.join(json.dumps(r) for r in rows))"
 
 # 방법 3: 테스트용 합성 데이터
 python scripts/create_test_data.py
@@ -290,16 +298,18 @@ python scripts/run_e2e_test.py
 `--verify` 옵션을 사용하면 에이전트 실행 → Docker 테스트 검증 → 리포트 생성까지 한 명령어로 수행됩니다:
 
 ```bash
-# Claude Code (Sonnet) — 전체 평가
+# Claude Code (Sonnet) — 전체 평가 (run-id는 자동 생성)
 python scripts/run_eval.py \
-    --tier micro --agents claude-code --model sonnet \
-    --sample-size 3 --run-id eval-claude --verify
+    --tier lite --agents claude-code --model sonnet \
+    --sample-size 3 --verify
 
 # OpenCode (Gemini 2.5 Flash) — 전체 평가
 python scripts/run_eval.py \
-    --tier micro --agents opencode --model google/gemini-2.5-flash \
-    --sample-size 3 --run-id eval-opencode --verify
+    --tier lite --agents opencode --model google/gemini-2.5-flash \
+    --sample-size 3 --verify
 ```
+
+`--run-id`를 생략하면 `{agent}_{model}_{YYYYMMDD-HHMMSS}` 형태로 자동 생성됩니다. 직접 지정하고 싶다면 `--run-id my-eval` 식으로 넘기면 되고, 같은 id 디렉터리가 이미 있으면 저장된 진행 상황을 읽어 **이어서 실행**(resume)합니다.
 
 `--verify` 없이 실행하면 에이전트 실행(패치 생성)만 수행되고, Docker 검증과 리포트는 별도 명령어로 나중에 실행할 수 있습니다.
 
@@ -308,16 +318,16 @@ python scripts/run_eval.py \
 각 단계를 개별적으로 실행할 수도 있습니다:
 
 ```bash
-# Step 1: 에이전트 실행 (패치 생성만)
+# Step 1: 에이전트 실행 (패치 생성만, run-id 자동 생성)
 python scripts/run_eval.py \
-    --tier micro --agents claude-code --model sonnet \
-    --sample-size 3 --run-id eval-001
+    --tier lite --agents claude-code --model sonnet --sample-size 3
 
-# Step 2: Docker 테스트 검증 (기존 결과에 대해)
-python scripts/run_docker_eval.py --run-id eval-001 --agent claude-code
+# Step 1 실행 후 출력되는 Run ID를 Step 2/3에서 사용
+# Step 2: Docker 테스트 검증
+python scripts/run_docker_eval.py --run-id <run-id> --agent claude-code
 
 # Step 3: 리포트 생성
-python scripts/generate_report.py --run-id eval-001 --format markdown,json
+python scripts/generate_report.py --run-id <run-id> --format markdown,json
 ```
 
 이 방식은 Step 1 실행 후 결과를 확인하고 선택적으로 검증을 진행하거나, 여러 환경의 결과를 병합하여 리포트를 생성할 때 유용합니다.
@@ -332,14 +342,16 @@ python scripts/generate_report.py --run-id eval-merged \
 
 | 옵션 | 설명 | 기본값 |
 |------|------|--------|
-| `--tier` | 데이터셋 티어 (micro/mini/full) | 자동 감지 |
+| `--tier` | 데이터셋 티어 (local/lite/verified/full/multi) | 자동 감지 |
 | `--agents` | 에이전트 이름 (claude-code, opencode) | claude-code |
 | `--model` | 사용할 모델 | 에이전트 기본 모델 |
-| `--run-id` | 실행 식별자 | 자동 생성 |
+| `--run-id` | 실행 식별자 (같은 id가 있으면 이어서 진행) | 자동 생성 |
 | `--sample-size` | 샘플 수 오버라이드 | 티어 기본값 |
 | `--verify` | Docker 검증 + 리포트까지 한번에 실행 | false |
 | `--offline` | 오프라인 모드 (로컬 데이터만) | false |
 | `--dry-run` | 실행 계획만 출력 | false |
+
+`--run-id`를 생략하면 `{agent}_{model}_{YYYYMMDD-HHMMSS}` 형태로 자동 생성되며, 결과는 `results/runs/<run-id>/`에 저장됩니다. `--run-id`를 명시적으로 지정했는데 같은 id의 디렉터리가 이미 있으면 **저장된 진행 상황을 이어서 실행**합니다 (완료된 태스크는 건너뛰고, 실패/미완료 태스크만 다시 시도). 해당 id의 디렉터리가 없다면 새로 시작합니다.
 
 `--model` 값은 에이전트 CLI에 그대로 전달됩니다. Claude Code는 `sonnet`, `opus` 같은 별칭이나 `claude-sonnet-4-6` 같은 전체 모델명을, OpenCode는 `google/gemini-2.5-flash`, `openai/gpt-4o` 같은 provider/model 형식을 사용합니다.
 
@@ -349,32 +361,51 @@ python scripts/generate_report.py --run-id eval-merged \
 source .venv/bin/activate
 
 # 전체 평가 한 번에 실행 (패치 생성 → Docker 검증 → 리포트)
+# run-id는 생략하면 {agent}_{model}_{YYYYMMDD-HHMMSS}로 자동 생성됨
 python scripts/run_eval.py \
-    --tier micro \
+    --tier lite \
     --agents claude-code \
     --model sonnet \
     --sample-size 3 \
-    --run-id my-eval \
     --verify
 ```
 
 ## 데이터셋 티어
 
-디스크 여유 공간에 따라 3개 티어를 선택할 수 있습니다:
+SWE-bench의 공식 4개 데이터셋(lite/verified/full/multi) + 로컬 전용(`local`) 티어를 사용할 수 있습니다. 기본 티어는 디스크 여유 공간에 따라 자동 선택되며(`--tier` 생략 시), 명시적으로 지정할 수도 있습니다.
 
-| 티어 | 인스턴스 수 | Docker 이미지 | 용도 |
-|------|------------|--------------|------|
-| Micro | 5~10 | ~2GB | 개발, 디버깅, 스모크 테스트 |
-| Mini | 50 | ~5GB | 기본 평가 (SWE-bench Verified Mini) |
-| Full | 500 | ~130GB | 공식 벤치마크 |
+| 티어 | 설명 | HuggingFace ID | 인스턴스 수 | Docker 이미지 예산 |
+|------|------|----------------|------------|-------------------|
+| `local` | 로컬 전용 (HF 호출 없음, `data/swebench_local.jsonl`만 사용) | — | 사용자 지정 | ~2GB |
+| `lite` | SWE-bench Lite | `princeton-nlp/SWE-bench_Lite` | 300 | ~30GB |
+| `verified` | SWE-bench Verified | `princeton-nlp/SWE-bench_Verified` | 500 | ~50GB |
+| `full` | SWE-bench (Full) | `princeton-nlp/SWE-bench` | 2,294 | ~130GB |
+| `multi` | SWE-bench Multilingual | `SWE-bench/SWE-bench_Multilingual` | 300 | ~30GB |
 
-## 중단 후 재개
+자동 선택 규칙: 여유 디스크 `>= 120GB` → `full`, `>= 30GB` → `verified`, 그 외 → `lite`. `multi`와 `local`은 자동 선택 대상이 아니므로 명시적으로 `--tier multi` 또는 `--tier local`로 지정해야 합니다.
 
-오케스트레이터는 태스크 단위로 결과를 즉시 저장합니다. 실행이 중단되어도 동일한 `--run-id`로 다시 실행하면 완료된 태스크를 건너뛰고 나머지만 실행합니다:
+`local` 티어는 `data/swebench_local.jsonl`을 바로 읽으며(HF 접근 없음), `scripts/create_test_data.py`로 합성 데이터를 생성하거나 직접 JSONL을 준비해 두면 됩니다. 스모크 테스트·디버깅·커스텀 케이스에 유용합니다.
+
+## Run ID 자동 생성과 재개
+
+`--run-id`는 생략할 수 있습니다. 생략 시 `{agent}_{model}_{YYYYMMDD-HHMMSS}` 형태로 실행 시각까지 포함한 고유 id가 자동 생성되어 실행마다 독립된 결과 디렉터리(`results/runs/<run-id>/`)가 만들어집니다.
 
 ```bash
-# 중단된 평가 재개 (같은 run-id 사용)
-python scripts/run_eval.py --tier mini --agents claude-code --run-id eval-001
+# run-id 자동 생성 — 새로운 실행
+python scripts/run_eval.py --tier verified --agents claude-code --model sonnet
+# → Run ID: claude-code_sonnet_20260417-153012
+```
+
+`--run-id`를 명시적으로 지정하면 다음과 같이 동작합니다:
+
+- **해당 id 디렉터리가 없으면**: 그 id로 새로 시작
+- **해당 id 디렉터리가 있으면**: 저장된 진행 상황을 읽어 이어서 실행 (SUCCESS로 저장된 태스크는 건너뛰고, 실패/미완료 태스크만 다시 시도)
+
+오케스트레이터는 태스크 단위로 결과를 즉시 저장하기 때문에 실행이 중단되더라도 같은 `--run-id`로 다시 실행하면 남은 태스크만 실행됩니다:
+
+```bash
+# 중단된 평가 이어서 실행 (같은 run-id 사용)
+python scripts/run_eval.py --tier verified --agents claude-code --run-id eval-001
 ```
 
 ## 리소스 정리
@@ -390,13 +421,13 @@ python scripts/cleanup.py
 
 ```bash
 # [사외망] 데이터셋 + Docker 이미지 내보내기
-python scripts/export_dataset.py --tier mini --output data/
+python scripts/export_dataset.py --tier verified --output data/
 docker save ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-12050:latest \
     | gzip > data/docker_images/django-12050.tar.gz
 
 # [사내망] 오프라인 실행
 docker load < data/docker_images/django-12050.tar.gz
-python scripts/run_eval.py --tier mini --agents claude-code --offline --run-id eval-int
+python scripts/run_eval.py --tier verified --agents claude-code --offline --run-id eval-int
 ```
 
 ## 대시보드
@@ -430,7 +461,7 @@ dashboard/
 # Coding Agent Eval Report
 
 - **Run ID**: eval-real-001
-- **Tier**: micro
+- **Tier**: lite
 - **Tasks**: 3
 
 ## Metric Comparison

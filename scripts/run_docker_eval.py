@@ -26,7 +26,7 @@ logger = logging.getLogger("coding-agent-eval")
 @click.command()
 @click.option("--run-id", required=True, help="Run ID with existing agent results")
 @click.option("--agent", default="claude-code", help="Agent name to evaluate")
-@click.option("--dataset", default="data/swebench_mini_real.jsonl", help="Dataset JSONL path")
+@click.option("--dataset", default="data/swebench_verified.jsonl", help="Dataset JSONL path")
 @click.option("--timeout", default=600, help="Timeout per task (seconds)")
 def main(run_id, agent, dataset, timeout):
     """Verify agent patches using Docker-based test execution."""

@@ -1,0 +1,22 @@
+{
+  "instance_id": "django__django-12050",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py\nindex ea51912e8b..90475d6fb9 100644\n--- a/django/db/models/sql/query.py\n+++ b/django/db/models/sql/query.py\n@@ -1073,7 +1073,7 @@ class Query(BaseExpression):\n                         ))\n                 else:\n                     resolved_values.append(sub_value)\n-            value = tuple(resolved_values)\n+            value = type(value)(resolved_values)\n         return value\n \n     def solve_lookup_type(self, lookup):",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 70013,
+    "output_tokens": 540,
+    "cache_read_tokens": 63206,
+    "cache_write_tokens": 6802
+  },
+  "timestamps": {
+    "task_start": 1776404342.9465861,
+    "task_end": 1776404364.9041893,
+    "first_action": 1776404348.3770862
+  },
+  "total_cost_usd": 0.053106299999999995,
+  "convergence_steps": 4,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":20475,\"duration_api_ms\":21722,\"num_turns\":4,\"result\":\"Line 1076 now uses `type(value)(resolved_values)` to preserve the original iterable type — if the input was a `list`, the output stays a `list`; a `tuple` stays a `tuple`. This fixes `PickledField` and any other field that relies on exact type matching.\",\"stop_reason\":\"end_turn\",\"session_id\":\"0aa46891-019e-4f35-b524-6e1a7bb89ec1\",\"total_cost_usd\":0.053106299999999995,\"usage\":{\"input_tokens\":5,\"cache_creation_input_tokens\":6802,\"cache_read_input_tokens\":63206,\"output_tokens\":540,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":6802,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":72,\"cache_read_input_tokens\":17783,\"cache_creation_input_tokens\":272,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":272},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":417,\"outputTokens\":21,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000522,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":5,\"outputTokens\":540,\"cacheReadInputTokens\":63206,\"cacheCreationInputTokens\":6802,\"webSearchRequests\":0,\"costUSD\":0.052584299999999994,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"617e757d-a753-4a6e-8117-473c3b2d88c4\"}\n",
+  "model_name": ""
+}

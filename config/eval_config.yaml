@@ -1,21 +1,38 @@
 tiers:
-  micro:
+  local:
     dataset_source: "local"
-    local_path: "data/swebench_micro.jsonl"
-    sample_size: 10
+    local_path: "data/swebench_local.jsonl"
+    sample_size: 5
+    total_instances: null
     docker_images_budget_gb: 2
-  mini:
+  lite:
     dataset_source: "auto"
-    huggingface_id: "MariusHobbhahn/swe-bench-verified-mini"
-    local_path: "data/swebench_mini.jsonl"
+    huggingface_id: "princeton-nlp/SWE-bench_Lite"
+    local_path: "data/swebench_lite.jsonl"
     sample_size: 50
-    docker_images_budget_gb: 5
-  full:
+    total_instances: 300
+    docker_images_budget_gb: 30
+  verified:
     dataset_source: "auto"
     huggingface_id: "princeton-nlp/SWE-bench_Verified"
+    local_path: "data/swebench_verified.jsonl"
+    sample_size: 50
+    total_instances: 500
+    docker_images_budget_gb: 50
+  full:
+    dataset_source: "auto"
+    huggingface_id: "princeton-nlp/SWE-bench"
     local_path: "data/swebench_full.jsonl"
     sample_size: 500
+    total_instances: 2294
     docker_images_budget_gb: 130
+  multi:
+    dataset_source: "auto"
+    huggingface_id: "SWE-bench/SWE-bench_Multilingual"
+    local_path: "data/swebench_multi.jsonl"
+    sample_size: 50
+    total_instances: 300
+    docker_images_budget_gb: 30
 
 execution:
   max_tokens_per_task: 1000000

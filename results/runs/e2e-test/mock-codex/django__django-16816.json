@@ -1,0 +1,22 @@
+{
+  "instance_id": "django__django-16816",
+  "agent_name": "mock-codex",
+  "patch": "",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 48402,
+    "output_tokens": 28972,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 0
+  },
+  "timestamps": {
+    "task_start": 1776236896.0911481,
+    "task_end": 1776237004.1606405,
+    "first_action": 1776236898.7777052
+  },
+  "total_cost_usd": 0.32858,
+  "convergence_steps": 28,
+  "error_message": "",
+  "raw_output": "",
+  "model_name": "o3"
+}
