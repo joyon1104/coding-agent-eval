@@ -11,6 +11,9 @@ data_old/
 # Results (generated per run)
 results/
 
+# Repo cache (cloned repos for evaluation)
+.repo_cache/
+
 # Environment
 .env
 

@@ -19,7 +19,7 @@ tiers:
 
 execution:
   max_tokens_per_task: 1000000
-  max_time_per_task: 1800
+  max_time_per_task: 3600
   max_turns_per_task: 50
   max_budget_per_task: 5.0
   temperature: 0
