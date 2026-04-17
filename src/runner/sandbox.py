@@ -75,8 +75,8 @@ class DiskAwareSandbox:
             )
 
             if result.returncode != 0:
-                last_error = result.stderr[:500]
-                logger.warning(f"  Clone failed (attempt {attempt}): {last_error[:100]}")
+                last_error = result.stderr.strip()
+                logger.warning(f"  Clone failed (attempt {attempt}): {last_error}")
                 if attempt < max_retries:
                     delay = retry_delay * attempt
                     logger.info(f"  Retrying in {delay}s...")
@@ -108,8 +108,8 @@ class DiskAwareSandbox:
             if result.returncode == 0:
                 return str(repo_path)
 
-            last_error = f"git checkout {base_commit} failed: {result.stderr[:500]}"
-            logger.warning(f"  Checkout failed (attempt {attempt}): {last_error[:100]}")
+            last_error = f"git checkout {base_commit} failed: {result.stderr.strip()}"
+            logger.warning(f"  Checkout failed (attempt {attempt}): {last_error}")
             if attempt < max_retries:
                 delay = retry_delay * attempt
                 logger.info(f"  Retrying in {delay}s...")

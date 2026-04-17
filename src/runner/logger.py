@@ -19,8 +19,10 @@ def setup_logging(run_id: str, level: int = logging.INFO) -> logging.Logger:
     logger.setLevel(level)
     logger.handlers.clear()
 
-    # File handler
-    fh = logging.FileHandler(log_dir / "run.log")
+    # File handler (append mode — re-runs add to existing log)
+    log_file = log_dir / "run.log"
+    is_rerun = log_file.exists()
+    fh = logging.FileHandler(log_file, mode="a")
     fh.setLevel(level)
     fh.setFormatter(logging.Formatter(
         "%(asctime)s [%(levelname)s] %(message)s"
@@ -32,6 +34,11 @@ def setup_logging(run_id: str, level: int = logging.INFO) -> logging.Logger:
     ch.setLevel(level)
     ch.setFormatter(logging.Formatter("%(message)s"))
     logger.addHandler(ch)
+
+    if is_rerun:
+        logger.info(f"\n{'='*60}")
+        logger.info(f"Re-run started at {datetime.now().isoformat()}")
+        logger.info(f"{'='*60}")
 
     return logger
 
