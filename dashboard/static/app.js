@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadRuns();
     document.getElementById('back-btn').addEventListener('click', showLeaderboard);
     document.getElementById('modal-close').addEventListener('click', closeModal);
-    document.getElementById('modal').addEventListener('click', (e) => {
+    document.getElementById('test-modal').addEventListener('click', (e) => {
         if (e.target === document.getElementById('test-modal')) closeModal();
     });
     // ESC key to close modal
