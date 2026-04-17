@@ -127,6 +127,20 @@ class DiskAwareSandbox:
         for iid in list(self._workdirs.keys()):
             self.cleanup(iid)
 
+    def cleanup_stale_workdirs(self):
+        """Remove orphaned /tmp/cape_* directories from previous runs."""
+        import glob
+        count = 0
+        for d in glob.glob("/tmp/cape_*"):
+            p = Path(d)
+            if p.is_dir() and p.name not in {
+                f"cape_{iid}" for iid in self._workdirs
+            }:
+                shutil.rmtree(p, ignore_errors=True)
+                count += 1
+        if count:
+            logger.info(f"  Cleaned up {count} stale temp directories")
+
     def _cleanup_old_images(self):
         """Remove dangling Docker images to free space."""
         try:
@@ -134,5 +148,27 @@ class DiskAwareSandbox:
                 ["docker", "image", "prune", "-f"],
                 capture_output=True, timeout=60,
             )
+        except (subprocess.TimeoutExpired, FileNotFoundError):
+            pass
+
+    @staticmethod
+    def cleanup_docker_resources():
+        """Remove stopped containers and dangling images."""
+        try:
+            # Remove stopped containers
+            result = subprocess.run(
+                ["docker", "container", "prune", "-f"],
+                capture_output=True, text=True, timeout=30,
+            )
+            if "Deleted" in result.stdout:
+                logger.info(f"  Docker container cleanup: {result.stdout.strip()}")
+
+            # Remove dangling images
+            result = subprocess.run(
+                ["docker", "image", "prune", "-f"],
+                capture_output=True, text=True, timeout=60,
+            )
+            if "Total reclaimed" in result.stdout:
+                logger.info(f"  Docker image cleanup: {result.stdout.strip()}")
         except (subprocess.TimeoutExpired, FileNotFoundError):
             pass

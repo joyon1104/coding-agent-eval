@@ -168,14 +168,15 @@ def _run_tests_in_container(
 
     # Write test modules to a file to avoid shell escaping issues
     test_list_file = _write_patch_file("\n".join(modules) + "\n")
-    # Rename with .txt suffix
     test_list_txt = test_list_file + ".txt"
     Path(test_list_file).rename(test_list_txt)
-    subprocess.run(
-        ["docker", "cp", test_list_txt, f"{container_id}:/tmp/test_modules.txt"],
-        capture_output=True, timeout=10,
-    )
-    Path(test_list_txt).unlink(missing_ok=True)
+    try:
+        subprocess.run(
+            ["docker", "cp", test_list_txt, f"{container_id}:/tmp/test_modules.txt"],
+            capture_output=True, timeout=10,
+        )
+    finally:
+        Path(test_list_txt).unlink(missing_ok=True)
 
     test_cmd = (
         "cd /testbed && "

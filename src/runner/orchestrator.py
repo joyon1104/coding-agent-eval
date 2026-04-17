@@ -71,6 +71,10 @@ class Orchestrator:
         """Run all tasks for all agents. Skips already completed tasks."""
         setup_logging(self.run_id)
 
+        # Clean up stale resources from previous runs
+        self.sandbox.cleanup_stale_workdirs()
+        self.sandbox.cleanup_docker_resources()
+
         agent = agents[0]  # New layout: one agent per run
 
         # Save run metadata
