@@ -1,4 +1,4 @@
-// CAPE-Eval Dashboard
+// Coding-Agent-Eval Dashboard
 
 const API = '';
 let allRuns = [];

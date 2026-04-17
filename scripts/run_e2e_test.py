@@ -118,7 +118,7 @@ class MockAgentAdapter2:
 
 
 def main():
-    console.print("[bold blue]CAPE Eval — E2E Pipeline Test[/bold blue]\n")
+    console.print("[bold blue]Coding Agent Eval — E2E Pipeline Test[/bold blue]\n")
 
     run_id = "e2e-test"
 

@@ -20,7 +20,7 @@ from src.evaluator.swebench_harness import EvalResult
 from src.metrics.accuracy import task_resolution_rate, regression_safety
 
 console = Console()
-logger = logging.getLogger("cape-eval")
+logger = logging.getLogger("coding-agent-eval")
 
 
 @click.command()
@@ -33,7 +33,7 @@ def main(run_id, agent, dataset, timeout):
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
-    console.print("[bold blue]CAPE Eval — Docker Test Verification[/bold blue]\n")
+    console.print("[bold blue]Coding Agent Eval — Docker Test Verification[/bold blue]\n")
 
     # 1. Load agent results
     results_dir = PROJECT_ROOT / "results" / "runs" / run_id / agent

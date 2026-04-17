@@ -13,7 +13,7 @@ from pathlib import Path
 
 from src.core.config import Config, PROJECT_ROOT
 
-logger = logging.getLogger("cape-eval")
+logger = logging.getLogger("coding-agent-eval")
 
 # Shared repo cache directory
 REPO_CACHE_DIR = PROJECT_ROOT / ".repo_cache"

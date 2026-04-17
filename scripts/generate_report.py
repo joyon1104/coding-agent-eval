@@ -61,9 +61,9 @@ def compute_metrics(
 @click.option("--merge-dirs", default=None,
               help="Comma-separated dirs to merge results from")
 def main(run_id, fmt, merge_dirs):
-    """Generate CAPE Eval comparison report."""
+    """Generate Coding Agent Eval comparison report."""
 
-    console.print("[bold blue]CAPE Eval Report Generator[/bold blue]")
+    console.print("[bold blue]Coding Agent Eval Report Generator[/bold blue]")
 
     # Load results
     if merge_dirs:

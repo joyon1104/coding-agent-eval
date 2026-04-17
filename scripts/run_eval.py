@@ -50,9 +50,9 @@ AGENT_REGISTRY = {
 @click.option("--dry-run", is_flag=True, default=False,
               help="Show what would run without executing")
 def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry_run):
-    """CAPE Eval — AI Coding Agent Performance Evaluation"""
+    """Coding Agent Eval — AI Coding Agent Performance Evaluation"""
 
-    console.print("[bold blue]CAPE Eval[/bold blue] — AI Coding Agent Evaluation")
+    console.print("[bold blue]Coding Agent Eval[/bold blue] — AI Coding Agent Evaluation")
     console.print()
 
     # Environment detection

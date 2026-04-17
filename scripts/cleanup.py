@@ -7,7 +7,7 @@ import glob
 from pathlib import Path
 
 def main():
-    print("CAPE-Eval Cleanup\n")
+    print("Coding-Agent-Eval Cleanup\n")
 
     # 1. Stale temp directories
     stale = glob.glob("/tmp/cape_*")

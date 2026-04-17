@@ -1,4 +1,4 @@
-# CAPE-Eval 개발 진행사항 (2026-04-15)
+# Coding-Agent-Eval 개발 진행사항 (2026-04-15)
 
 ## 목표
 phase1.md 기반으로 AI Coding Agent 서비스 평가 시스템 개발 → 간단한 데이터셋으로 풀 E2E 실행

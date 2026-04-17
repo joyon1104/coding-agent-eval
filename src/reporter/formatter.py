@@ -19,7 +19,7 @@ def format_markdown(
 ) -> str:
     """Generate markdown comparison report."""
     lines = [
-        f"# CAPE Eval Report",
+        f"# Coding Agent Eval Report",
         f"",
         f"- **Run ID**: {run_id}",
         f"- **Tier**: {tier}",

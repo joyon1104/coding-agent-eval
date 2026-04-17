@@ -15,7 +15,7 @@ def setup_logging(run_id: str, level: int = logging.INFO) -> logging.Logger:
     log_dir = PROJECT_ROOT / "results" / "runs" / run_id
     log_dir.mkdir(parents=True, exist_ok=True)
 
-    logger = logging.getLogger("cape-eval")
+    logger = logging.getLogger("coding-agent-eval")
     logger.setLevel(level)
     logger.handlers.clear()
 

@@ -11,7 +11,7 @@ import time
 from src.adapters.base import AgentAdapter
 from src.core.models import AgentResult, TaskStatus, TokenUsage, Timestamps
 
-logger = logging.getLogger("cape-eval")
+logger = logging.getLogger("coding-agent-eval")
 
 
 class OpenCodeAdapter(AgentAdapter):

@@ -12,7 +12,7 @@ from typing import Optional
 
 from src.core.models import AgentResult, EvalTask
 
-logger = logging.getLogger("cape-eval")
+logger = logging.getLogger("coding-agent-eval")
 
 
 @dataclass
@@ -69,7 +69,7 @@ def run_swebench_evaluation(
     predictions: list[dict],
     dataset_name: str = "princeton-nlp/SWE-bench_Verified",
     run_id: str = "eval",
-    timeout: int = 1800,
+    timeout: int = 3600,
 ) -> list[EvalResult]:
     """Run SWE-bench evaluation using the official harness.
 

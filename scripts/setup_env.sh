@@ -2,7 +2,7 @@
 # scripts/setup_env.sh — OS/디스크/네트워크 자동 감지 후 최적 설치
 
 set -e
-echo "=== CAPE Eval 환경 구축 ==="
+echo "=== Coding Agent Eval 환경 구축 ==="
 
 # ── OS 감지 ──
 if grep -qi microsoft /proc/version 2>/dev/null; then

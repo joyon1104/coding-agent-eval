@@ -1,4 +1,4 @@
-"""Data models for CAPE Eval."""
+"""Data models for Coding Agent Eval."""
 
 from __future__ import annotations
 

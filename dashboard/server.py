@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CAPE-Eval Dashboard Server.
+"""Coding-Agent-Eval Dashboard Server.
 
 Lightweight HTTP server that serves the dashboard UI and provides
 API endpoints to read evaluation results from results/runs/.
@@ -208,7 +208,7 @@ def main():
                 port = int(arg)
 
     server = HTTPServer(("0.0.0.0", port), DashboardHandler)
-    print(f"CAPE-Eval Dashboard: http://localhost:{port}")
+    print(f"Coding-Agent-Eval Dashboard: http://localhost:{port}")
     print(f"Results dir: {RESULTS_DIR}")
     print("Press Ctrl+C to stop")
 

@@ -13,7 +13,17 @@
       "Bash(cp /home/going114kim/Coding-Agent-Eval/data/swebench_mini_real.jsonl /home/going114kim/Coding-Agent-Eval/data/swebench_mini.jsonl)",
       "Bash(python3 -c ' *)",
       "Bash(git init *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(/home/going114kim/Coding-Agent-Eval/.venv/bin/python *)",
+      "Bash(python -m json.tool)",
+      "Bash(ls /home/going114kim/Coding-Agent-Eval/.venv/lib/python*/site-packages)",
+      "Bash(find *)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:epoch.ai)",
+      "Bash(python3 *)",
+      "Bash(opencode --version)",
+      "Bash(opencode *)"
     ]
   }
 }

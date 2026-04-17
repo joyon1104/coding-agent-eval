@@ -25,7 +25,7 @@ from pathlib import Path
 from src.core.models import AgentResult, EvalTask
 from src.evaluator.swebench_harness import EvalResult
 
-logger = logging.getLogger("cape-eval")
+logger = logging.getLogger("coding-agent-eval")
 
 ARCH = "x86_64" if platform.machine() in ("x86_64", "AMD64") else "arm64"
 IMAGE_REGISTRY = "ghcr.io/epoch-research"

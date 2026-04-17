@@ -18,7 +18,7 @@ from src.runner.logger import setup_logging, save_run_metadata
 from src.runner.sandbox import DiskAwareSandbox, DiskSpaceError
 
 console = Console()
-logger = logging.getLogger("cape-eval")
+logger = logging.getLogger("coding-agent-eval")
 
 
 class Orchestrator:

@@ -1,4 +1,4 @@
-# CAPE-Eval
+# Coding-Agent-Eval
 
 **CLI AI Coding Agent Performance Evaluation System**
 
@@ -7,7 +7,7 @@ SWE-bench 데이터셋 기반으로 CLI AI 코딩 에이전트(Claude Code, Code
 ## 프로젝트 구조
 
 ```
-cape-eval/
+coding-agent-eval/
 ├── config/
 │   ├── eval_config.yaml              # 티어별 설정, 실행 제한, 모델 가격표
 │   ├── agents/
@@ -427,7 +427,7 @@ dashboard/
 ## 리포트 예시
 
 ```
-# CAPE Eval Report
+# Coding Agent Eval Report
 
 - **Run ID**: eval-real-001
 - **Tier**: micro
