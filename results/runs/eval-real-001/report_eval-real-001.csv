@@ -1,8 +1,0 @@
-metric,claude-code
-task_resolution_rate,1.0000
-regression_safety,1.0000
-token_efficiency,2106.3333
-cost_per_resolved_task,0.2611
-e2e_time,61.5190
-time_to_first_action,6.1519
-convergence_steps,16.3333
