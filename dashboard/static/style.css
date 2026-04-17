@@ -310,6 +310,15 @@ td.rank {
     font-size: 16px;
 }
 
+/* Per-task rows: no pointer cursor, no hover highlight */
+.task-row-no-click {
+    cursor: default !important;
+}
+
+.task-row-no-click:hover {
+    background: transparent !important;
+}
+
 /* Detail sections spacing */
 #detail-tasks {
     margin-top: 24px;
@@ -318,3 +327,84 @@ td.rank {
 #detail-tasks table {
     font-size: 13px;
 }
+
+/* Section header with link */
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.section-header h3 {
+    margin: 0;
+}
+
+.btn-link {
+    background: none;
+    border: 1px solid #30363d;
+    color: #58a6ff;
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.btn-link:hover {
+    background: #21262d;
+}
+
+/* Metrics Info Page */
+.info-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+}
+
+.info-card h3 {
+    color: #58a6ff;
+    margin-bottom: 8px;
+}
+
+.info-card p {
+    color: #c9d1d9;
+    margin-bottom: 8px;
+    line-height: 1.7;
+}
+
+.formula {
+    display: block;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 10px 0;
+    font-family: monospace;
+    font-size: 13px;
+    color: #d2a8ff;
+}
+
+.grade-table {
+    width: auto;
+    margin-top: 10px;
+    background: #0d1117;
+}
+
+.grade-table th, .grade-table td {
+    padding: 6px 16px;
+    text-align: center;
+    font-size: 13px;
+}
+
+.grade-table th {
+    font-weight: 700;
+}
+
+.grade-table th:nth-child(1) { color: #58a6ff; }
+.grade-table th:nth-child(2) { color: #3fb950; }
+.grade-table th:nth-child(3) { color: #d29922; }
+.grade-table th:nth-child(4) { color: #f78166; }
+.grade-table th:nth-child(5) { color: #f85149; }
+.grade-table th:nth-child(6) { color: #ff7b72; }

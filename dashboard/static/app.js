@@ -10,7 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('back-btn').addEventListener('click', showLeaderboard);
     document.getElementById('modal-close').addEventListener('click', closeModal);
     document.getElementById('modal').addEventListener('click', (e) => {
-        if (e.target === document.getElementById('modal')) closeModal();
+        if (e.target === document.getElementById('test-modal')) closeModal();
+    });
+    // ESC key to close modal
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
     });
     document.getElementById('filter-agent').addEventListener('change', renderLeaderboard);
     document.getElementById('filter-tier').addEventListener('change', renderLeaderboard);
@@ -27,6 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
             renderLeaderboard();
         });
     });
+
+    // Metrics info page navigation
+    document.getElementById('metrics-info-btn')?.addEventListener('click', showMetricsInfo);
+    document.getElementById('metrics-back-btn')?.addEventListener('click', hideMetricsInfo);
 });
 
 // ── API ──
@@ -79,8 +87,7 @@ function renderLeaderboard() {
     let filtered = allRuns.filter(r => {
         if (agentFilter && r.agent !== agentFilter) return false;
         if (tierFilter && r.tier !== tierFilter) return false;
-        // Only show runs that have metrics
-        return Object.keys(r.metrics || {}).length > 0;
+        return true;
     });
 
     // Sort
@@ -176,6 +183,7 @@ async function showDetail(runId) {
 
 function showLeaderboard() {
     document.getElementById('detail-view').style.display = 'none';
+    document.getElementById('metrics-info-view').style.display = 'none';
     document.getElementById('leaderboard-view').style.display = 'block';
 }
 
@@ -186,12 +194,6 @@ function renderDetail(runId, summary) {
     // Meta
     const metaGrid = document.getElementById('detail-meta');
     const started = summary.started_at || '';
-    const completed = summary.completed_at || '';
-    let duration = '';
-    if (started && completed) {
-        const ms = new Date(completed) - new Date(started);
-        if (ms > 0) duration = formatDuration(ms / 1000);
-    }
 
     metaGrid.innerHTML = `
         ${metaItem('Agent', summary.agent)}
@@ -243,6 +245,7 @@ function renderDetail(runId, summary) {
 
     (summary.per_task || []).forEach(task => {
         const tr = document.createElement('tr');
+        tr.classList.add('task-row-no-click');
         const resolved = task.resolved;
         const resolvedStr = resolved === true ? '<span class="status-resolved">RESOLVED</span>'
             : resolved === false ? '<span class="status-failed">NOT RESOLVED</span>'
@@ -269,7 +272,7 @@ function renderDetail(runId, summary) {
             <td>${task.convergence_steps || '-'}</td>
             <td>${colorTestCount(f2p)}</td>
             <td>${colorTestCount(p2p)}</td>
-            <td>${hasEval ? `<button class="btn-detail" onclick="showTestDetail('${runId}', '${task.instance_id}')">View</button>` : '-'}</td>
+            <td>${hasEval ? `<button class="btn-detail" onclick="event.stopPropagation(); showTestDetail('${runId}', '${task.instance_id}')">View</button>` : '-'}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -338,6 +341,18 @@ function renderTestDetail(data) {
     }
 
     body.innerHTML = html;
+}
+
+// ── Metrics Info Page ──
+function showMetricsInfo() {
+    document.getElementById('detail-view').style.display = 'none';
+    document.getElementById('leaderboard-view').style.display = 'none';
+    document.getElementById('metrics-info-view').style.display = 'block';
+}
+
+function hideMetricsInfo() {
+    document.getElementById('metrics-info-view').style.display = 'none';
+    document.getElementById('detail-view').style.display = 'block';
 }
 
 // ── Helpers ──
