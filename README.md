@@ -4,6 +4,8 @@
 
 SWE-bench 데이터셋 기반으로 CLI AI 코딩 에이전트(Claude Code, Codex, OpenCode 등)의 성능을 자동 평가하고, 7개 지표에 대한 비교 리포트를 생성합니다.
 
+![alt text](./image/dashboard.png)
+
 ## 프로젝트 구조
 
 ```
