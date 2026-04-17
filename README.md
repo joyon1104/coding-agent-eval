@@ -377,6 +377,15 @@ python scripts/run_eval.py \
 python scripts/run_eval.py --tier mini --agents claude-code --run-id eval-001
 ```
 
+## 리소스 정리
+
+평가를 반복하면 SWE-bench Docker 이미지(인스턴스당 ~3.4GB)와 임시 파일이 쌓일 수 있습니다. 다음 스크립트로 정리할 수 있습니다:
+
+```bash
+python scripts/cleanup.py
+```
+
+
 ## 오프라인 실행 (사내망)
 
 ```bash
