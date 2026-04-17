@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 import subprocess
 import time
 
 from src.adapters.base import AgentAdapter
 from src.core.models import AgentResult, TaskStatus, TokenUsage, Timestamps
+
+logger = logging.getLogger("cape-eval")
 
 
 class OpenCodeAdapter(AgentAdapter):
@@ -45,31 +48,84 @@ class OpenCodeAdapter(AgentAdapter):
         t_start = time.time()
 
         try:
-            proc = subprocess.run(
+            # Use Popen for real-time progress logging
+            proc = subprocess.Popen(
                 cmd,
-                capture_output=True,
-                timeout=self.timeout,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
                 text=True,
                 env=env,
             )
+
+            stdout_lines = []
+            step_count = 0
+            last_log_time = t_start
+
+            while True:
+                # Check timeout
+                elapsed = time.time() - t_start
+                if elapsed > self.timeout:
+                    proc.kill()
+                    proc.wait()
+                    t_end = time.time()
+                    return AgentResult(
+                        instance_id=instance_id,
+                        agent_name=self.name,
+                        status=TaskStatus.ERROR,
+                        error_message=f"Timeout after {self.timeout}s (steps completed: {step_count})",
+                        timestamps=Timestamps(task_start=t_start, task_end=t_end),
+                        raw_output="".join(stdout_lines)[:50000],
+                    )
+
+                line = proc.stdout.readline()
+                if not line and proc.poll() is not None:
+                    break
+                if not line:
+                    continue
+
+                stdout_lines.append(line)
+
+                # Log progress from JSON events
+                line_stripped = line.strip()
+                if line_stripped.startswith("{"):
+                    try:
+                        event = json.loads(line_stripped)
+                        etype = event.get("type", "")
+                        now = time.time()
+
+                        if etype == "step_start":
+                            step_count += 1
+                        elif etype == "tool_use":
+                            tool = event.get("part", {}).get("tool", "")
+                            if now - last_log_time > 10:  # Log every 10s max
+                                logger.info(f"    [{elapsed:.0f}s] step {step_count}: {tool}")
+                                last_log_time = now
+                        elif etype == "error":
+                            err = event.get("error", {}).get("data", {}).get("message", "")
+                            logger.warning(f"    [{elapsed:.0f}s] error: {err[:200]}")
+                    except json.JSONDecodeError:
+                        pass
+
             t_end = time.time()
+            stdout = "".join(stdout_lines)
+            stderr = proc.stderr.read() if proc.stderr else ""
 
             if proc.returncode != 0:
-                error_msg = self._extract_error(proc.stdout) or proc.stderr[:2000]
+                error_msg = self._extract_error(stdout) or stderr[:2000]
                 return AgentResult(
                     instance_id=instance_id,
                     agent_name=self.name,
                     status=TaskStatus.ERROR,
                     error_message=error_msg,
                     timestamps=Timestamps(task_start=t_start, task_end=t_end),
-                    raw_output=proc.stdout[:5000],
+                    raw_output=stdout[:5000],
                 )
 
             # Parse JSON events from output
-            events = self._parse_events(proc.stdout)
+            events = self._parse_events(stdout)
 
             # Check for API errors in events
-            api_error = self._extract_error(proc.stdout)
+            api_error = self._extract_error(stdout)
             if api_error:
                 return AgentResult(
                     instance_id=instance_id,
@@ -77,7 +133,7 @@ class OpenCodeAdapter(AgentAdapter):
                     status=TaskStatus.ERROR,
                     error_message=api_error,
                     timestamps=Timestamps(task_start=t_start, task_end=t_end),
-                    raw_output=proc.stdout[:5000],
+                    raw_output=stdout[:5000],
                 )
 
             patch = self._extract_patch(repo_path)
@@ -94,6 +150,8 @@ class OpenCodeAdapter(AgentAdapter):
             else:
                 first_action = t_start + (t_end - t_start) * 0.1
 
+            logger.info(f"    Total steps: {num_turns}, elapsed: {t_end - t_start:.0f}s")
+
             return AgentResult(
                 instance_id=instance_id,
                 agent_name=self.name,
@@ -107,17 +165,17 @@ class OpenCodeAdapter(AgentAdapter):
                 ),
                 total_cost_usd=cost,
                 convergence_steps=num_turns,
-                raw_output=proc.stdout[:50000],
+                raw_output=stdout[:50000],
                 model_name=model_name,
             )
 
-        except subprocess.TimeoutExpired:
+        except Exception as e:
             t_end = time.time()
             return AgentResult(
                 instance_id=instance_id,
                 agent_name=self.name,
                 status=TaskStatus.ERROR,
-                error_message=f"Timeout after {self.timeout}s",
+                error_message=str(e),
                 timestamps=Timestamps(task_start=t_start, task_end=t_end),
             )
 
