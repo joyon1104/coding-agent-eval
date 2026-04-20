@@ -23,10 +23,35 @@ console = Console()
 logger = logging.getLogger("coding-agent-eval")
 
 
+def _resolve_dataset(dataset_arg, run_dir):
+    """Pick the dataset JSONL: explicit flag > tier from metadata > common fallbacks."""
+    if dataset_arg:
+        return PROJECT_ROOT / dataset_arg
+
+    meta_path = run_dir / "metadata.json"
+    if meta_path.exists():
+        try:
+            tier = json.loads(meta_path.read_text()).get("tier")
+            if tier:
+                tier_path = PROJECT_ROOT / "data" / f"swebench_{tier}.jsonl"
+                if tier_path.exists():
+                    return tier_path
+        except (json.JSONDecodeError, KeyError):
+            pass
+
+    for name in ("verified", "lite", "multi", "full", "local"):
+        path = PROJECT_ROOT / "data" / f"swebench_{name}.jsonl"
+        if path.exists():
+            return path
+
+    return PROJECT_ROOT / "data" / "swebench_verified.jsonl"
+
+
 @click.command()
 @click.option("--run-id", required=True, help="Run ID with existing agent results")
 @click.option("--agent", default="claude-code", help="Agent name to evaluate")
-@click.option("--dataset", default="data/swebench_verified.jsonl", help="Dataset JSONL path")
+@click.option("--dataset", default=None,
+              help="Dataset JSONL path (default: auto-detect from run's tier)")
 @click.option("--timeout", default=600, help="Timeout per task (seconds)")
 def main(run_id, agent, dataset, timeout):
     """Verify agent patches using Docker-based test execution."""
@@ -35,22 +60,45 @@ def main(run_id, agent, dataset, timeout):
 
     console.print("[bold blue]Coding Agent Eval — Docker Test Verification[/bold blue]\n")
 
-    # 1. Load agent results
-    results_dir = PROJECT_ROOT / "results" / "runs" / run_id / agent
-    if not results_dir.exists():
-        console.print(f"[red]Results not found: {results_dir}[/red]")
+    run_dir = PROJECT_ROOT / "results" / "runs" / run_id
+    if not run_dir.exists():
+        console.print(f"[red]Run directory not found: {run_dir}[/red]")
+        sys.exit(1)
+
+    # 1. Load agent results — new layout uses patches/; fall back to legacy <agent>/ layout
+    patches_dir = run_dir / "patches"
+    legacy_dir = run_dir / agent
+    if patches_dir.exists():
+        results_dir = patches_dir
+        layout = "patches"
+    elif legacy_dir.exists():
+        results_dir = legacy_dir
+        layout = agent
+    else:
+        console.print(f"[red]No patches under {run_dir} (looked for patches/ and {agent}/)[/red]")
         sys.exit(1)
 
     agent_results = []
     for f in sorted(results_dir.glob("*.json")):
         if f.name == "metadata.json":
             continue
-        agent_results.append(AgentResult.from_dict(json.loads(f.read_text())))
+        r = AgentResult.from_dict(json.loads(f.read_text()))
+        if layout == "patches" and r.agent_name and r.agent_name != agent:
+            continue  # skip results from other agents sharing the same run-id
+        agent_results.append(r)
 
-    console.print(f"Loaded {len(agent_results)} agent results from [bold]{run_id}/{agent}[/bold]")
+    if not agent_results:
+        console.print(f"[red]No agent results for agent='{agent}' in {results_dir}[/red]")
+        sys.exit(1)
+
+    console.print(f"Loaded {len(agent_results)} agent results from [bold]{run_id}/{layout}/[/bold]")
 
     # 2. Load dataset for task info (test_patch, FAIL_TO_PASS, etc.)
-    dataset_path = PROJECT_ROOT / dataset
+    dataset_path = _resolve_dataset(dataset, run_dir)
+    if not dataset_path.exists():
+        console.print(f"[red]Dataset JSONL not found: {dataset_path}[/red]")
+        sys.exit(1)
+    console.print(f"Dataset: [bold]{dataset_path.relative_to(PROJECT_ROOT)}[/bold]")
     raw_items = load_from_jsonl(dataset_path)
     tasks = [EvalTask.from_swebench(item) for item in raw_items]
     console.print(f"Loaded {len(tasks)} tasks from dataset")
