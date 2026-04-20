@@ -45,6 +45,7 @@ class ClaudeCodeAdapter(AgentAdapter):
 
         t_start = time.time()
         first_action = 0.0
+        base_sha = self._capture_base_sha(repo_path)
 
         try:
             proc = subprocess.run(
@@ -69,7 +70,7 @@ class ClaudeCodeAdapter(AgentAdapter):
 
             # Parse JSON output
             output = self._parse_output(proc.stdout)
-            patch = self._extract_patch(repo_path)
+            patch = self._extract_patch(repo_path, base_ref=base_sha)
 
             # Extract usage info
             usage = output.get("usage", {})

@@ -46,6 +46,7 @@ class OpenCodeAdapter(AgentAdapter):
             env["HTTPS_PROXY"] = self.config["proxy"]
 
         t_start = time.time()
+        base_sha = self._capture_base_sha(repo_path)
 
         try:
             # Use Popen for real-time progress logging
@@ -136,7 +137,7 @@ class OpenCodeAdapter(AgentAdapter):
                     raw_output=stdout[:5000],
                 )
 
-            patch = self._extract_patch(repo_path)
+            patch = self._extract_patch(repo_path, base_ref=base_sha)
 
             # Extract usage info from events
             token_usage, cost, event_model = self._extract_usage(events)

@@ -1,0 +1,22 @@
+{
+  "instance_id": "django__django-11099",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/django/contrib/auth/validators.py b/django/contrib/auth/validators.py\nindex b4878cfd45..1304f20a60 100644\n--- a/django/contrib/auth/validators.py\n+++ b/django/contrib/auth/validators.py\n@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _\n \n @deconstructible\n class ASCIIUsernameValidator(validators.RegexValidator):\n-    regex = r'^[\\w.@+-]+$'\n+    regex = r'\\A[\\w.@+-]+\\Z'\n     message = _(\n         'Enter a valid username. This value may contain only English letters, '\n         'numbers, and @/./+/-/_ characters.'\n@@ -17,7 +17,7 @@ class ASCIIUsernameValidator(validators.RegexValidator):\n \n @deconstructible\n class UnicodeUsernameValidator(validators.RegexValidator):\n-    regex = r'^[\\w.@+-]+$'\n+    regex = r'\\A[\\w.@+-]+\\Z'\n     message = _(\n         'Enter a valid username. This value may contain only letters, '\n         'numbers, and @/./+/-/_ characters.'",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 97044,
+    "output_tokens": 726,
+    "cache_read_tokens": 87976,
+    "cache_write_tokens": 9060
+  },
+  "timestamps": {
+    "task_start": 1776666716.7691894,
+    "task_end": 1776666730.8546636,
+    "first_action": 1776666720.4734395
+  },
+  "total_cost_usd": 0.119433,
+  "convergence_steps": 4,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":12217,\"duration_api_ms\":14817,\"num_turns\":4,\"result\":\"Updated both `ASCIIUsernameValidator` and `UnicodeUsernameValidator` in `django/contrib/auth/validators.py` to use `\\\\A...\\\\Z` anchors instead of `^...$`, so trailing newlines are now rejected.\",\"stop_reason\":\"end_turn\",\"session_id\":\"563daa7a-eec5-4a91-b276-7cdd903f4b3e\",\"total_cost_usd\":0.119433,\"usage\":{\"input_tokens\":8,\"cache_creation_input_tokens\":9060,\"cache_read_input_tokens\":87976,\"output_tokens\":726,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":9060,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":88,\"cache_read_input_tokens\":24119,\"cache_creation_input_tokens\":724,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":724},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":540,\"outputTokens\":18,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.00063,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-7\":{\"inputTokens\":8,\"outputTokens\":726,\"cacheReadInputTokens\":87976,\"cacheCreationInputTokens\":9060,\"webSearchRequests\":0,\"costUSD\":0.11880299999999999,\"contextWindow\":200000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"0fdbf4d6-b015-4108-8ea5-a2cf8b43f117\"}\n",
+  "model_name": ""
+}

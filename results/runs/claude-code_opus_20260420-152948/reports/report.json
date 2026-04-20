@@ -1,0 +1,45 @@
+{
+  "run_id": "claude-code_opus_20260420-152948",
+  "tier": "lite",
+  "num_tasks": 3,
+  "generated_at": "2026-04-20T15:34:07.876631",
+  "agents": {
+    "claude-code": {
+      "task_resolution_rate": {
+        "value": 1.0,
+        "unit": "%",
+        "grade": "S"
+      },
+      "regression_safety": {
+        "value": 0.6666666666666666,
+        "unit": "%",
+        "grade": "F"
+      },
+      "token_efficiency": {
+        "value": 415745.3333333333,
+        "unit": "tokens/task",
+        "grade": "D"
+      },
+      "cost_per_resolved_task": {
+        "value": 0.42451866666666666,
+        "unit": "USD",
+        "grade": "S"
+      },
+      "e2e_time": {
+        "value": 81.53827126820882,
+        "unit": "sec",
+        "grade": "A"
+      },
+      "time_to_first_action": {
+        "value": 5.499687274297078,
+        "unit": "sec",
+        "grade": "B"
+      },
+      "convergence_steps": {
+        "value": 13.333333333333334,
+        "unit": "steps",
+        "grade": "B"
+      }
+    }
+  }
+}

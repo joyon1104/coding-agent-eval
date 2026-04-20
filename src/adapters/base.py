@@ -31,15 +31,39 @@ class AgentAdapter(ABC):
     def is_available(self) -> bool:
         ...
 
-    def _extract_patch(self, repo_path: str) -> str:
-        """Extract git diff from the repo after agent runs."""
+    def _capture_base_sha(self, repo_path: str) -> str:
+        """Snapshot HEAD before the agent runs, so _extract_patch can diff against it.
+
+        This matters when an agent (e.g. OpenCode) auto-commits step snapshots,
+        which moves HEAD and makes a plain `git diff` empty.
+        """
         try:
             result = subprocess.run(
-                ["git", "diff"],
-                cwd=repo_path,
-                capture_output=True,
-                text=True,
-                timeout=30,
+                ["git", "rev-parse", "HEAD"],
+                cwd=repo_path, capture_output=True, text=True, timeout=10,
+            )
+            if result.returncode == 0:
+                return result.stdout.strip()
+        except (subprocess.TimeoutExpired, FileNotFoundError):
+            pass
+        return ""
+
+    def _extract_patch(self, repo_path: str, base_ref: str = "") -> str:
+        """Extract git diff (base_ref..worktree) from the repo after agent runs.
+
+        - `git add -N .` registers untracked files as intent-to-add so diff sees them.
+        - Comparing against the captured base_ref covers agents that commit during the
+          session; falls back to plain `git diff` (vs HEAD) if no ref was captured.
+        """
+        try:
+            subprocess.run(
+                ["git", "add", "-N", "."],
+                cwd=repo_path, capture_output=True, timeout=30,
+            )
+            cmd = ["git", "diff", base_ref] if base_ref else ["git", "diff"]
+            result = subprocess.run(
+                cmd,
+                cwd=repo_path, capture_output=True, text=True, timeout=30,
             )
             return result.stdout.strip()
         except (subprocess.TimeoutExpired, FileNotFoundError):
