@@ -1,0 +1,202 @@
+2026-04-20 16:31:31,748 [INFO]   Docker image cleanup: Total reclaimed space: 0B
+2026-04-20 16:31:31,748 [INFO] 
+============================================================
+2026-04-20 16:31:31,749 [INFO] Agent: claude-code | Tasks: 6
+2026-04-20 16:31:31,749 [INFO] ============================================================
+2026-04-20 16:31:31,750 [INFO]   Running: django__django-10914
+2026-04-20 16:31:31,751 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/django__django
+2026-04-20 16:31:31,751 [INFO]   Copying cached repo for django__django-10914...
+2026-04-20 16:32:53,842 [INFO]   Completed: success | Cost: $0.277 | Time: 80.8s
+2026-04-20 16:32:54,020 [INFO]   Running: django__django-11099
+2026-04-20 16:32:54,021 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/django__django
+2026-04-20 16:32:54,021 [INFO]   Copying cached repo for django__django-11099...
+2026-04-20 16:33:08,757 [INFO]   Completed: success | Cost: $0.053 | Time: 13.7s
+2026-04-20 16:33:08,916 [INFO]   Running: django__django-11001
+2026-04-20 16:33:08,916 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/django__django
+2026-04-20 16:33:08,916 [INFO]   Copying cached repo for django__django-11001...
+2026-04-20 16:35:16,159 [INFO]   Completed: success | Cost: $0.388 | Time: 126.0s
+2026-04-20 16:35:16,351 [INFO]   Running: django__django-12184
+2026-04-20 16:35:16,351 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/django__django
+2026-04-20 16:35:16,352 [INFO]   Copying cached repo for django__django-12184...
+2026-04-20 16:37:44,421 [INFO]   Completed: success | Cost: $0.257 | Time: 146.9s
+2026-04-20 16:37:44,603 [INFO]   Running: django__django-12284
+2026-04-20 16:37:44,604 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/django__django
+2026-04-20 16:37:44,604 [INFO]   Copying cached repo for django__django-12284...
+2026-04-20 16:38:26,853 [INFO]   Completed: success | Cost: $0.106 | Time: 41.1s
+2026-04-20 16:38:27,043 [INFO]   Running: django__django-12286
+2026-04-20 16:38:27,043 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/django__django
+2026-04-20 16:38:27,044 [INFO]   Copying cached repo for django__django-12286...
+2026-04-20 16:40:08,484 [INFO]   Completed: success | Cost: $0.163 | Time: 100.4s
+2026-04-20 16:40:08,670 [INFO]   Done: 6 run, 0 skipped
+2026-04-20 16:40:08,676 [INFO] Evaluating: django__django-10914
+2026-04-20 16:40:08,771 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-10914:latest
+2026-04-20 16:40:08,771 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-10914:latest
+2026-04-20 16:40:09,143 [INFO]   Container started: 32d029a917c7
+2026-04-20 16:40:09,754 [INFO]   Patch applied successfully
+2026-04-20 16:40:09,754 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-04-20 16:40:10,786 [INFO]   Test exit code: 0
+2026-04-20 16:40:10,786 [INFO]   Test output (last 500 chars): ache (test_utils.tests.OverrideSettingsTests) ... ok
+test_urlconf_first (test_utils.tests.OverrideSettingsTests) ... ok
+test_urlconf_second (test_utils.tests.OverrideSettingsTests) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.033s
+
+OK
+Testing against Django installed in '/testbed/django' with up to 12 processes
+Importing application test_utils
+Skipping setup of unused database(s): default, other.
+System check identified no issues (0 silenced).
+
+2026-04-20 16:40:10,786 [INFO]   Running PASS_TO_PASS tests (98)...
+2026-04-20 16:40:11,265 [INFO]   Test exit code: 1
+2026-04-20 16:40:11,265 [INFO]   Test output (last 500 chars): gs)
+  File "/testbed/django/core/management/commands/migrate.py", line 202, in handle
+    self.sync_apps(connection, executor.loader.unmigrated_apps)
+  File "/testbed/django/core/management/commands/migrate.py", line 323, in sync_apps
+    self.stdout.write("  Creating tables\u2026\n")
+  File "/testbed/django/core/management/base.py", line 145, in write
+    self._out.write(style_func(msg))
+UnicodeEncodeError: 'ascii' codec can't encode character '\u2026' in position 17: ordinal not in range(128)
+
+2026-04-20 16:40:11,519 [INFO]   Container removed
+2026-04-20 16:40:11,519 [INFO]   Result: RESOLVED | F2P: 100% | P2P: 0%
+2026-04-20 16:40:11,519 [INFO] Evaluating: django__django-11099
+2026-04-20 16:40:11,597 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-11099:latest
+2026-04-20 16:40:11,597 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-11099:latest
+2026-04-20 16:40:11,925 [INFO]   Container started: afee6b0b9d28
+2026-04-20 16:40:12,430 [INFO]   Patch applied successfully
+2026-04-20 16:40:12,430 [INFO]   Running FAIL_TO_PASS tests (3)...
+2026-04-20 16:40:13,584 [INFO]   Test exit code: 0
+2026-04-20 16:40:13,584 [INFO]   Test output (last 500 chars): ) ... ok
+test_validate_property (auth_tests.test_validators.UserAttributeSimilarityValidatorTest) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.129s
+
+OK
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+2026-04-20 16:40:13,584 [INFO]   Running PASS_TO_PASS tests (19)...
+2026-04-20 16:40:14,272 [INFO]   Test exit code: 0
+2026-04-20 16:40:14,272 [INFO]   Test output (last 500 chars): )...
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+2026-04-20 16:40:14,514 [INFO]   Container removed
+2026-04-20 16:40:14,514 [INFO]   Result: RESOLVED | F2P: 100% | P2P: 100%
+2026-04-20 16:40:14,514 [INFO] Evaluating: django__django-11001
+2026-04-20 16:40:14,591 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-11001:latest
+2026-04-20 16:40:14,591 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-11001:latest
+2026-04-20 16:40:14,868 [INFO]   Container started: 213765dbdea3
+2026-04-20 16:40:15,352 [INFO]   Patch applied successfully
+2026-04-20 16:40:15,352 [INFO]   Running FAIL_TO_PASS tests (2)...
+2026-04-20 16:40:16,408 [INFO]   Test exit code: 0
+2026-04-20 16:40:16,408 [INFO]   Test output (last 500 chars): essions_result
+    Creating table expressions_time
+    Creating table expressions_simulationrun
+    Creating table expressions_uuidpk
+    Creating table expressions_uuid
+    Running deferred SQL...
+Running migrations:
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying sites.0001_initial... OK
+  Applying sites.0002_alter_domain_unique... OK
+System check identified no issues (0 silenced).
+
+2026-04-20 16:40:16,408 [INFO]   Running PASS_TO_PASS tests (118)...
+2026-04-20 16:40:17,082 [INFO]   Test exit code: 0
+2026-04-20 16:40:17,083 [INFO]   Test output (last 500 chars): )...
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+2026-04-20 16:40:17,353 [INFO]   Container removed
+2026-04-20 16:40:17,353 [INFO]   Result: RESOLVED | F2P: 100% | P2P: 100%
+2026-04-20 16:40:17,353 [INFO] Evaluating: django__django-12184
+2026-04-20 16:40:17,402 [INFO]   Pulling image: ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-12184:latest
+2026-04-20 16:40:27,514 [INFO]   Pull complete: ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-12184:latest
+2026-04-20 16:40:27,514 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-12184:latest
+2026-04-20 16:40:27,927 [INFO]   Container started: 357a62952556
+2026-04-20 16:40:28,366 [INFO]   git apply failed, trying patch -p1...
+2026-04-20 16:40:28,536 [INFO]   Patch applied successfully
+2026-04-20 16:40:28,536 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-04-20 16:40:29,498 [INFO]   Test exit code: 0
+2026-04-20 16:40:29,498 [INFO]   Test output (last 500 chars): ests.SimplifiedURLTests) ... ok
+test_space_in_route (urlpatterns.tests.SimplifiedURLTests) ... ok
+test_two_variable_at_start_of_path_pattern (urlpatterns.tests.SimplifiedURLTests) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.008s
+
+OK
+Testing against Django installed in '/testbed/django' with up to 12 processes
+Importing application urlpatterns
+Skipping setup of unused database(s): default, other.
+System check identified no issues (0 silenced).
+
+2026-04-20 16:40:29,498 [INFO]   Running PASS_TO_PASS tests (25)...
+2026-04-20 16:40:30,089 [INFO]   Test exit code: 0
+2026-04-20 16:40:30,089 [INFO]   Test output (last 500 chars): ests) ... ok
+test_re_path (urlpatterns.tests.SimplifiedURLTests) ... ok
+test_re_path_with_missing_optional_parameter (urlpatterns.tests.SimplifiedURLTests) ... ok
+test_re_path_with_optional_parameter (urlpatterns.tests.SimplifiedURLTests) ... ok
+test_space_in_route (urlpatterns.tests.SimplifiedURLTests) ... ok
+test_two_variable_at_start_of_path_pattern (urlpatterns.tests.SimplifiedURLTests) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 0.129s
+
+OK
+
+2026-04-20 16:40:30,387 [INFO]   Container removed
+2026-04-20 16:40:30,387 [INFO]   Result: RESOLVED | F2P: 100% | P2P: 100%
+2026-04-20 16:40:30,387 [INFO] Evaluating: django__django-12284
+2026-04-20 16:40:30,435 [INFO]   Pulling image: ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-12284:latest
+2026-04-20 16:40:39,695 [INFO]   Pull complete: ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-12284:latest
+2026-04-20 16:40:39,695 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-12284:latest
+2026-04-20 16:40:40,071 [INFO]   Container started: a80acbe76351
+2026-04-20 16:40:40,550 [INFO]   Patch applied successfully
+2026-04-20 16:40:40,550 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-04-20 16:40:41,316 [INFO]   Test exit code: 0
+2026-04-20 16:40:41,317 [INFO]   Test output (last 500 chars): splayTests) ... ok
+test_overriding_FIELD_display (model_fields.tests.GetFieldDisplayTests) ... ok
+test_overriding_inherited_FIELD_display (model_fields.tests.GetFieldDisplayTests) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.002s
+
+OK
+Testing against Django installed in '/testbed/django' with up to 12 processes
+Importing application model_fields
+Skipping setup of unused database(s): default, other.
+System check identified no issues (0 silenced).
+
+2026-04-20 16:40:41,317 [INFO]   Running PASS_TO_PASS tests (31)...
+2026-04-20 16:40:42,150 [INFO]   Test exit code: 1
+2026-04-20 16:40:42,150 [INFO]   Test output (last 500 chars): )...
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+2026-04-20 16:40:42,438 [INFO]   Container removed
+2026-04-20 16:40:42,438 [INFO]   Result: RESOLVED | F2P: 100% | P2P: 100%
+2026-04-20 16:40:42,438 [INFO] Evaluating: django__django-12286
+2026-04-20 16:40:42,487 [INFO]   Pulling image: ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-12286:latest
+2026-04-20 16:40:52,292 [INFO]   Pull complete: ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-12286:latest
+2026-04-20 16:40:52,292 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-12286:latest
+2026-04-20 16:40:52,666 [INFO]   Container started: c4647e361e96
+2026-04-20 16:40:53,130 [INFO]   git apply failed, trying patch -p1...
+2026-04-20 16:40:53,602 [INFO]   Container removed
+2026-04-20 16:40:53,602 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%

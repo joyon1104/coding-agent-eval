@@ -1,0 +1,22 @@
+{
+  "instance_id": "django__django-14034",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/django/forms/fields.py b/django/forms/fields.py\nindex 65d6a9ec82..e5016625a4 100644\n--- a/django/forms/fields.py\n+++ b/django/forms/fields.py\n@@ -1025,7 +1025,9 @@ class MultiValueField(Field):\n             if not value or not [v for v in value if v not in self.empty_values]:\n                 if self.required:\n                     raise ValidationError(self.error_messages['required'], code='required')\n-                else:\n+                # If all values are empty and require_all_fields=False, fall\n+                # through to the field loop so required sub-fields are checked.\n+                elif self.require_all_fields:\n                     return self.compress([])\n         else:\n             raise ValidationError(self.error_messages['invalid'], code='invalid')",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 378973,
+    "output_tokens": 4032,
+    "cache_read_tokens": 363997,
+    "cache_write_tokens": 14958
+  },
+  "timestamps": {
+    "task_start": 1776749615.158673,
+    "task_end": 1776749696.6244433,
+    "first_action": 1776749619.762379
+  },
+  "total_cost_usd": 0.2266386,
+  "convergence_steps": 17,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":79834,\"duration_api_ms\":78263,\"num_turns\":17,\"result\":\"All cases behave correctly. The fix is in `django/forms/fields.py:1030`.\\n\\n**Root cause:** When all sub-values are empty, `clean()` short-circuited with `return self.compress([])` whenever `self.required` was `False`, without ever reaching the per-field required check in the loop below. This meant a sub-field with `required=True` was silently ignored.\\n\\n**Fix:** Changed `else: return self.compress([])` to `elif self.require_all_fields: return self.compress([])`. When `require_all_fields=False`, execution falls through to the field loop, which correctly raises an `'incomplete'` error for any required sub-field that received an empty value.\",\"stop_reason\":\"end_turn\",\"session_id\":\"3f46ec5f-d974-4c95-92ea-fcb381bb7995\",\"total_cost_usd\":0.2266386,\"usage\":{\"input_tokens\":18,\"cache_creation_input_tokens\":14958,\"cache_read_input_tokens\":363997,\"output_tokens\":4032,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":14958,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":170,\"cache_read_input_tokens\":25050,\"cache_creation_input_tokens\":689,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":689},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":718,\"outputTokens\":19,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000813,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":18,\"outputTokens\":4032,\"cacheReadInputTokens\":363997,\"cacheCreationInputTokens\":14958,\"webSearchRequests\":0,\"costUSD\":0.2258256,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"6ddb4472-f33c-4611-bc9f-f84e9a3eb801\"}\n",
+  "model_name": ""
+}

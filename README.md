@@ -419,6 +419,36 @@ python scripts/cleanup.py
 ```
 
 
+## Docker 이미지 가용성 사전 점검
+
+사내망·제한된 네트워크에서 평가를 돌리기 전에, 해당 티어의 SWE-bench Docker 이미지를 실제로 받아올 수 있는지 **다운로드 없이** 미리 확인할 수 있습니다. 각 인스턴스에 대해 `docker manifest inspect`(메타데이터만 조회, 수 KB)를 병렬로 실행해 레지스트리 도달성 + 인증 + 이미지 존재 여부를 검증합니다.
+
+```bash
+# verified 티어(500개) 전체 점검 — 2~3분
+python scripts/check_docker_images.py --tier verified
+
+# 티어/병렬도/타임아웃 조정
+python scripts/check_docker_images.py --tier full --concurrency 16 --timeout 60
+
+# 이전 실행에서 실패한 인스턴스만 재확인
+python scripts/check_docker_images.py --tier verified --only-failing
+```
+
+결과는 `results/image_availability_<tier>.json`에 저장되며, 실패는 카테고리별로 자동 분류됩니다:
+
+| 카테고리 | 의미 | 대응 |
+|----------|------|------|
+| `not_found` | ghcr.io에 해당 이미지 미공개 | 평가 대상에서 제외 |
+| `auth` | 인증 필요 또는 rate limit | `docker login ghcr.io` (PAT) |
+| `timeout` | 프록시/방화벽의 throttle | `HTTPS_PROXY`/`NO_PROXY` 설정, 재시도 |
+| `tls` | 사내 SSL 인터셉트로 인증서 불일치 | `/etc/docker/certs.d/ghcr.io/ca.crt`에 사내 CA 등록 |
+| `dns` | DNS 차단 | 사내 DNS가 `ghcr.io` 해석하는지 `nslookup`으로 확인 |
+| `network` | 아웃바운드 차단 | 네트워크 정책팀에 `ghcr.io:443` 허용 요청 |
+| `unknown` | 기타 | 리포트의 `error` 필드 확인 후 개별 대응 |
+
+전부 OK면 다음 단계(실제 평가)로 진행하면 되고, 실패가 많으면 아래 "오프라인 실행"으로 사외망에서 번들을 반입하는 게 안정적입니다.
+
+
 ## 오프라인 실행 (사내망)
 
 ```bash

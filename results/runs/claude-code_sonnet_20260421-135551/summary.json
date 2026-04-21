@@ -1,0 +1,162 @@
+{
+  "run_id": "claude-code_sonnet_20260421-135551",
+  "agent": "claude-code",
+  "model": "sonnet",
+  "tier": "verified",
+  "num_tasks": 6,
+  "started_at": "2026-04-21T14:36:09.118701",
+  "completed_at": "2026-04-21T14:36:09.118709",
+  "environment": "OS: wsl | Network: external | Disk: 943.1GB | RAM: 15.5GB | Docker: Yes | Tier: full",
+  "agents": {
+    "claude-code": {
+      "metrics": {
+        "task_resolution_rate": {
+          "value": 0.16666666666666666,
+          "unit": "%",
+          "grade": "D"
+        },
+        "regression_safety": {
+          "value": 0.6666666666666666,
+          "unit": "%",
+          "grade": "F"
+        },
+        "token_efficiency": {
+          "value": 443603.0,
+          "unit": "tokens/task",
+          "grade": "D"
+        },
+        "cost_per_resolved_task": {
+          "value": 4.5272985,
+          "unit": "USD",
+          "grade": "C"
+        },
+        "e2e_time": {
+          "value": 357.15168356895447,
+          "unit": "sec",
+          "grade": "C"
+        },
+        "time_to_first_action": {
+          "value": 35.7196292479833,
+          "unit": "sec",
+          "grade": "F"
+        },
+        "convergence_steps": {
+          "value": 23.5,
+          "unit": "steps",
+          "grade": "C"
+        }
+      }
+    }
+  },
+  "per_task": [
+    {
+      "instance_id": "astropy__astropy-14508",
+      "agent": "claude-code",
+      "status": "success",
+      "patch_generated": true,
+      "cost_usd": 0.19220074999999998,
+      "e2e_time": 109.6174898147583,
+      "tokens": 252960,
+      "convergence_steps": 12,
+      "model": "",
+      "resolved": false,
+      "regression_safe": false,
+      "fail_to_pass_total": 1,
+      "fail_to_pass_passed": 0,
+      "pass_to_pass_total": 174,
+      "pass_to_pass_passed": 0,
+      "eval_detail": "eval/astropy__astropy-14508.json"
+    },
+    {
+      "instance_id": "django__django-11734",
+      "agent": "claude-code",
+      "status": "success",
+      "patch_generated": true,
+      "cost_usd": 1.7918593500000002,
+      "e2e_time": 726.9488739967346,
+      "tokens": 2758596,
+      "convergence_steps": 59,
+      "model": "",
+      "resolved": false,
+      "regression_safe": true,
+      "fail_to_pass_total": 0,
+      "fail_to_pass_passed": 0,
+      "pass_to_pass_total": 0,
+      "pass_to_pass_passed": 0,
+      "eval_detail": "eval/django__django-11734.json"
+    },
+    {
+      "instance_id": "django__django-13741",
+      "agent": "claude-code",
+      "status": "success",
+      "patch_generated": true,
+      "cost_usd": 0.22796885000000003,
+      "e2e_time": 70.78750228881836,
+      "tokens": 443603,
+      "convergence_steps": 20,
+      "model": "",
+      "resolved": true,
+      "regression_safe": true,
+      "fail_to_pass_total": 1,
+      "fail_to_pass_passed": 1,
+      "pass_to_pass_total": 82,
+      "pass_to_pass_passed": 82,
+      "eval_detail": "eval/django__django-13741.json"
+    },
+    {
+      "instance_id": "django__django-14034",
+      "agent": "claude-code",
+      "status": "success",
+      "patch_generated": true,
+      "cost_usd": 0.2266386,
+      "e2e_time": 81.46577024459839,
+      "tokens": 383005,
+      "convergence_steps": 17,
+      "model": "",
+      "resolved": false,
+      "regression_safe": true,
+      "fail_to_pass_total": 0,
+      "fail_to_pass_passed": 0,
+      "pass_to_pass_total": 0,
+      "pass_to_pass_passed": 0,
+      "eval_detail": "eval/django__django-14034.json"
+    },
+    {
+      "instance_id": "pylint-dev__pylint-7080",
+      "agent": "claude-code",
+      "status": "success",
+      "patch_generated": true,
+      "cost_usd": 1.4991123499999994,
+      "e2e_time": 601.7990357875824,
+      "tokens": 1645014,
+      "convergence_steps": 32,
+      "model": "",
+      "resolved": false,
+      "regression_safe": false,
+      "fail_to_pass_total": 1,
+      "fail_to_pass_passed": 0,
+      "pass_to_pass_total": 120,
+      "pass_to_pass_passed": 0,
+      "eval_detail": "eval/pylint-dev__pylint-7080.json"
+    },
+    {
+      "instance_id": "scikit-learn__scikit-learn-26323",
+      "agent": "claude-code",
+      "status": "success",
+      "patch_generated": true,
+      "cost_usd": 0.5895186,
+      "e2e_time": 552.2914292812347,
+      "tokens": 38003,
+      "convergence_steps": 1,
+      "model": "",
+      "resolved": false,
+      "regression_safe": true,
+      "fail_to_pass_total": 0,
+      "fail_to_pass_passed": 0,
+      "pass_to_pass_total": 0,
+      "pass_to_pass_passed": 0,
+      "eval_detail": "eval/scikit-learn__scikit-learn-26323.json"
+    }
+  ],
+  "generated_at": "2026-04-21T14:40:48.504735"
+}

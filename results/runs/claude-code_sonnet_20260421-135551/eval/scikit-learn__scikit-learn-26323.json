@@ -1,0 +1,11 @@
+{
+  "instance_id": "scikit-learn__scikit-learn-26323",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "fail_to_pass_results": {},
+  "pass_to_pass_results": {},
+  "regression_safe": true,
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 1.0,
+  "error": "Failed to pull image: ghcr.io/epoch-research/swe-bench.eval.x86_64.scikit-learn__scikit-learn-26323:latest"
+}

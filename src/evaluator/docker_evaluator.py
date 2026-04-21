@@ -281,27 +281,39 @@ def evaluate_single(
             if result.returncode != 0:
                 logger.warning(f"  test_patch apply warning: {result.stderr[:200]}")
 
-        # 4. Apply agent's patch (try git apply, fallback to patch -p1)
+        # 4. Apply agent's patch
+        #    Official SWE-bench sequence: `git apply` → `git apply --3way` (blob-SHA merge).
+        #    Patch content is never modified; --3way only changes the apply algorithm to use
+        #    the patch header's blob SHAs for context resolution, recovering from test_patch
+        #    drift without altering the agent's submission.
         patch_path = _write_patch_file(agent_result.patch)
         subprocess.run(
             ["docker", "cp", patch_path, f"{container_name}:/tmp/agent.patch"],
             capture_output=True, timeout=10,
         )
+
         result = _docker_exec(
-            container_name, "cd /testbed && git apply /tmp/agent.patch", timeout=30,
+            container_name,
+            "cd /testbed && git apply --verbose /tmp/agent.patch",
+            timeout=30,
         )
         if result.returncode != 0:
-            logger.info(f"  git apply failed, trying patch -p1...")
+            logger.info(f"  git apply failed, retrying with --3way...")
             result = _docker_exec(
-                container_name, "cd /testbed && patch -p1 < /tmp/agent.patch", timeout=30,
+                container_name,
+                "cd /testbed && git apply --verbose --3way /tmp/agent.patch",
+                timeout=30,
             )
+
         Path(patch_path).unlink(missing_ok=True)
 
         if result.returncode != 0:
+            detail = (result.stderr.strip() or result.stdout.strip() or "(no output)")[:500]
             return EvalResult(
                 instance_id=task.instance_id,
                 agent_name=agent_result.agent_name,
-                error=f"Agent patch apply failed: {result.stderr[:300]}",
+                resolved=False,
+                error=f"Agent patch apply failed: {detail}",
             )
 
         logger.info(f"  Patch applied successfully")

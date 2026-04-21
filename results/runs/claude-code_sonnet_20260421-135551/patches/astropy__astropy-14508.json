@@ -1,0 +1,22 @@
+{
+  "instance_id": "astropy__astropy-14508",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py\nindex 118bfced89..2aca0cb465 100644\n--- a/astropy/io/fits/card.py\n+++ b/astropy/io/fits/card.py\n@@ -1299,7 +1299,13 @@ def _format_value(value):\n \n def _format_float(value):\n     \"\"\"Format a floating number to make sure it gets the decimal point.\"\"\"\n-    value_str = f\"{value:.16G}\"\n+    value_str = str(value)\n+    if len(value_str) <= 20 and (\".\" in value_str or \"e\" in value_str):\n+        # str(value) is short enough and already looks like a float; normalize\n+        # the exponent marker to uppercase so the rest of the code handles it.\n+        value_str = value_str.upper()\n+    else:\n+        value_str = f\"{value:.16G}\"\n     if \".\" not in value_str and \"E\" not in value_str:\n         value_str += \".0\"\n     elif \"E\" in value_str:",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 248299,
+    "output_tokens": 4661,
+    "cache_read_tokens": 234815,
+    "cache_write_tokens": 13471
+  },
+  "timestamps": {
+    "task_start": 1776748827.6711996,
+    "task_end": 1776748937.2886894,
+    "first_action": 1776748836.3133662
+  },
+  "total_cost_usd": 0.19220074999999998,
+  "convergence_steps": 12,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":107845,\"duration_api_ms\":103706,\"num_turns\":12,\"result\":\"The fix looks good. Here's a summary of what changed and why:\\n\\n**Root cause:** `_format_float` always used `f\\\"{value:.16G}\\\"` which expands `0.009125` to `0.009124999999999999` (16 significant digits of IEEE 754 float representation), unnecessarily making the string longer.\\n\\n**Fix:** Try `str(value)` first. Python's `str()` for floats uses the shortest representation that round-trips back to the same float (since Python 3.1, using David Gay's algorithm). If the result fits within 20 characters and looks like a float (has `.` or `e`), use it — normalizing the exponent marker to uppercase `E` so the existing normalization/truncation logic works unchanged. Only fall back to `f\\\"{value:.16G}\\\"` when `str()` gives something too long (e.g. an integer without a decimal point like `1` for `1.0`, which hits the `+= \\\".0\\\"` path after the fallback).\\n\\nThis means `0.009125` stays `0.009125` instead of expanding to `0.009124999999999999`, preserving space for the comment field.\",\"stop_reason\":\"end_turn\",\"session_id\":\"05b91be0-f5e8-4627-a2af-07b8deb13503\",\"total_cost_usd\":0.19220074999999998,\"usage\":{\"input_tokens\":13,\"cache_creation_input_tokens\":13471,\"cache_read_input_tokens\":234815,\"output_tokens\":4661,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":13471,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":275,\"cache_read_input_tokens\":24372,\"cache_creation_input_tokens\":698,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":698},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1206,\"outputTokens\":16,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.001286,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":13,\"outputTokens\":4661,\"cacheReadInputTokens\":234815,\"cacheCreationInputTokens\":13471,\"webSearchRequests\":0,\"costUSD\":0.19091475000000002,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"5a3ad383-dbfa-4ead-b49a-f098c400eba4\"}\n",
+  "model_name": ""
+}

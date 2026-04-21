@@ -1,0 +1,22 @@
+{
+  "instance_id": "django__django-12284",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py\nindex 1a55d3d417..5b75eb756a 100644\n--- a/django/db/models/fields/__init__.py\n+++ b/django/db/models/fields/__init__.py\n@@ -764,7 +764,7 @@ class Field(RegisterLookupMixin):\n             if not getattr(cls, self.attname, None):\n                 setattr(cls, self.attname, self.descriptor_class(self))\n         if self.choices is not None:\n-            if not hasattr(cls, 'get_%s_display' % self.name):\n+            if 'get_%s_display' % self.name not in cls.__dict__:\n                 setattr(\n                     cls,\n                     'get_%s_display' % self.name,",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 129447,
+    "output_tokens": 2336,
+    "cache_read_tokens": 120391,
+    "cache_write_tokens": 9048
+  },
+  "timestamps": {
+    "task_start": 1776670665.5937502,
+    "task_end": 1776670706.6867077,
+    "first_action": 1776670670.6032503
+  },
+  "total_cost_usd": 0.10582530000000001,
+  "convergence_steps": 8,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":39647,\"duration_api_ms\":40076,\"num_turns\":8,\"result\":\"The fix works. \\\"C\\\" now correctly returns \\\"output3\\\" instead of \\\"C\\\".\\n\\n**Root cause:** `contribute_to_class` used `hasattr(cls, 'get_%s_display')` which returns `True` for child classes because they inherit the method from the parent. So the child model's field (with extended choices) never registered its own display method — it kept using the parent's method with the parent's (shorter) choices list.\\n\\n**Fix:** Changed the check to `'get_%s_display' % self.name not in cls.__dict__`, which only skips setting the method if it's *directly* defined on the class itself (e.g., by the user), not if it's merely inherited.\",\"stop_reason\":\"end_turn\",\"session_id\":\"f8491541-2bd9-4b28-a6e8-1e578a38ac5b\",\"total_cost_usd\":0.10582530000000001,\"usage\":{\"input_tokens\":8,\"cache_creation_input_tokens\":9048,\"cache_read_input_tokens\":120391,\"output_tokens\":2336,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":9048,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":163,\"cache_read_input_tokens\":19909,\"cache_creation_input_tokens\":548,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":548},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":614,\"outputTokens\":20,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000714,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":8,\"outputTokens\":2336,\"cacheReadInputTokens\":120391,\"cacheCreationInputTokens\":9048,\"webSearchRequests\":0,\"costUSD\":0.1051113,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"4c5bef3d-2112-42bd-91d8-c9b899849df0\"}\n",
+  "model_name": ""
+}
