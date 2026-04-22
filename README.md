@@ -446,15 +446,6 @@ python scripts/pick_small_instances.py --tier verified --n 20 --per-repo-max 2
 - Manifest 조회 결과는 `data/.image_size_cache.json`에 캐싱 → `--n`이나 `--per-repo-max` 값만 바꿔 재실행할 때 GHCR 재조회 없이 즉시 선택
 - Manifest를 가져올 수 없는 인스턴스(공개 안 됨 / 네트워크 차단)는 자동 제외
 
-**실행 후 평가**
-```bash
-# 추출된 서브셋으로 평가
-python scripts/run_eval.py --agents claude-code --model sonnet \
-    --dataset data/swebench_lite_small.jsonl --tier lite \
-    --sample-size 10 --verify
-```
-
-
 ## Docker 이미지 사전 pull (pre-warm)
 
 평가 도중 `docker pull` 실패로 evaluation이 중단되지 않게, 대상 인스턴스의 이미지들을 **평가 시작 전에 미리** 받아둡니다. `pull_image()`를 그대로 재사용하므로 실패 분류 + 재시도 로직이 동일하게 적용되고, 이미 받은 이미지는 자동 skip되어 **중단 후 재실행 시 이어받기**가 됩니다.
