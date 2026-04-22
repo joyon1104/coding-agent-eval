@@ -8,6 +8,7 @@ paths before running a full evaluation, especially on restricted networks.
 
 import json
 import os
+import random
 import subprocess
 import sys
 import time
@@ -25,15 +26,23 @@ from src.evaluator.docker_evaluator import get_image_name
 
 console = Console()
 
-# Keyword → category, ordered from most specific to generic
+# Keyword → category, ordered from most specific to generic.
+# rate_limit must come before `auth` so "429 too many requests" doesn't get
+# miscategorized when GHCR wraps it in a vaguely-auth-looking envelope.
 _ERROR_CATEGORIES = [
-    ("not_found", ("no such manifest", "not found", "manifest unknown")),
-    ("auth",      ("unauthorized", "denied", "forbidden")),
-    ("timeout",   ("timeout", "timed out", "deadline")),
-    ("tls",       ("tls", "certificate", "x509")),
-    ("dns",       ("no such host", "dns", "lookup")),
-    ("network",   ("connection refused", "connect:")),
+    ("not_found",  ("no such manifest", "not found", "manifest unknown")),
+    ("rate_limit", ("toomanyrequests", "too many requests", "rate limit", "429")),
+    ("auth",       ("unauthorized", "denied", "forbidden", "401")),
+    ("timeout",    ("timeout", "timed out", "deadline", "i/o timeout")),
+    ("tls",        ("tls", "certificate", "x509")),
+    ("dns",        ("no such host", "dns", "lookup")),
+    ("network",    ("connection refused", "connect:",
+                    "connection reset", "reset by peer",
+                    "broken pipe", "unexpected eof")),
 ]
+
+# Categories worth retrying — transient in nature. Others are persistent.
+_RETRYABLE = {"rate_limit", "timeout", "network"}
 
 
 def _classify(err: str) -> str:
@@ -44,33 +53,69 @@ def _classify(err: str) -> str:
     return "unknown"
 
 
-def check_one(instance_id: str, timeout: int = 30) -> dict:
-    """Check a single image's manifest. Metadata-only, no pull."""
+def _backoff_seconds(category: str, attempt: int) -> float:
+    """Exponential backoff with jitter. rate_limit waits longer (GHCR reset window)."""
+    base = 15 if category == "rate_limit" else 2
+    return base * (2 ** attempt) + random.uniform(0, 1)
+
+
+def check_one(instance_id: str, timeout: int = 30, max_retries: int = 3) -> dict:
+    """Check a single image's manifest. Metadata-only, no pull.
+
+    Retries transient failures (rate_limit / timeout / network) up to max_retries
+    with exponential backoff. Persistent failures (not_found / auth / tls / dns)
+    return immediately.
+    """
     image = get_image_name(instance_id)
-    t0 = time.time()
-    try:
-        r = subprocess.run(
-            ["docker", "manifest", "inspect", image],
-            capture_output=True, text=True, timeout=timeout,
-        )
-        if r.returncode == 0:
-            return {
-                "instance_id": instance_id, "image": image,
-                "ok": True, "elapsed": round(time.time() - t0, 2),
+    last = None
+    for attempt in range(max_retries + 1):
+        t0 = time.time()
+        try:
+            r = subprocess.run(
+                ["docker", "manifest", "inspect", image],
+                capture_output=True, text=True, timeout=timeout,
+            )
+            if r.returncode == 0:
+                return {
+                    "instance_id": instance_id, "image": image, "ok": True,
+                    "elapsed": round(time.time() - t0, 2),
+                    "attempts": attempt + 1,
+                }
+            err = (r.stderr or r.stdout).strip()
+            # Docker client-side parser limitation: "unsupported manifest format"
+            # means the registry returned a valid (often newer OCI) manifest that
+            # the local `docker manifest inspect` parser can't handle — but the
+            # image IS on the registry and `docker pull` uses a different code
+            # path that succeeds. Treat as OK with a note.
+            if "unsupported manifest format" in err.lower():
+                return {
+                    "instance_id": instance_id, "image": image, "ok": True,
+                    "note": "client parser limitation; image is pullable",
+                    "elapsed": round(time.time() - t0, 2),
+                    "attempts": attempt + 1,
+                }
+            category = _classify(err)
+            last = {
+                "instance_id": instance_id, "image": image, "ok": False,
+                "category": category, "error": err[:300],
+                "elapsed": round(time.time() - t0, 2),
+                "attempts": attempt + 1,
             }
-        err = (r.stderr or r.stdout).strip()
-        return {
-            "instance_id": instance_id, "image": image, "ok": False,
-            "category": _classify(err), "error": err[:300],
-            "elapsed": round(time.time() - t0, 2),
-        }
-    except subprocess.TimeoutExpired:
-        return {
-            "instance_id": instance_id, "image": image, "ok": False,
-            "category": "timeout",
-            "error": f"hard timeout after {timeout}s",
-            "elapsed": timeout,
-        }
+        except subprocess.TimeoutExpired:
+            category = "timeout"
+            last = {
+                "instance_id": instance_id, "image": image, "ok": False,
+                "category": category,
+                "error": f"hard timeout after {timeout}s",
+                "elapsed": timeout,
+                "attempts": attempt + 1,
+            }
+
+        if category not in _RETRYABLE or attempt == max_retries:
+            return last
+        time.sleep(_backoff_seconds(category, attempt))
+
+    return last  # unreachable; satisfies type-checkers
 
 
 @click.command()
@@ -81,13 +126,15 @@ def check_one(instance_id: str, timeout: int = 30) -> dict:
               help="Parallel manifest checks")
 @click.option("--timeout", default=30, show_default=True,
               help="Per-image timeout (seconds)")
+@click.option("--retries", default=3, show_default=True,
+              help="Max retries for transient failures (rate_limit/timeout/network)")
 @click.option("--output", default=None,
               help="Report JSON path (default: results/image_availability_<tier>.json)")
 @click.option("--only-failing", is_flag=True,
               help="Re-check only the instances that failed in a previous report")
 @click.option("--input", "input_path", default=None,
               help="Previous report JSON (used with --only-failing)")
-def main(tier, concurrency, timeout, output, only_failing, input_path):
+def main(tier, concurrency, timeout, retries, output, only_failing, input_path):
     """Check Docker image availability for every instance in a tier."""
     ds_path = PROJECT_ROOT / "data" / f"swebench_{tier}.jsonl"
     if not ds_path.exists():
@@ -107,7 +154,7 @@ def main(tier, concurrency, timeout, output, only_failing, input_path):
     else:
         instances = [json.loads(l)["instance_id"] for l in ds_path.open()]
         console.print(f"Checking {len(instances)} images from tier=[bold]{tier}[/bold] "
-                      f"(concurrency={concurrency}, timeout={timeout}s)")
+                      f"(concurrency={concurrency}, timeout={timeout}s, retries={retries})")
 
     if not instances:
         console.print("[yellow]Nothing to check.[/yellow]")
@@ -116,21 +163,28 @@ def main(tier, concurrency, timeout, output, only_failing, input_path):
     results = []
     t_start = time.time()
     with ThreadPoolExecutor(max_workers=concurrency) as ex:
-        futures = {ex.submit(check_one, iid, timeout): iid for iid in instances}
+        futures = {ex.submit(check_one, iid, timeout, retries): iid for iid in instances}
         for i, fut in enumerate(as_completed(futures), 1):
             r = fut.result()
             results.append(r)
+            attempts = r.get("attempts", 1)
+            retry_tag = f" (after {attempts} attempts)" if attempts > 1 else ""
             if r["ok"]:
+                note_tag = f" [dim]({r['note']})[/dim]" if r.get("note") else ""
                 mark = "[green]OK  [/green]"
+                console.print(f"  [{i:>4}/{len(instances)}] {mark} {r['instance_id']}{retry_tag}{note_tag}")
             else:
                 mark = f"[red]FAIL[{r['category']}][/red]"
-            console.print(f"  [{i:>4}/{len(instances)}] {mark} {r['instance_id']}")
+                console.print(f"  [{i:>4}/{len(instances)}] {mark} {r['instance_id']}{retry_tag}")
 
     elapsed = time.time() - t_start
 
     # Summary
     ok = sum(1 for r in results if r["ok"])
+    retried_ok = sum(1 for r in results if r["ok"] and r.get("attempts", 1) > 1)
     console.print(f"\n[bold]Summary[/bold]: {ok}/{len(results)} OK — {elapsed:.1f}s total")
+    if retried_ok:
+        console.print(f"  [dim]({retried_ok} recovered via retry)[/dim]")
     cats = Counter(r["category"] for r in results if not r["ok"])
     for cat, n in cats.most_common():
         console.print(f"  [red]{cat:<12}[/red]: {n}")
