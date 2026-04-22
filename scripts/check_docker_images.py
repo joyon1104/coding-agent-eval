@@ -8,7 +8,6 @@ paths before running a full evaluation, especially on restricted networks.
 
 import json
 import os
-import random
 import subprocess
 import sys
 import time
@@ -23,40 +22,9 @@ from rich.console import Console
 
 from src.core.config import PROJECT_ROOT
 from src.evaluator.docker_evaluator import get_image_name
+from src.evaluator.registry_utils import classify, RETRYABLE, backoff_seconds
 
 console = Console()
-
-# Keyword → category, ordered from most specific to generic.
-# rate_limit must come before `auth` so "429 too many requests" doesn't get
-# miscategorized when GHCR wraps it in a vaguely-auth-looking envelope.
-_ERROR_CATEGORIES = [
-    ("not_found",  ("no such manifest", "not found", "manifest unknown")),
-    ("rate_limit", ("toomanyrequests", "too many requests", "rate limit", "429")),
-    ("auth",       ("unauthorized", "denied", "forbidden", "401")),
-    ("timeout",    ("timeout", "timed out", "deadline", "i/o timeout")),
-    ("tls",        ("tls", "certificate", "x509")),
-    ("dns",        ("no such host", "dns", "lookup")),
-    ("network",    ("connection refused", "connect:",
-                    "connection reset", "reset by peer",
-                    "broken pipe", "unexpected eof")),
-]
-
-# Categories worth retrying — transient in nature. Others are persistent.
-_RETRYABLE = {"rate_limit", "timeout", "network"}
-
-
-def _classify(err: str) -> str:
-    el = err.lower()
-    for cat, kws in _ERROR_CATEGORIES:
-        if any(k in el for k in kws):
-            return cat
-    return "unknown"
-
-
-def _backoff_seconds(category: str, attempt: int) -> float:
-    """Exponential backoff with jitter. rate_limit waits longer (GHCR reset window)."""
-    base = 15 if category == "rate_limit" else 2
-    return base * (2 ** attempt) + random.uniform(0, 1)
 
 
 def check_one(instance_id: str, timeout: int = 30, max_retries: int = 3) -> dict:
@@ -94,7 +62,7 @@ def check_one(instance_id: str, timeout: int = 30, max_retries: int = 3) -> dict
                     "elapsed": round(time.time() - t0, 2),
                     "attempts": attempt + 1,
                 }
-            category = _classify(err)
+            category = classify(err)
             last = {
                 "instance_id": instance_id, "image": image, "ok": False,
                 "category": category, "error": err[:300],
@@ -111,9 +79,9 @@ def check_one(instance_id: str, timeout: int = 30, max_retries: int = 3) -> dict
                 "attempts": attempt + 1,
             }
 
-        if category not in _RETRYABLE or attempt == max_retries:
+        if category not in RETRYABLE or attempt == max_retries:
             return last
-        time.sleep(_backoff_seconds(category, attempt))
+        time.sleep(backoff_seconds(category, attempt))
 
     return last  # unreachable; satisfies type-checkers
 

@@ -20,9 +20,11 @@ import logging
 import platform
 import subprocess
 import tempfile
+import time
 from pathlib import Path
 
 from src.core.models import AgentResult, EvalTask
+from src.evaluator.registry_utils import RETRYABLE, backoff_seconds, classify
 from src.evaluator.swebench_harness import EvalResult
 
 logger = logging.getLogger("coding-agent-eval")
@@ -49,26 +51,47 @@ def image_exists_locally(image_name: str) -> bool:
     return bool(result.stdout.strip())
 
 
-def pull_image(instance_id: str) -> bool:
-    """Pull the SWE-bench Docker image for an instance."""
+def pull_image(instance_id: str, max_retries: int = 3, timeout_per_try: int = 600) -> bool:
+    """Pull the SWE-bench Docker image for an instance with retry on transient failures.
+
+    Transient categories (rate_limit / timeout / network) trigger retry with
+    exponential backoff, since docker reuses already-downloaded blobs on retry,
+    making partial-progress failures cheap to recover from. Persistent failures
+    (not_found / auth / tls / dns) bail out immediately.
+    """
     image = get_image_name(instance_id)
 
     if image_exists_locally(image):
         logger.info(f"  Image already exists: {image}")
         return True
 
-    logger.info(f"  Pulling image: {image}")
-    result = subprocess.run(
-        ["docker", "pull", image],
-        capture_output=True, text=True, timeout=600,
-    )
+    for attempt in range(max_retries + 1):
+        logger.info(f"  Pulling image (attempt {attempt + 1}/{max_retries + 1}): {image}")
+        try:
+            result = subprocess.run(
+                ["docker", "pull", image],
+                capture_output=True, text=True, timeout=timeout_per_try,
+            )
+            if result.returncode == 0:
+                logger.info(f"  Pull complete: {image}")
+                return True
+            err = (result.stderr or result.stdout).strip()
+            category = classify(err)
+        except subprocess.TimeoutExpired:
+            err = f"hard timeout after {timeout_per_try}s"
+            category = "timeout"
 
-    if result.returncode != 0:
-        logger.error(f"  Pull failed: {result.stderr[:500]}")
-        return False
+        logger.warning(f"  Pull failed [{category}]: {err[:300]}")
 
-    logger.info(f"  Pull complete: {image}")
-    return True
+        if category not in RETRYABLE or attempt == max_retries:
+            logger.error(f"  Giving up after {attempt + 1} attempts: {image}")
+            return False
+
+        delay = backoff_seconds(category, attempt)
+        logger.info(f"  Retrying in {delay:.1f}s...")
+        time.sleep(delay)
+
+    return False
 
 
 def _docker_exec(container_id: str, cmd: str, timeout: int = 300) -> subprocess.CompletedProcess:
