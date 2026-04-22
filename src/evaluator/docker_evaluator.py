@@ -109,17 +109,26 @@ def _parse_test_output(output: str, test_names: list[str]) -> dict[str, bool]:
     Django format: "test_method (module.Class) ... ok"
                    "test_method (module.Class) ... FAIL"
     pytest format: "module/test_file.py::TestClass::test_method PASSED"
+
+    Conservative semantics: a test is `True` only if its per-test pass
+    line is observed in the output. Tests not observed (skipped, name typo,
+    runner crashed before reaching them, etc.) are `False` — never upgraded
+    to True based on an overall "OK" footer, since that overestimates TRR.
     """
     results = {}
 
     for test_name in test_names:
         test_name_stripped = test_name.strip()
 
-        # Parse "method_name (module.Class)" format
+        # Build search terms per test-name shape
         if " (" in test_name_stripped and test_name_stripped.endswith(")"):
+            # Django: "method (module.Class)"
             method, class_path = test_name_stripped.rsplit(" (", 1)
             class_path = class_path.rstrip(")")
             search_terms = [method, f"{class_path}.{method}", test_name_stripped]
+        elif "::" in test_name_stripped:
+            # pytest: "path/file.py::test_name[param]"
+            search_terms = [test_name_stripped, test_name_stripped.split("::")[-1]]
         else:
             search_terms = [test_name_stripped, test_name_stripped.split(".")[-1]]
 
@@ -131,25 +140,23 @@ def _parse_test_output(output: str, test_names: list[str]) -> dict[str, bool]:
                 if term not in line:
                     continue
                 found = True
-                # Django: "test_name ... ok" or "test_name ... FAIL"
-                if "... ok" in line or " ok" in line.split("...")[-1] if "..." in line else False:
+                # Django "... ok"
+                if "..." in line and (
+                    "... ok" in line or " ok" in line.split("...")[-1]
+                ):
                     passed = True
                     break
-                elif "PASSED" in line:
+                # pytest PASSED
+                if "PASSED" in line:
                     passed = True
                     break
-                elif "FAIL" in line or "ERROR" in line:
+                if "FAIL" in line or "ERROR" in line:
                     passed = False
                     break
             if found:
                 break
 
-        if not found:
-            # Check overall test result as fallback
-            last_lines = "\n".join(output.split("\n")[-10:])
-            if "\nOK" in last_lines and "FAILED" not in last_lines:
-                passed = True
-
+        # Unobserved → False (conservative; no overall-OK fallback).
         results[test_name] = passed
 
     return results
@@ -162,65 +169,86 @@ def _run_tests_in_container(
 ) -> dict[str, bool]:
     """Run tests inside the SWE-bench container.
 
-    Converts test names and runs them using Django's runtests.py or pytest.
-    For Django, extracts unique test modules to pass to runtests.py, then
-    parses per-test results from the verbose output.
+    Supports two test-name shapes that SWE-bench ships:
+      - Django:  "method_name (module.path.ClassName)"  → runtests.py
+      - pytest:  "path/to/file.py::test_name"            → pytest direct
+    pytest targets are passed verbatim so only the specific tests run
+    (not the whole file), and so pytest's CLI doesn't reject a mangled path.
     """
     if not test_names:
         return {}
 
-    # Convert "method (module.Class)" → "module.Class.method" for Django runtests
-    converted = []
+    django_targets: list[str] = []
+    pytest_targets: list[str] = []
+
     for t in test_names:
         t = t.strip()
-        if " (" in t and t.endswith(")"):
+        if not t:
+            continue
+        if "::" in t or t.endswith(".py"):
+            # pytest-native: "path/file.py::test_name" or "path/file.py"
+            pytest_targets.append(t)
+        elif " (" in t and t.endswith(")"):
+            # Django: "method (module.Class)" → "module.Class.method"
             method, cls = t.rsplit(" (", 1)
-            converted.append(f"{cls.rstrip(')')}.{method}")
-        elif t.startswith("test_") or "." in t:
-            converted.append(t)
-        # Skip non-standard test names (e.g. "#21962 - adding html escape...")
+            django_targets.append(f"{cls.rstrip(')')}.{method}")
+        elif t.startswith("test_") and "." in t:
+            # Pre-normalized Django dotted path
+            django_targets.append(t)
+        # else: unsupported shape (e.g. "#21962 - html escape..."); silently skip
 
-    # For Django runtests.py, pass unique test modules (not individual methods)
-    # to avoid command-line length issues with 100+ tests
-    modules = sorted(set(
-        ".".join(c.split(".")[:-1])  # module.Class (drop method)
-        for c in converted
-        if "." in c
-    ))
-    test_str = " ".join(modules)
+    # Write targets to two separate files. Write 0-byte file when the list is
+    # empty (don't go through _write_patch_file — it forces a trailing newline
+    # on empty strings, producing a 1-byte "\n" file that would make bash's
+    # `-n` test see a non-empty value and invoke the wrong runner).
+    def _stage_targets(targets: list[str], container_path: str):
+        content = ("\n".join(targets) + "\n") if targets else ""
+        tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False)
+        tmp.write(content)
+        tmp.close()
+        try:
+            subprocess.run(
+                ["docker", "cp", tmp.name, f"{container_id}:{container_path}"],
+                capture_output=True, timeout=10,
+            )
+        finally:
+            Path(tmp.name).unlink(missing_ok=True)
 
-    # Write test modules to a file to avoid shell escaping issues
-    test_list_file = _write_patch_file("\n".join(modules) + "\n")
-    test_list_txt = test_list_file + ".txt"
-    Path(test_list_file).rename(test_list_txt)
-    try:
-        subprocess.run(
-            ["docker", "cp", test_list_txt, f"{container_id}:/tmp/test_modules.txt"],
-            capture_output=True, timeout=10,
-        )
-    finally:
-        Path(test_list_txt).unlink(missing_ok=True)
+    _stage_targets(django_targets, "/tmp/django_targets.txt")
+    _stage_targets(pytest_targets, "/tmp/pytest_targets.txt")
 
+    # Use `[ -s file ]` (file has size > 0) to decide whether to invoke each
+    # runner — an empty file cleanly signals "no targets of this kind".
     test_cmd = (
         "cd /testbed && "
-        "MODULES=$(cat /tmp/test_modules.txt | tr '\\n' ' ') && "
-        "if [ -f tests/runtests.py ]; then "
-        "  python tests/runtests.py $MODULES --verbosity 2 2>&1; "
-        "else "
-        "  python -m pytest $MODULES -v 2>&1; "
-        "fi"
+        "RC=0 && "
+        "if [ -f tests/runtests.py ] && [ -s /tmp/django_targets.txt ]; then "
+        "  DJANGO=$(tr '\\n' ' ' < /tmp/django_targets.txt); "
+        "  python tests/runtests.py $DJANGO --verbosity 2 2>&1 || RC=$?; "
+        "fi; "
+        "if [ -s /tmp/pytest_targets.txt ]; then "
+        "  PYTEST=$(tr '\\n' ' ' < /tmp/pytest_targets.txt); "
+        "  python -m pytest $PYTEST -v --no-header 2>&1 || RC=$?; "
+        "fi; "
+        "exit $RC"
     )
 
     try:
         result = _docker_exec(container_id, test_cmd, timeout=timeout)
-    except subprocess.TimeoutExpired:
-        logger.warning(f"  Test execution timed out after {timeout}s")
-        return {t: False for t in test_names}
+        output = (result.stdout or "") + (result.stderr or "")
+        logger.info(f"  Test exit code: {result.returncode}")
+    except subprocess.TimeoutExpired as e:
+        # Salvage whatever the runner wrote before we killed it — tests that
+        # completed before the timeout still have valid results in the buffer.
+        partial_stdout = (e.stdout or b"").decode("utf-8", errors="replace") if isinstance(e.stdout, bytes) else (e.stdout or "")
+        partial_stderr = (e.stderr or b"").decode("utf-8", errors="replace") if isinstance(e.stderr, bytes) else (e.stderr or "")
+        output = partial_stdout + partial_stderr
+        logger.warning(
+            f"  Test execution timed out after {timeout}s; parsing {len(output)} "
+            f"chars of partial output (completed tests keep real results; rest are False)"
+        )
 
-    output = result.stdout + result.stderr
-    logger.info(f"  Test exit code: {result.returncode}")
     logger.info(f"  Test output (last 500 chars): {output[-500:]}")
-
     return _parse_test_output(output, test_names)
 
 
@@ -238,8 +266,17 @@ def evaluate_single(
     task: EvalTask,
     agent_result: AgentResult,
     timeout: int = 600,
+    f2p_timeout: int | None = None,
+    p2p_timeout: int | None = None,
 ) -> EvalResult:
-    """Evaluate a single agent result using the SWE-bench Docker image."""
+    """Evaluate a single agent result using the SWE-bench Docker image.
+
+    `timeout` is the default per-phase budget. `f2p_timeout` / `p2p_timeout`
+    override it for the respective test batches — P2P can hold hundreds of
+    tests on Django instances, so it gets a more generous default (1.5x).
+    """
+    f2p_timeout = f2p_timeout if f2p_timeout is not None else timeout
+    p2p_timeout = p2p_timeout if p2p_timeout is not None else int(timeout * 1.5)
     if not agent_result.patch:
         return EvalResult(
             instance_id=task.instance_id,
@@ -286,7 +323,11 @@ def evaluate_single(
         container_id = result.stdout.strip()[:12]
         logger.info(f"  Container started: {container_id}")
 
-        # 3. Apply test_patch (SWE-bench verification tests)
+        # 3. Apply test_patch (SWE-bench verification tests).
+        # Same sequence as agent patch: git apply → --3way, so F2P tests are
+        # guaranteed to be injected. If test_patch fails to apply, F2P tests
+        # won't exist in the repo and the parser would treat them as unobserved
+        # (False) — log it as an error, not a warning, so it's visible.
         if task.test_patch:
             patch_path = _write_patch_file(task.test_patch)
             subprocess.run(
@@ -294,15 +335,21 @@ def evaluate_single(
                 capture_output=True, timeout=10,
             )
             result = _docker_exec(
-                container_name, "cd /testbed && git apply /tmp/test.patch", timeout=30,
+                container_name,
+                "cd /testbed && git apply --verbose /tmp/test.patch",
+                timeout=30,
             )
             if result.returncode != 0:
+                logger.info("  test_patch apply failed, retrying with --3way...")
                 result = _docker_exec(
-                    container_name, "cd /testbed && patch -p1 < /tmp/test.patch", timeout=30,
+                    container_name,
+                    "cd /testbed && git apply --verbose --3way /tmp/test.patch",
+                    timeout=30,
                 )
             Path(patch_path).unlink(missing_ok=True)
             if result.returncode != 0:
-                logger.warning(f"  test_patch apply warning: {result.stderr[:200]}")
+                detail = (result.stderr.strip() or result.stdout.strip() or "(no output)")[:300]
+                logger.error(f"  test_patch apply failed: {detail}")
 
         # 4. Apply agent's patch
         #    Official SWE-bench sequence: `git apply` → `git apply --3way` (blob-SHA merge).
@@ -344,17 +391,26 @@ def evaluate_single(
         # 5. Run FAIL_TO_PASS tests
         logger.info(f"  Running FAIL_TO_PASS tests ({len(task.FAIL_TO_PASS)})...")
         f2p_results = _run_tests_in_container(
-            container_name, task.FAIL_TO_PASS, timeout=timeout,
+            container_name, task.FAIL_TO_PASS, timeout=f2p_timeout,
         )
 
         # 6. Run PASS_TO_PASS tests
         logger.info(f"  Running PASS_TO_PASS tests ({len(task.PASS_TO_PASS)})...")
         p2p_results = _run_tests_in_container(
-            container_name, task.PASS_TO_PASS, timeout=timeout,
+            container_name, task.PASS_TO_PASS, timeout=p2p_timeout,
         )
 
-        # Resolved = all FAIL_TO_PASS tests now pass
-        all_f2p_pass = bool(f2p_results) and all(f2p_results.values())
+        # Resolved = all FAIL_TO_PASS tests now pass.
+        # Distinguish "no F2P defined in dataset" (can't verify) from
+        # "F2P exists and some failed" — the former is flagged but not conflated
+        # with a real regression; keep resolved=False conservatively so TRR
+        # stays honest, but record the reason so reports can explain it.
+        error_note = ""
+        if not task.FAIL_TO_PASS:
+            error_note = "no FAIL_TO_PASS tests in dataset row; resolution unverifiable"
+            all_f2p_pass = False
+        else:
+            all_f2p_pass = all(f2p_results.values()) if f2p_results else False
 
         return EvalResult(
             instance_id=task.instance_id,
@@ -362,6 +418,7 @@ def evaluate_single(
             resolved=all_f2p_pass,
             fail_to_pass_results=f2p_results,
             pass_to_pass_results=p2p_results,
+            error=error_note,
         )
 
     except subprocess.TimeoutExpired:
@@ -389,6 +446,8 @@ def evaluate_batch(
     tasks: list[EvalTask],
     agent_results: list[AgentResult],
     timeout_per_task: int = 600,
+    f2p_timeout: int | None = None,
+    p2p_timeout: int | None = None,
 ) -> list[EvalResult]:
     """Evaluate a batch of agent results."""
     task_map = {t.instance_id: t for t in tasks}
@@ -405,7 +464,12 @@ def evaluate_batch(
             continue
 
         logger.info(f"Evaluating: {result.instance_id}")
-        eval_result = evaluate_single(task, result, timeout=timeout_per_task)
+        eval_result = evaluate_single(
+            task, result,
+            timeout=timeout_per_task,
+            f2p_timeout=f2p_timeout,
+            p2p_timeout=p2p_timeout,
+        )
 
         status = "RESOLVED" if eval_result.resolved else "NOT RESOLVED"
         logger.info(

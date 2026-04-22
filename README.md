@@ -419,6 +419,77 @@ python scripts/cleanup.py
 ```
 
 
+## 가벼운 서브셋 추출 (작은 이미지 + 작은 텍스트 우선)
+
+자원이 제한된 환경(디스크·대역폭·API 예산)에서 돌릴 때, 티어 전체 대신 이미지 용량이 작고 문제·힌트·패치 텍스트가 짧은 인스턴스만 골라 별도 JSONL로 저장할 수 있습니다. GHCR manifest API로 각 이미지의 compressed layer 크기를 조회해 ranking하며, 원본 JSONL은 건드리지 않습니다.
+
+```bash
+# verified에서 이미지 가장 작은 10개 추출
+python scripts/pick_small_instances.py --tier verified --n 10
+
+# lite에서 10개 — repo 다양성 보장 (repo당 최대 1개씩)
+python scripts/pick_small_instances.py --tier lite --n 10 --per-repo-max 1
+
+# 여러 인스턴스를 같은 repo에서 허용 (repo당 최대 2개)
+python scripts/pick_small_instances.py --tier verified --n 20 --per-repo-max 2
+```
+
+**주요 옵션**
+- `--tier {lite|verified|full|multi}`: 소스 티어 (필수)
+- `--n N`: 추출할 인스턴스 개수 (필수)
+- `--per-repo-max M`: repo당 최대 M개 (생략 시 무제한, `1`이면 완전 다양성)
+- `--output PATH`: 출력 JSONL 경로 (기본 `data/swebench_<tier>_small.jsonl`)
+- `--concurrency N`: manifest 병렬 조회 수 (기본 8)
+
+**동작 방식**
+- 정렬 기준: `(image_size ASC, text_size ASC)` — 이미지 크기 우선, 같은 이미지 크기면 텍스트 짧은 순
+- Manifest 조회 결과는 `data/.image_size_cache.json`에 캐싱 → `--n`이나 `--per-repo-max` 값만 바꿔 재실행할 때 GHCR 재조회 없이 즉시 선택
+- Manifest를 가져올 수 없는 인스턴스(공개 안 됨 / 네트워크 차단)는 자동 제외
+
+**실행 후 평가**
+```bash
+# 추출된 서브셋으로 평가
+python scripts/run_eval.py --agents claude-code --model sonnet \
+    --dataset data/swebench_lite_small.jsonl --tier lite \
+    --sample-size 10 --verify
+```
+
+
+## Docker 이미지 사전 pull (pre-warm)
+
+평가 도중 `docker pull` 실패로 evaluation이 중단되지 않게, 대상 인스턴스의 이미지들을 **평가 시작 전에 미리** 받아둡니다. `pull_image()`를 그대로 재사용하므로 실패 분류 + 재시도 로직이 동일하게 적용되고, 이미 받은 이미지는 자동 skip되어 **중단 후 재실행 시 이어받기**가 됩니다.
+
+```bash
+# 여러 데이터셋의 이미지 한꺼번에 사전 pull (중복은 자동 제거)
+python scripts/prepull_images.py \
+    --dataset data/swebench_lite_small.jsonl \
+    --dataset data/swebench_verified_small.jsonl
+
+# 대용량/느린 네트워크에서는 per-try timeout 늘리기 (기본 1200s)
+python scripts/prepull_images.py \
+    --dataset data/swebench_verified_small.jsonl \
+    --timeout 1800 --max-retries 5
+
+# 실제 pull 없이 "받을 대상" 목록만 확인
+python scripts/prepull_images.py \
+    --dataset data/swebench_lite_small.jsonl --dry-run
+```
+
+**주요 옵션**
+- `--dataset PATH`: 대상 JSONL (여러 번 지정 가능, 중복 instance_id는 자동 병합)
+- `--max-retries N`: transient 실패 재시도 (기본 3)
+- `--timeout N`: pull 한 번 시도 최대 초 (기본 1200)
+- `--dry-run`: 미리 대상만 출력
+
+**중단 후 재개 동작**
+- Ctrl-C 또는 중간 실패로 종료 → 같은 명령 재실행하면 됨
+- 이미 로컬에 있는 이미지는 `image_exists_locally()` 체크로 즉시 skip
+- 마지막에 실패 instance 목록이 보이며, exit 1로 종료 (CI 파이프라인에서 감지 가능)
+
+**평가 연결**
+사전 pull 후 `run_eval.py --verify`를 실행하면 Step 2에서 모든 이미지가 `Image already exists` 로그 한 줄과 함께 즉시 테스트 단계로 진행됩니다. 실패 요인에서 "pull" 카테고리가 완전히 제거됩니다.
+
+
 ## Docker 이미지 가용성 사전 점검
 
 사내망·제한된 네트워크에서 평가를 돌리기 전에, 해당 티어의 SWE-bench Docker 이미지를 실제로 받아올 수 있는지 **다운로드 없이** 미리 확인할 수 있습니다. 각 인스턴스에 대해 `docker manifest inspect`(메타데이터만 조회, 수 KB)를 병렬로 실행해 레지스트리 도달성 + 인증 + 이미지 존재 여부를 검증합니다.

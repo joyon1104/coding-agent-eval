@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import click
 from pathlib import Path
 from rich.console import Console
+from rich.markup import escape as _esc
 
 from src.core.config import PROJECT_ROOT
 from src.core.models import AgentResult, EvalTask
@@ -128,12 +129,15 @@ def main(run_id, agent, dataset, timeout):
         console.print(f"  {er.instance_id}: {status}")
 
         if er.error:
-            console.print(f"    Error: {er.error}")
+            console.print(f"    Error: {_esc(er.error)}")
 
+        # Test names may contain square brackets (e.g. parametrized pytest ids like
+        # "test_foo[param-1]") which rich interprets as markup tags and crashes on.
+        # Wrap every dynamic test-name string in escape() to keep it literal.
         if er.fail_to_pass_results:
             for test, passed in er.fail_to_pass_results.items():
                 icon = "[green]PASS[/green]" if passed else "[red]FAIL[/red]"
-                console.print(f"    F2P: {icon} {test}")
+                console.print(f"    F2P: {icon} {_esc(test)}")
 
         if er.pass_to_pass_results:
             p2p_pass = sum(1 for v in er.pass_to_pass_results.values() if v)
@@ -144,7 +148,7 @@ def main(run_id, agent, dataset, timeout):
                 console.print(f"    P2P: [yellow]{p2p_pass}/{p2p_total} passed[/yellow]")
                 for test, passed in er.pass_to_pass_results.items():
                     if not passed:
-                        console.print(f"    P2P: [red]FAIL[/red] {test}")
+                        console.print(f"    P2P: [red]FAIL[/red] {_esc(test)}")
 
     # 6. Summary metrics
     console.print(f"\n[bold]Summary[/bold]")
