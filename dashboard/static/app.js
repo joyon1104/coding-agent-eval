@@ -248,8 +248,12 @@ function renderDetail(runId, summary) {
         const tr = document.createElement('tr');
         tr.classList.add('task-row-no-click');
         const resolved = task.resolved;
-        const resolvedStr = resolved === true ? '<span class="status-resolved">RESOLVED</span>'
-            : resolved === false ? '<span class="status-failed">NOT RESOLVED</span>'
+        const resolvedTooltip = resolved === true ? RESOLVED_DESC.true
+            : resolved === false ? RESOLVED_DESC.false : '';
+        const resolvedStr = resolved === true
+            ? `<span class="status-resolved" title="${esc(RESOLVED_DESC.true)}">RESOLVED</span>`
+            : resolved === false
+            ? `<span class="status-failed" title="${esc(RESOLVED_DESC.false)}">NOT RESOLVED</span>`
             : '-';
         // Pipeline-level status (set by formatter.save_summary):
         //   success = tests ran end-to-end · fail = agent-side issue ·
@@ -257,7 +261,8 @@ function renderDetail(runId, summary) {
         let statusClass = 'status-error';
         if (task.status === 'success') statusClass = 'status-success';
         else if (task.status === 'fail') statusClass = 'status-failed';
-        const statusStr = `<span class="${statusClass}">${esc(task.status || '-')}</span>`;
+        const statusTooltip = STATUS_DESC[task.status] || '';
+        const statusStr = `<span class="${statusClass}" title="${esc(statusTooltip)}">${esc(task.status || '-')}</span>`;
 
         const f2p = task.fail_to_pass_total !== undefined
             ? `${task.fail_to_pass_passed}/${task.fail_to_pass_total}`
@@ -283,6 +288,19 @@ function renderDetail(runId, summary) {
     });
 }
 
+// Per-status & per-resolved descriptions. Used both in the inline legend
+// under the task-counts panel and as `title=` tooltips on the per-task
+// table cells, so a hover anywhere in the detail page yields the same text.
+const STATUS_DESC = {
+    success: 'F2P · P2P 테스트가 끝까지 실행됨 (통과 여부와 무관)',
+    fail: '에이전트 측 문제로 평가 불가 (patch 미생성 또는 patch 적용 실패)',
+    error: '환경적 문제로 평가 불가 (Docker 이미지/컨테이너/테스트 러너 등 — TRR 분모에서 제외)',
+};
+const RESOLVED_DESC = {
+    true: 'F2P AND P2P 테스트 모두 통과 — 버그를 수정했고 기존 기능도 깨지지 않음',
+    false: 'F2P 또는 P2P 중 하나라도 실패 — strict 정의상 not resolved',
+};
+
 function renderTaskCounts(tc) {
     const el = document.getElementById('task-counts');
     if (!tc) {
@@ -298,10 +316,10 @@ function renderTaskCounts(tc) {
 
     el.innerHTML = `
         <div class="tc-row">
-            <div class="tc-pill tc-success"><span class="tc-label">success</span><span class="tc-num">${success}</span></div>
-            <div class="tc-pill tc-fail"><span class="tc-label">fail</span><span class="tc-num">${fail}</span></div>
-            <div class="tc-pill tc-error"><span class="tc-label">error</span><span class="tc-num">${error}</span></div>
-            <div class="tc-pill tc-resolved"><span class="tc-label">resolved</span><span class="tc-num">${resolved}</span></div>
+            <div class="tc-pill tc-success" title="${esc(STATUS_DESC.success)}"><span class="tc-label">success</span><span class="tc-num">${success}</span></div>
+            <div class="tc-pill tc-fail" title="${esc(STATUS_DESC.fail)}"><span class="tc-label">fail</span><span class="tc-num">${fail}</span></div>
+            <div class="tc-pill tc-error" title="${esc(STATUS_DESC.error)}"><span class="tc-label">error</span><span class="tc-num">${error}</span></div>
+            <div class="tc-pill tc-resolved" title="${esc(RESOLVED_DESC.true)}"><span class="tc-label">resolved</span><span class="tc-num">${resolved}</span></div>
         </div>
         <div class="tc-formula">
             Resolution Rate = resolved / (success + fail)
@@ -309,6 +327,16 @@ function renderTaskCounts(tc) {
             = <strong>${trrPct.toFixed(1)}%</strong>
             <span class="tc-note">(error 상태는 분모에서 제외)</span>
         </div>
+        <details class="tc-legend">
+            <summary>상태 의미 보기</summary>
+            <ul>
+                <li><span class="tc-chip tc-chip-success">success</span> ${esc(STATUS_DESC.success)}</li>
+                <li><span class="tc-chip tc-chip-fail">fail</span> ${esc(STATUS_DESC.fail)}</li>
+                <li><span class="tc-chip tc-chip-error">error</span> ${esc(STATUS_DESC.error)}</li>
+                <li><span class="tc-chip tc-chip-resolved">resolved</span> ${esc(RESOLVED_DESC.true)}</li>
+                <li><span class="tc-chip tc-chip-notres">not resolved</span> ${esc(RESOLVED_DESC.false)}</li>
+            </ul>
+        </details>
     `;
     el.style.display = 'block';
 }

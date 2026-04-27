@@ -191,6 +191,62 @@ td.started-cell {
 .tc-formula strong { color: #58a6ff; }
 .tc-note { color: #8b949e; margin-left: 6px; font-style: italic; }
 
+/* Collapsible inline legend (native <details>). Hidden by default to keep
+   the panel compact; user clicks the summary to expand when needed. */
+.tc-legend {
+    margin-top: 10px;
+    font-size: 0.88em;
+    color: #c9d1d9;
+}
+.tc-legend > summary {
+    cursor: pointer;
+    color: #8b949e;
+    font-weight: 500;
+    list-style: none;          /* hide default disclosure marker */
+    padding: 4px 0;
+    user-select: none;
+}
+.tc-legend > summary::-webkit-details-marker { display: none; }
+.tc-legend > summary::before {
+    content: "▸";
+    display: inline-block;
+    margin-right: 6px;
+    transition: transform 0.15s ease;
+    color: #6e7681;
+}
+.tc-legend[open] > summary::before { transform: rotate(90deg); }
+.tc-legend > summary:hover { color: #c9d1d9; }
+.tc-legend ul {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 8px 0 4px;
+    border-top: 1px dashed #30363d;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    column-gap: 10px;
+    row-gap: 6px;
+}
+.tc-legend li {
+    display: contents;
+}
+.tc-legend li > .tc-chip {
+    align-self: center;
+}
+.tc-chip {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 0.85em;
+    font-weight: 500;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+.tc-chip-success { color: #3fb950; border-color: #2ea04340; background: #0f1f12; }
+.tc-chip-fail    { color: #d29922; border-color: #d2992240; background: #1f1810; }
+.tc-chip-error   { color: #f85149; border-color: #f8514940; background: #1f1212; }
+.tc-chip-resolved{ color: #3fb950; border-color: #2ea04340; background: #1c2c1f; }
+.tc-chip-notres  { color: #f85149; border-color: #f8514940; background: #1f1212; }
+
 .badge-pass {
     display: inline-block;
     background: #23863533;
