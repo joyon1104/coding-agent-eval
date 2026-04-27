@@ -21,7 +21,7 @@ from src.core.models import AgentResult, EvalTask, TaskStatus, TokenUsage, Times
 from src.dataset.loader import load_dataset_for_tier
 from src.dataset.sampler import sample_tasks
 from src.evaluator.swebench_harness import EvalResult
-from src.metrics.accuracy import task_resolution_rate, regression_safety
+from src.metrics.accuracy import task_resolution_rate
 from src.metrics.cost import avg_tokens_per_task, avg_cost_per_task, cost_per_resolved_task, token_efficiency
 from src.metrics.latency import avg_e2e_time, avg_time_to_first_action
 from src.metrics.process import avg_convergence_steps
@@ -174,12 +174,14 @@ def main():
 
         all_results[agent.name] = agent_results
 
-        # Create eval results (mock: resolved if patch exists)
+        # Create eval results (mock: resolved if patch exists; eval_status
+        # success/fail mirrors that, no environmental errors in mock).
         eval_results = [
             EvalResult(
                 instance_id=r.instance_id,
                 agent_name=agent.name,
                 resolved=bool(r.patch),
+                eval_status="success" if r.patch else "fail",
                 fail_to_pass_results={
                     f"test_{r.instance_id}": bool(r.patch)
                 },
@@ -212,7 +214,6 @@ def main():
 
         metrics = {
             "task_resolution_rate": task_resolution_rate(eval_res),
-            "regression_safety": regression_safety(eval_res),
             "token_efficiency": token_efficiency(results, resolved_ids),
             "cost_per_resolved_task": cost_per_resolved_task(results, resolved_ids),
             "e2e_time": avg_e2e_time(results),

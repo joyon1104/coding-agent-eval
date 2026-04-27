@@ -5,7 +5,7 @@ __pycache__/
 *.egg-info/
 
 # Data (large files, downloaded separately)
-data/
+# data/
 
 # Results (generated per run)
 # results/

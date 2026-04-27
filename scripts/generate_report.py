@@ -14,13 +14,13 @@ from rich.console import Console
 from src.core.config import PROJECT_ROOT
 from src.core.models import AgentResult
 from src.evaluator.swebench_harness import EvalResult
-from src.metrics.accuracy import task_resolution_rate, regression_safety
+from src.metrics.accuracy import task_resolution_rate
 from src.metrics.cost import avg_tokens_per_task, avg_cost_per_task, cost_per_resolved_task, token_efficiency
 from src.metrics.latency import avg_e2e_time, avg_time_to_first_action
 from src.metrics.process import avg_convergence_steps
 from src.reporter.comparator import load_run_results, merge_results
 from src.reporter.scorer import score_agent
-from src.reporter.formatter import format_markdown, format_json, format_csv, save_report
+from src.reporter.formatter import format_markdown, format_json, format_csv, save_report, save_summary
 
 console = Console()
 
@@ -29,14 +29,22 @@ def compute_metrics(
     agent_results: list[AgentResult],
     eval_results: list[EvalResult] | None = None,
 ) -> dict[str, float]:
-    """Compute all 7 metrics for an agent."""
-    # If no eval results, create stub results based on patch presence
+    """Compute all metrics for an agent.
+
+    When Step 2 (Docker eval) hasn't been run, we synthesize stub EvalResults
+    so downstream code can still produce a report. Stub status:
+      - patch present → "fail" (would be evaluable but tests didn't run)
+      - patch absent  → "fail" (agent-side issue: no patch produced)
+    Marking these as "fail" (not "error" or "success") keeps them in the TRR
+    denominator while honestly admitting the evaluation didn't really run.
+    """
     if eval_results is None:
         eval_results = [
             EvalResult(
                 instance_id=r.instance_id,
                 agent_name=r.agent_name,
-                resolved=bool(r.patch),  # Simplified: has patch = "resolved"
+                resolved=False,
+                eval_status="fail",
             )
             for r in agent_results
         ]
@@ -45,7 +53,6 @@ def compute_metrics(
 
     return {
         "task_resolution_rate": task_resolution_rate(eval_results),
-        "regression_safety": regression_safety(eval_results),
         "token_efficiency": token_efficiency(agent_results, resolved_ids),
         "cost_per_resolved_task": cost_per_resolved_task(agent_results, resolved_ids),
         "e2e_time": avg_e2e_time(agent_results),
@@ -95,6 +102,14 @@ def main(run_id, fmt, merge_dirs):
                     instance_id=data["instance_id"],
                     agent_name=data.get("agent_name", ""),
                     resolved=data.get("resolved", False),
+                    # Old eval JSONs (pre eval_status): infer from test
+                    # results presence — the same fallback rule as run_eval.py.
+                    eval_status=data.get(
+                        "eval_status",
+                        "success" if (data.get("fail_to_pass_results")
+                                      or data.get("pass_to_pass_results"))
+                        else "error",
+                    ),
                     fail_to_pass_results=data.get("fail_to_pass_results", {}),
                     pass_to_pass_results=data.get("pass_to_pass_results", {}),
                     error=data.get("error", ""),
@@ -153,6 +168,21 @@ def main(run_id, fmt, merge_dirs):
 
         path = save_report(content, run_id, f, output_dir)
         console.print(f"\n[green]Report saved: {path}[/green]")
+
+    # Refresh summary.json so the dashboard picks up the latest task counts
+    # and metric grades. Without this, regenerating reports leaves the
+    # dashboard showing stale or buggy summary data.
+    if not merge_dirs:
+        meta = {}
+        if metadata_path.exists():
+            meta = json.loads(metadata_path.read_text())
+        all_evals_flat = [er for evals in eval_results_map.values() for er in evals]
+        summary_path = save_summary(
+            run_dir, meta, agent_scores,
+            agent_results=all_results,
+            eval_results=all_evals_flat or None,
+        )
+        console.print(f"[green]Summary refreshed: {summary_path}[/green]")
 
 
 if __name__ == "__main__":

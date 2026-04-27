@@ -97,10 +97,10 @@ function renderLeaderboard() {
             case 'agent': va = a.agent || ''; vb = b.agent || ''; break;
             case 'model': va = a.model || ''; vb = b.model || ''; break;
             case 'trr': va = getMetricValue(a, 'task_resolution_rate') ?? -1; vb = getMetricValue(b, 'task_resolution_rate') ?? -1; break;
-            case 'safety': va = getMetricValue(a, 'regression_safety') ?? -1; vb = getMetricValue(b, 'regression_safety') ?? -1; break;
             case 'cost': va = getMetricValue(a, 'cost_per_resolved_task') ?? 9999; vb = getMetricValue(b, 'cost_per_resolved_task') ?? 9999; break;
             case 'time': va = getMetricValue(a, 'e2e_time') ?? 9999; vb = getMetricValue(b, 'e2e_time') ?? 9999; break;
             case 'steps': va = getMetricValue(a, 'convergence_steps') ?? 9999; vb = getMetricValue(b, 'convergence_steps') ?? 9999; break;
+            case 'started': va = a.started_at || ''; vb = b.started_at || ''; break;
             default: va = 0; vb = 0;
         }
         if (typeof va === 'string') {
@@ -131,25 +131,23 @@ function renderLeaderboard() {
         tr.addEventListener('click', () => showDetail(run.run_id));
 
         const trr = getMetricValue(run, 'task_resolution_rate');
-        const safety = getMetricValue(run, 'regression_safety');
         const cost = getMetricValue(run, 'cost_per_resolved_task');
         const time = getMetricValue(run, 'e2e_time');
         const steps = getMetricValue(run, 'convergence_steps');
 
-        const date = run.started_at ? run.started_at.split('T')[0] : '';
+        const started = formatStarted(run.started_at);
 
         tr.innerHTML = `
             <td class="rank">${i + 1}</td>
             <td><strong>${esc(run.agent)}</strong></td>
             <td>${esc(run.model)}</td>
             <td>${formatMetric(trr, 'rate', getMetricGrade(run, 'task_resolution_rate'))}</td>
-            <td>${formatMetric(safety, 'rate', getMetricGrade(run, 'regression_safety'))}</td>
             <td>${formatMetric(cost, 'cost', getMetricGrade(run, 'cost_per_resolved_task'))}</td>
             <td>${formatMetric(time, 'time', getMetricGrade(run, 'e2e_time'))}</td>
             <td>${formatMetric(steps, 'num', getMetricGrade(run, 'convergence_steps'))}</td>
             <td>${esc(run.tier)}</td>
             <td>${run.num_tasks || ''}</td>
-            <td>${date}</td>
+            <td class="started-cell">${started}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -204,13 +202,16 @@ function renderDetail(runId, summary) {
         ${metaItem('Environment', summary.environment || '')}
     `;
 
+    // Task counts breakdown — exposes the TRR formula directly so users can
+    // reconcile the headline metric with the underlying resolved/evaluable.
+    renderTaskCounts(summary.task_counts);
+
     // Metrics cards
     const metricsGrid = document.getElementById('metrics-cards');
     metricsGrid.innerHTML = '';
 
     const metricLabels = {
         task_resolution_rate: 'Resolution Rate',
-        regression_safety: 'Regression Safety',
         token_efficiency: 'Token Efficiency',
         cost_per_resolved_task: 'Cost / Task',
         e2e_time: 'E2E Time',
@@ -225,7 +226,7 @@ function renderDetail(runId, summary) {
             const grade = m.grade || 'F';
             let valueStr;
             if (m.value === null) valueStr = 'N/A';
-            else if (key.includes('rate') || key.includes('safety')) valueStr = (m.value * 100).toFixed(1) + '%';
+            else if (key.includes('rate')) valueStr = (m.value * 100).toFixed(1) + '%';
             else if (key.includes('cost')) valueStr = '$' + m.value.toFixed(3);
             else if (key.includes('time')) valueStr = m.value.toFixed(1) + 's';
             else valueStr = m.value.toFixed(1) + ' ' + (m.unit || '');
@@ -250,9 +251,13 @@ function renderDetail(runId, summary) {
         const resolvedStr = resolved === true ? '<span class="status-resolved">RESOLVED</span>'
             : resolved === false ? '<span class="status-failed">NOT RESOLVED</span>'
             : '-';
-        const statusStr = task.status === 'success'
-            ? '<span class="status-success">success</span>'
-            : '<span class="status-error">' + esc(task.status) + '</span>';
+        // Pipeline-level status (set by formatter.save_summary):
+        //   success = tests ran end-to-end · fail = agent-side issue ·
+        //   error   = environmental failure
+        let statusClass = 'status-error';
+        if (task.status === 'success') statusClass = 'status-success';
+        else if (task.status === 'fail') statusClass = 'status-failed';
+        const statusStr = `<span class="${statusClass}">${esc(task.status || '-')}</span>`;
 
         const f2p = task.fail_to_pass_total !== undefined
             ? `${task.fail_to_pass_passed}/${task.fail_to_pass_total}`
@@ -276,6 +281,36 @@ function renderDetail(runId, summary) {
         `;
         tbody.appendChild(tr);
     });
+}
+
+function renderTaskCounts(tc) {
+    const el = document.getElementById('task-counts');
+    if (!tc) {
+        el.style.display = 'none';
+        return;
+    }
+    const success = tc.success ?? 0;
+    const fail = tc.fail ?? 0;
+    const error = tc.error ?? 0;
+    const resolved = tc.resolved ?? 0;
+    const evaluable = tc.evaluable ?? (success + fail);
+    const trrPct = (tc.resolution_rate_pct ?? (evaluable > 0 ? (resolved / evaluable * 100) : 0));
+
+    el.innerHTML = `
+        <div class="tc-row">
+            <div class="tc-pill tc-success"><span class="tc-label">success</span><span class="tc-num">${success}</span></div>
+            <div class="tc-pill tc-fail"><span class="tc-label">fail</span><span class="tc-num">${fail}</span></div>
+            <div class="tc-pill tc-error"><span class="tc-label">error</span><span class="tc-num">${error}</span></div>
+            <div class="tc-pill tc-resolved"><span class="tc-label">resolved</span><span class="tc-num">${resolved}</span></div>
+        </div>
+        <div class="tc-formula">
+            Resolution Rate = resolved / (success + fail)
+            = <strong>${resolved} / ${evaluable}</strong>
+            = <strong>${trrPct.toFixed(1)}%</strong>
+            <span class="tc-note">(error 상태는 분모에서 제외)</span>
+        </div>
+    `;
+    el.style.display = 'block';
 }
 
 function colorTestCount(str) {
@@ -373,6 +408,22 @@ function formatTime(iso) {
         const d = new Date(iso);
         return d.toLocaleString('ko-KR');
     } catch { return iso; }
+}
+
+function formatStarted(iso) {
+    if (!iso) return '';
+    // Show "YYYY-MM-DD" on top and "HH:MM:SS" below so runs from the same
+    // day are easy to disambiguate at a glance.
+    try {
+        const d = new Date(iso);
+        if (isNaN(d.getTime())) throw new Error('invalid');
+        const pad = n => String(n).padStart(2, '0');
+        const date = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+        const time = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+        return `${esc(date)}<br><span class="started-time">${esc(time)}</span>`;
+    } catch {
+        return esc(iso);
+    }
 }
 
 function formatDuration(seconds) {

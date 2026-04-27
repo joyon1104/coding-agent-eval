@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import logging
 import platform
+import re
 import subprocess
 import tempfile
 import time
@@ -92,6 +93,46 @@ def pull_image(instance_id: str, max_retries: int = 3, timeout_per_try: int = 60
         time.sleep(delay)
 
     return False
+
+
+def _paths_in_patch(patch_text: str) -> list[str]:
+    """Extract destination ('b/') file paths from a unified diff."""
+    paths = []
+    for line in patch_text.split("\n"):
+        if line.startswith("diff --git a/"):
+            parts = line.split(" b/", 1)
+            if len(parts) == 2:
+                paths.append(parts[1])
+    return paths
+
+
+def _format_apply_failure(result: subprocess.CompletedProcess, patch: str) -> str:
+    """Build an informative error message for a failed `git apply`.
+
+    Includes stderr/stdout excerpt and, if git reports a specific line number
+    ("at line N" / "patch failed: file:N"), a small window of the patch
+    content around that line so post-hoc debugging can see why it broke
+    without needing to re-pull the original patch from disk.
+    """
+    detail = (result.stderr.strip() or result.stdout.strip() or "(no output)")[:500]
+    line_nums: set[int] = set()
+    for m in re.finditer(r"at line (\d+)", detail):
+        line_nums.add(int(m.group(1)))
+    for m in re.finditer(r"patch failed:[^:\n]+:(\d+)", detail):
+        # NOTE: this is a line in the target FILE, not the patch — we skip it
+        # to avoid confusing noise. Only true "at line N" (patch-internal) wins.
+        pass
+    if not line_nums:
+        return detail
+
+    lines = patch.split("\n")
+    ctx_chunks = []
+    for n in sorted(line_nums):
+        lo = max(1, n - 2)
+        hi = min(len(lines), n + 2)
+        window = [f"{i:>4}: {lines[i - 1]}" for i in range(lo, hi + 1)]
+        ctx_chunks.append(f"patch around line {n}:\n" + "\n".join(window))
+    return f"{detail}\n---\n" + "\n---\n".join(ctx_chunks)
 
 
 def _docker_exec(container_id: str, cmd: str, timeout: int = 300) -> subprocess.CompletedProcess:
@@ -277,21 +318,24 @@ def evaluate_single(
     """
     f2p_timeout = f2p_timeout if f2p_timeout is not None else timeout
     p2p_timeout = p2p_timeout if p2p_timeout is not None else int(timeout * 1.5)
+    # No patch from agent → fail (agent-side issue, not environment).
     if not agent_result.patch:
         return EvalResult(
             instance_id=task.instance_id,
             agent_name=agent_result.agent_name,
             resolved=False,
+            eval_status="fail",
             error="No patch generated",
         )
 
     image = get_image_name(task.instance_id)
 
-    # 1. Pull image
+    # 1. Pull image — environmental dependency, classify failures as "error".
     if not pull_image(task.instance_id):
         return EvalResult(
             instance_id=task.instance_id,
             agent_name=agent_result.agent_name,
+            eval_status="error",
             error=f"Failed to pull image: {image}",
         )
 
@@ -317,45 +361,17 @@ def evaluate_single(
             return EvalResult(
                 instance_id=task.instance_id,
                 agent_name=agent_result.agent_name,
+                eval_status="error",
                 error=f"Container start failed: {result.stderr[:300]}",
             )
 
         container_id = result.stdout.strip()[:12]
         logger.info(f"  Container started: {container_id}")
 
-        # 3. Apply test_patch (SWE-bench verification tests).
-        # Same sequence as agent patch: git apply → --3way, so F2P tests are
-        # guaranteed to be injected. If test_patch fails to apply, F2P tests
-        # won't exist in the repo and the parser would treat them as unobserved
-        # (False) — log it as an error, not a warning, so it's visible.
-        if task.test_patch:
-            patch_path = _write_patch_file(task.test_patch)
-            subprocess.run(
-                ["docker", "cp", patch_path, f"{container_name}:/tmp/test.patch"],
-                capture_output=True, timeout=10,
-            )
-            result = _docker_exec(
-                container_name,
-                "cd /testbed && git apply --verbose /tmp/test.patch",
-                timeout=30,
-            )
-            if result.returncode != 0:
-                logger.info("  test_patch apply failed, retrying with --3way...")
-                result = _docker_exec(
-                    container_name,
-                    "cd /testbed && git apply --verbose --3way /tmp/test.patch",
-                    timeout=30,
-                )
-            Path(patch_path).unlink(missing_ok=True)
-            if result.returncode != 0:
-                detail = (result.stderr.strip() or result.stdout.strip() or "(no output)")[:300]
-                logger.error(f"  test_patch apply failed: {detail}")
-
-        # 4. Apply agent's patch
-        #    Official SWE-bench sequence: `git apply` → `git apply --3way` (blob-SHA merge).
-        #    Patch content is never modified; --3way only changes the apply algorithm to use
-        #    the patch header's blob SHAs for context resolution, recovering from test_patch
-        #    drift without altering the agent's submission.
+        # 3. Apply agent's patch — three-tier fallback (patch content never modified):
+        #    (1) strict `git apply`
+        #    (2) `git apply --3way` (blob-SHA merge; recovers from test_patch drift)
+        #    (3) `git apply --3way --ignore-whitespace` (tolerates whitespace drift)
         patch_path = _write_patch_file(agent_result.patch)
         subprocess.run(
             ["docker", "cp", patch_path, f"{container_name}:/tmp/agent.patch"],
@@ -374,63 +390,138 @@ def evaluate_single(
                 "cd /testbed && git apply --verbose --3way /tmp/agent.patch",
                 timeout=30,
             )
+        if result.returncode != 0:
+            logger.info(f"  --3way failed, retrying with --ignore-whitespace...")
+            result = _docker_exec(
+                container_name,
+                "cd /testbed && git apply --verbose --3way --ignore-whitespace /tmp/agent.patch",
+                timeout=30,
+            )
 
         Path(patch_path).unlink(missing_ok=True)
 
         if result.returncode != 0:
-            detail = (result.stderr.strip() or result.stdout.strip() or "(no output)")[:500]
+            detail = _format_apply_failure(result, agent_result.patch)
+            # Patch apply failures are agent-side issues (malformed patch,
+            # context mismatch from agent's poor edits). Classify as "fail".
             return EvalResult(
                 instance_id=task.instance_id,
                 agent_name=agent_result.agent_name,
                 resolved=False,
+                eval_status="fail",
                 error=f"Agent patch apply failed: {detail}",
             )
 
         logger.info(f"  Patch applied successfully")
 
-        # 5. Run FAIL_TO_PASS tests
+        # 4. SWE-bench official guard: reset paths that test_patch will touch.
+        # Some agents include changes to test files; without this reset, those
+        # changes would conflict with test_patch (which we apply next), even
+        # though SWE-bench's contract is that test files are owned by
+        # test_patch and the agent is evaluated only on its production-code
+        # changes. Mirroring the official harness order (agent → reset →
+        # test_patch) keeps production changes intact while restoring test
+        # files so test_patch always applies cleanly.
+        if task.test_patch:
+            test_paths = _paths_in_patch(task.test_patch)
+            if test_paths:
+                tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False)
+                tmp.write("\n".join(test_paths) + "\n")
+                tmp.close()
+                try:
+                    subprocess.run(
+                        ["docker", "cp", tmp.name,
+                         f"{container_name}:/tmp/test_paths.txt"],
+                        capture_output=True, timeout=10,
+                    )
+                finally:
+                    Path(tmp.name).unlink(missing_ok=True)
+                # `|| true`: paths newly created by test_patch don't exist in
+                # HEAD, so checkout prints a warning for them. That's expected.
+                _docker_exec(
+                    container_name,
+                    "cd /testbed && xargs -d '\\n' git checkout HEAD -- "
+                    "< /tmp/test_paths.txt 2>&1 || true",
+                    timeout=30,
+                )
+                logger.info(f"  Reset {len(test_paths)} test path(s) before test_patch")
+
+        # 5. Apply test_patch (SWE-bench verification tests).
+        # Resets above guarantee target files are at base, so a strict
+        # `git apply` should succeed for the SWE-bench-curated test_patch.
+        # We keep the `--3way` fallback as a safety net for unusual cases.
+        if task.test_patch:
+            patch_path = _write_patch_file(task.test_patch)
+            subprocess.run(
+                ["docker", "cp", patch_path,
+                 f"{container_name}:/tmp/test.patch"],
+                capture_output=True, timeout=10,
+            )
+            result = _docker_exec(
+                container_name,
+                "cd /testbed && git apply --verbose /tmp/test.patch",
+                timeout=30,
+            )
+            if result.returncode != 0:
+                logger.info("  test_patch apply failed, retrying with --3way...")
+                result = _docker_exec(
+                    container_name,
+                    "cd /testbed && git apply --verbose --3way /tmp/test.patch",
+                    timeout=30,
+                )
+            Path(patch_path).unlink(missing_ok=True)
+            if result.returncode != 0:
+                detail = (result.stderr.strip() or result.stdout.strip()
+                          or "(no output)")[:300]
+                logger.error(f"  test_patch apply failed: {detail}")
+
+        # 6. Run FAIL_TO_PASS tests
         logger.info(f"  Running FAIL_TO_PASS tests ({len(task.FAIL_TO_PASS)})...")
         f2p_results = _run_tests_in_container(
             container_name, task.FAIL_TO_PASS, timeout=f2p_timeout,
         )
 
-        # 6. Run PASS_TO_PASS tests
+        # 7. Run PASS_TO_PASS tests
         logger.info(f"  Running PASS_TO_PASS tests ({len(task.PASS_TO_PASS)})...")
         p2p_results = _run_tests_in_container(
             container_name, task.PASS_TO_PASS, timeout=p2p_timeout,
         )
 
-        # Resolved = all FAIL_TO_PASS tests now pass.
-        # Distinguish "no F2P defined in dataset" (can't verify) from
-        # "F2P exists and some failed" — the former is flagged but not conflated
-        # with a real regression; keep resolved=False conservatively so TRR
-        # stays honest, but record the reason so reports can explain it.
+        # Reaching this point means both F2P and P2P test batches were
+        # executed → eval_status="success". Resolved is the stricter
+        # conjunction: ALL F2P AND ALL P2P tests passed.
+        all_f2p_pass = all(f2p_results.values()) if f2p_results else False
+        all_p2p_pass = (all(p2p_results.values()) if p2p_results else True)
+        resolved = all_f2p_pass and all_p2p_pass
+
         error_note = ""
         if not task.FAIL_TO_PASS:
             error_note = "no FAIL_TO_PASS tests in dataset row; resolution unverifiable"
-            all_f2p_pass = False
-        else:
-            all_f2p_pass = all(f2p_results.values()) if f2p_results else False
+            resolved = False
 
         return EvalResult(
             instance_id=task.instance_id,
             agent_name=agent_result.agent_name,
-            resolved=all_f2p_pass,
+            resolved=resolved,
+            eval_status="success",
             fail_to_pass_results=f2p_results,
             pass_to_pass_results=p2p_results,
             error=error_note,
         )
 
     except subprocess.TimeoutExpired:
+        # Test runner exceeded the wall clock. Environmental, not agent fault.
         return EvalResult(
             instance_id=task.instance_id,
             agent_name=agent_result.agent_name,
+            eval_status="error",
             error=f"Timeout after {timeout}s",
         )
     except Exception as e:
         return EvalResult(
             instance_id=task.instance_id,
             agent_name=agent_result.agent_name,
+            eval_status="error",
             error=str(e),
         )
     finally:

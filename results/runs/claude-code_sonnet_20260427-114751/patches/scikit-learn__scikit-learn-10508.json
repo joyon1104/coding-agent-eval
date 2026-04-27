@@ -1,0 +1,22 @@
+{
+  "instance_id": "scikit-learn__scikit-learn-10508",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/sklearn/preprocessing/label.py b/sklearn/preprocessing/label.py\nindex 61b8d4a21a..1763f6336c 100644\n--- a/sklearn/preprocessing/label.py\n+++ b/sklearn/preprocessing/label.py\n@@ -126,6 +126,8 @@ class LabelEncoder(BaseEstimator, TransformerMixin):\n         \"\"\"\n         check_is_fitted(self, 'classes_')\n         y = column_or_1d(y, warn=True)\n+        if len(y) == 0:\n+            return np.array([], dtype=self.classes_.dtype)\n \n         classes = np.unique(y)\n         if len(np.intersect1d(classes, self.classes_)) < len(classes):\ndiff --git a/sklearn/preprocessing/tests/test_label.py b/sklearn/preprocessing/tests/test_label.py\nindex 4f64fc6b46..c89fe40695 100644\n--- a/sklearn/preprocessing/tests/test_label.py\n+++ b/sklearn/preprocessing/tests/test_label.py\n@@ -184,6 +184,18 @@ def test_label_encoder():\n     assert_raise_message(ValueError, msg, le.transform, \"apple\")\n \n \n+def test_label_encoder_empty_array():\n+    # transform of empty array should work regardless of fitted dtype (#10508)\n+    le = LabelEncoder()\n+    le.fit([1, 2])\n+    result = le.transform([])\n+    assert_array_equal(result, [])\n+\n+    le.fit([\"a\", \"b\"])\n+    result = le.transform([])\n+    assert_array_equal(result, [])\n+\n+\n def test_label_encoder_fit_transform():\n     # Test fit_transform\n     le = LabelEncoder()\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 249987,
+    "output_tokens": 2515,
+    "cache_read_tokens": 237880,
+    "cache_write_tokens": 12094
+  },
+  "timestamps": {
+    "task_start": 1777259605.3131728,
+    "task_end": 1777259663.0273771,
+    "first_action": 1777259610.0043395
+  },
+  "total_cost_usd": 0.15542050000000002,
+  "convergence_steps": 12,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":56013,\"duration_api_ms\":56294,\"num_turns\":12,\"result\":\"The fix is in place. Here's a summary of the change:\\n\\n**Root cause:** When `transform([])` is called, `np.unique([])` returns a `float64` array (numpy's default for an empty array). When `self.classes_` holds strings (e.g., dtype `<U32`), `np.searchsorted` cannot safely cast `float64` to the string dtype and raises a `TypeError`.\\n\\n**Fix** (`sklearn/preprocessing/label.py`, line 130): Added an early return before the `np.unique` call when the input array is empty, returning an empty array with the same dtype as `self.classes_`. This matches the behavior already observed for numeric classes and is consistent with what an identity operation on an empty sequence should do.\\n\\n**New test** (`test_label_encoder_empty_array`): Verifies `transform([])` works for both integer-fitted and string-fitted encoders.\",\"stop_reason\":\"end_turn\",\"session_id\":\"324123bb-811a-4f84-9e84-f208bc3d97dd\",\"total_cost_usd\":0.15542050000000002,\"usage\":{\"input_tokens\":13,\"cache_creation_input_tokens\":12094,\"cache_read_input_tokens\":237880,\"output_tokens\":2515,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":12094,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":212,\"cache_read_input_tokens\":23000,\"cache_creation_input_tokens\":467,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":467},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":855,\"outputTokens\":17,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.00094,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":13,\"outputTokens\":2515,\"cacheReadInputTokens\":237880,\"cacheCreationInputTokens\":12094,\"webSearchRequests\":0,\"costUSD\":0.1544805,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"9dcaf9ba-1955-4894-a61d-5573a55be75e\"}\n",
+  "model_name": ""
+}

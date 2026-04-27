@@ -2,16 +2,11 @@
   "run_id": "e2e-test",
   "tier": "local",
   "num_tasks": 5,
-  "generated_at": "2026-04-20T15:51:13.703489",
+  "generated_at": "2026-04-27T10:52:30.795762",
   "agents": {
     "mock-claude-code": {
       "task_resolution_rate": {
         "value": 0.8,
-        "unit": "%",
-        "grade": "S"
-      },
-      "regression_safety": {
-        "value": 1.0,
         "unit": "%",
         "grade": "S"
       },
@@ -46,11 +41,6 @@
         "value": 0.4,
         "unit": "%",
         "grade": "B"
-      },
-      "regression_safety": {
-        "value": 1.0,
-        "unit": "%",
-        "grade": "S"
       },
       "token_efficiency": {
         "value": 82530.0,

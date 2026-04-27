@@ -21,11 +21,6 @@ GRADE_THRESHOLDS = {
         "unit": "%",
         "thresholds": {"S": 0.60, "A": 0.45, "B": 0.30, "C": 0.20, "D": 0.10},
     },
-    "regression_safety": {
-        "higher_is_better": True,
-        "unit": "%",
-        "thresholds": {"S": 0.98, "A": 0.95, "B": 0.90, "C": 0.85, "D": 0.75},
-    },
     "token_efficiency": {
         "higher_is_better": False,
         "unit": "tokens/task",

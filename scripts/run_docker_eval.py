@@ -18,7 +18,7 @@ from src.core.models import AgentResult, EvalTask
 from src.dataset.loader import load_from_jsonl
 from src.evaluator.docker_evaluator import evaluate_batch, get_image_name
 from src.evaluator.swebench_harness import EvalResult
-from src.metrics.accuracy import task_resolution_rate, regression_safety
+from src.metrics.accuracy import task_resolution_rate
 
 console = Console()
 logger = logging.getLogger("coding-agent-eval")
@@ -153,9 +153,16 @@ def main(run_id, agent, dataset, timeout):
     # 6. Summary metrics
     console.print(f"\n[bold]Summary[/bold]")
     trr = task_resolution_rate(eval_results)
-    rs = regression_safety(eval_results)
-    console.print(f"  Task Resolution Rate: {trr*100:.1f}%")
-    console.print(f"  Regression Safety:    {rs*100:.1f}%")
+    counts = {"success": 0, "fail": 0, "error": 0}
+    resolved = 0
+    for er in eval_results:
+        counts[er.eval_status] = counts.get(er.eval_status, 0) + 1
+        if er.resolved:
+            resolved += 1
+    evaluable = counts["success"] + counts["fail"]
+    console.print(f"  Tasks: success={counts['success']}  fail={counts['fail']}  error={counts['error']}")
+    console.print(f"  Resolved: {resolved} / {evaluable} evaluable")
+    console.print(f"  Task Resolution Rate: {trr*100:.1f}% (resolved / (success + fail))")
 
     # 7. Save eval results
     eval_output_dir = PROJECT_ROOT / "results" / "runs" / run_id / "eval"

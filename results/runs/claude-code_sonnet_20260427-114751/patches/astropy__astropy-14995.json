@@ -1,0 +1,22 @@
+{
+  "instance_id": "astropy__astropy-14995",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/astropy/nddata/mixins/ndarithmetic.py b/astropy/nddata/mixins/ndarithmetic.py\nindex 4153dfccb2..56a8678791 100644\n--- a/astropy/nddata/mixins/ndarithmetic.py\n+++ b/astropy/nddata/mixins/ndarithmetic.py\n@@ -520,7 +520,7 @@ class NDArithmeticMixin:\n         elif self.mask is None and operand is not None:\n             # Make a copy so there is no reference in the result.\n             return deepcopy(operand.mask)\n-        elif operand is None:\n+        elif operand is None or operand.mask is None:\n             return deepcopy(self.mask)\n         else:\n             # Now lets calculate the resulting mask (operation enforces copy)\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 207794,
+    "output_tokens": 2525,
+    "cache_read_tokens": 196358,
+    "cache_write_tokens": 11423
+  },
+  "timestamps": {
+    "task_start": 1777259376.9409654,
+    "task_end": 1777259523.667509,
+    "first_action": 1777259385.8771653
+  },
+  "total_cost_usd": 0.24829749999999998,
+  "convergence_steps": 10,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":144811,\"duration_api_ms\":89362,\"num_turns\":10,\"result\":\"All cases now work correctly. The fix is a one-line change in `astropy/nddata/mixins/ndarithmetic.py` at line 523:\\n\\n**Before:**\\n```python\\nelif operand is None:\\n    return deepcopy(self.mask)\\n```\\n\\n**After:**\\n```python\\nelif operand is None or operand.mask is None:\\n    return deepcopy(self.mask)\\n```\\n\\n**Root cause:** The original code only handled the case where the `operand` object itself is `None` (i.e., multiplying by a scalar constant). But when an `NDDataRef` with `mask=None` is passed as operand, `operand is None` is `False`, so the code falls through to `handle_mask(self.mask, operand.mask)` — calling `np.bitwise_or` on an integer array and `None`, which raises `TypeError`.\\n\\nThe fix adds `or operand.mask is None` to also return a copy of `self.mask` when the operand exists but has no mask.\",\"stop_reason\":\"end_turn\",\"session_id\":\"883e2895-6c35-4c66-9c82-cd36fcc5c0be\",\"total_cost_usd\":0.24829749999999998,\"usage\":{\"input_tokens\":13,\"cache_creation_input_tokens\":11423,\"cache_read_input_tokens\":196358,\"output_tokens\":2525,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":11423,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":245,\"cache_read_input_tokens\":22261,\"cache_creation_input_tokens\":536,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":536},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1232,\"outputTokens\":3241,\"cacheReadInputTokens\":639566,\"cacheCreationInputTokens\":21797,\"webSearchRequests\":0,\"costUSD\":0.10863985000000001,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":13,\"outputTokens\":2525,\"cacheReadInputTokens\":196358,\"cacheCreationInputTokens\":11423,\"webSearchRequests\":0,\"costUSD\":0.13965765000000002,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"c1bd5f27-1b41-4e19-9f81-f6d6ce6ead3d\"}\n",
+  "model_name": ""
+}

@@ -17,9 +17,26 @@ logger = logging.getLogger("coding-agent-eval")
 
 @dataclass
 class EvalResult:
+    """Result of evaluating a single task.
+
+    `eval_status` semantics:
+      - "success": both F2P and P2P test batches were executed (regardless of
+        whether tests passed or failed). The task ran end-to-end.
+      - "fail":   the agent's contribution couldn't be evaluated because of an
+        agent-side issue — patch wasn't generated, or generated but failed to
+        apply (malformed / context-mismatched). This is a quality problem, not
+        an environmental one.
+      - "error":  environmental failure unrelated to the agent — image pull,
+        container start, test runner crash before reaching tests, etc.
+
+    `resolved` semantics:
+      - True only when ALL F2P AND ALL P2P tests pass.
+      - Any test failure (or the task not reaching test execution) → False.
+    """
     instance_id: str
     agent_name: str
     resolved: bool = False
+    eval_status: str = "error"  # "success" | "fail" | "error"
     fail_to_pass_results: dict[str, bool] = None  # test_name -> passed
     pass_to_pass_results: dict[str, bool] = None  # test_name -> passed
     error: str = ""
@@ -29,13 +46,6 @@ class EvalResult:
             self.fail_to_pass_results = {}
         if self.pass_to_pass_results is None:
             self.pass_to_pass_results = {}
-
-    @property
-    def regression_safe(self) -> bool:
-        """All PASS_TO_PASS tests still pass."""
-        if not self.pass_to_pass_results:
-            return True
-        return all(self.pass_to_pass_results.values())
 
     @property
     def fail_to_pass_rate(self) -> float:
@@ -56,9 +66,9 @@ class EvalResult:
             "instance_id": self.instance_id,
             "agent_name": self.agent_name,
             "resolved": self.resolved,
+            "eval_status": self.eval_status,
             "fail_to_pass_results": self.fail_to_pass_results,
             "pass_to_pass_results": self.pass_to_pass_results,
-            "regression_safe": self.regression_safe,
             "fail_to_pass_rate": self.fail_to_pass_rate,
             "pass_to_pass_rate": self.pass_to_pass_rate,
             "error": self.error,

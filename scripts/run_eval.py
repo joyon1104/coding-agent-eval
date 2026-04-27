@@ -191,7 +191,7 @@ def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry
     console.print(f"\n[bold]Step 3: Report Generation[/bold]")
 
     from src.evaluator.swebench_harness import EvalResult
-    from src.metrics.accuracy import task_resolution_rate, regression_safety
+    from src.metrics.accuracy import task_resolution_rate
     from src.metrics.cost import token_efficiency, cost_per_resolved_task
     from src.metrics.latency import avg_e2e_time, avg_time_to_first_action
     from src.metrics.process import avg_convergence_steps
@@ -213,6 +213,15 @@ def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry
                     instance_id=data["instance_id"],
                     agent_name=data.get("agent_name", ""),
                     resolved=data.get("resolved", False),
+                    # Old eval JSONs (pre eval_status) → infer from presence of
+                    # test results: tests ran ⇒ success; otherwise fall back
+                    # to error so the field is never silently wrong.
+                    eval_status=data.get(
+                        "eval_status",
+                        "success" if (data.get("fail_to_pass_results")
+                                      or data.get("pass_to_pass_results"))
+                        else "error",
+                    ),
                     fail_to_pass_results=data.get("fail_to_pass_results", {}),
                     pass_to_pass_results=data.get("pass_to_pass_results", {}),
                     error=data.get("error", ""),
@@ -230,13 +239,16 @@ def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry
         result_ids = {r.instance_id for r in agent_results}
         agent_eval = [er for er in all_eval_results if er.instance_id in result_ids] or None
 
-        # If no eval results, fall back to patch-based estimation
+        # If no eval results, synthesize stubs marked "fail" so TRR is honest
+        # (Step 2 hasn't actually verified anything; treating these as
+        # "resolved" would inflate the metric).
         if agent_eval is None:
             agent_eval = [
                 EvalResult(
                     instance_id=r.instance_id,
                     agent_name=r.agent_name,
-                    resolved=bool(r.patch),
+                    resolved=False,
+                    eval_status="fail",
                 )
                 for r in agent_results
             ]
@@ -245,7 +257,6 @@ def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry
 
         metrics = {
             "task_resolution_rate": task_resolution_rate(agent_eval),
-            "regression_safety": regression_safety(agent_eval),
             "token_efficiency": token_efficiency(agent_results, resolved_ids),
             "cost_per_resolved_task": cost_per_resolved_task(agent_results, resolved_ids),
             "e2e_time": avg_e2e_time(agent_results),

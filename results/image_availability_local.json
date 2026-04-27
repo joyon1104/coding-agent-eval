@@ -3,30 +3,35 @@
     "instance_id": "django__django-16379",
     "image": "ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-16379:latest",
     "ok": true,
-    "elapsed": 1.54
+    "elapsed": 1.53,
+    "attempts": 1
   },
   {
     "instance_id": "django__django-16400",
     "image": "ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-16400:latest",
     "ok": true,
-    "elapsed": 1.48
+    "elapsed": 1.49,
+    "attempts": 1
   },
   {
     "instance_id": "django__django-16527",
     "image": "ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-16527:latest",
     "ok": true,
-    "elapsed": 1.5
+    "elapsed": 1.98,
+    "attempts": 1
   },
   {
     "instance_id": "django__django-16595",
     "image": "ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-16595:latest",
     "ok": true,
-    "elapsed": 1.61
+    "elapsed": 1.46,
+    "attempts": 1
   },
   {
     "instance_id": "django__django-16816",
     "image": "ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-16816:latest",
     "ok": true,
-    "elapsed": 1.43
+    "elapsed": 1.42,
+    "attempts": 1
   }
 ]

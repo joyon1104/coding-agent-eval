@@ -54,17 +54,25 @@ class AgentAdapter(ABC):
         - `git add -N .` registers untracked files as intent-to-add so diff sees them.
         - Comparing against the captured base_ref covers agents that commit during the
           session; falls back to plain `git diff` (vs HEAD) if no ref was captured.
+        - Returns git's output as-is (no strip). Unified diff is format-sensitive —
+          a blank context line is literally " \\n", and .strip() would eat the
+          space, corrupting the last hunk's line counts. _write_patch_file
+          downstream handles trailing-newline normalization.
+        - `--binary` preserves binary-file changes properly (agents rarely touch
+          binaries, but without this they'd silently drop).
         """
         try:
             subprocess.run(
                 ["git", "add", "-N", "."],
                 cwd=repo_path, capture_output=True, timeout=30,
             )
-            cmd = ["git", "diff", base_ref] if base_ref else ["git", "diff"]
+            cmd = ["git", "diff", "--binary"]
+            if base_ref:
+                cmd.append(base_ref)
             result = subprocess.run(
                 cmd,
                 cwd=repo_path, capture_output=True, text=True, timeout=30,
             )
-            return result.stdout.strip()
+            return result.stdout
         except (subprocess.TimeoutExpired, FileNotFoundError):
             return ""

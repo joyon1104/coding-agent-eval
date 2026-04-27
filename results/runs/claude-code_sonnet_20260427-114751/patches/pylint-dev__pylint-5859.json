@@ -1,0 +1,22 @@
+{
+  "instance_id": "pylint-dev__pylint-5859",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/pylint/checkers/misc.py b/pylint/checkers/misc.py\nindex 69149e61a..a9e9912bd 100644\n--- a/pylint/checkers/misc.py\n+++ b/pylint/checkers/misc.py\n@@ -121,9 +121,9 @@ class EncodingChecker(BaseChecker):\n \n         notes = \"|\".join(re.escape(note) for note in self.config.notes)\n         if self.config.notes_rgx:\n-            regex_string = rf\"#\\s*({notes}|{self.config.notes_rgx})\\b\"\n+            regex_string = rf\"#\\s*({notes}|{self.config.notes_rgx})(?!\\w)\"\n         else:\n-            regex_string = rf\"#\\s*({notes})\\b\"\n+            regex_string = rf\"#\\s*({notes})(?!\\w)\"\n \n         self._fixme_pattern = re.compile(regex_string, re.I)\n \ndiff --git a/tests/checkers/unittest_misc.py b/tests/checkers/unittest_misc.py\nindex 23e19a9d0..c4bec298d 100644\n--- a/tests/checkers/unittest_misc.py\n+++ b/tests/checkers/unittest_misc.py\n@@ -106,6 +106,16 @@ class TestFixme(CheckerTestCase):\n         ):\n             self.checker.process_tokens(_tokenize_str(code))\n \n+    @set_config(notes=[\"???\"])\n+    def test_fixme_with_punctuation_only_note(self) -> None:\n+        code = \"\"\"a = 1\n+                # ???: message\n+                \"\"\"\n+        with self.assertAddsMessages(\n+            MessageTest(msg_id=\"fixme\", line=2, args=\"???: message\", col_offset=17)\n+        ):\n+            self.checker.process_tokens(_tokenize_str(code))\n+\n     def test_dont_trigger_on_todoist(self) -> None:\n         code = \"\"\"\n         # Todoist API: What is this task about?\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 28724,
+    "output_tokens": 266,
+    "cache_read_tokens": 28210,
+    "cache_write_tokens": 511
+  },
+  "timestamps": {
+    "task_start": 1777258439.6005638,
+    "task_end": 1777258657.3018575,
+    "first_action": 1777258525.4735637
+  },
+  "total_cost_usd": 0.2763074,
+  "convergence_steps": 1,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":5389,\"duration_api_ms\":85873,\"num_turns\":1,\"result\":\"The fix is already complete and verified. The background task was just searching for pytest, which isn't needed since we confirmed the regex behavior directly.\\n\\nTo recap what was done:\\n\\n**Bug:** `--notes` tags made entirely of punctuation (e.g. `???`) were silently ignored because the regex used `\\\\b` (word boundary), which requires the last character of the tag to be a word character (`[a-zA-Z0-9_]`).\\n\\n**Fix in `pylint/checkers/misc.py:124,126`:** Changed `\\\\b` → `(?!\\\\w)` in both the `notes_rgx` and plain-notes branches of the `open()` method. `(?!\\\\w)` (negative lookahead) means \\\"not followed by a word character\\\", which works correctly for both word-based and punctuation-only tags.\",\"stop_reason\":\"end_turn\",\"session_id\":\"1a611faf-63d6-4f18-8593-569ec02d2b8d\",\"total_cost_usd\":0.2763074,\"usage\":{\"input_tokens\":3,\"cache_creation_input_tokens\":511,\"cache_read_input_tokens\":28210,\"output_tokens\":266,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":511,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":3,\"output_tokens\":266,\"cache_read_input_tokens\":28210,\"cache_creation_input_tokens\":511,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":511},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":661,\"outputTokens\":17,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000746,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":22,\"outputTokens\":4688,\"cacheReadInputTokens\":456368,\"cacheCreationInputTokens\":18204,\"webSearchRequests\":0,\"costUSD\":0.2755614,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"db58e13d-b10a-44ea-b845-1df4e783d619\"}\n",
+  "model_name": ""
+}

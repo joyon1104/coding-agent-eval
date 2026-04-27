@@ -1,0 +1,22 @@
+{
+  "instance_id": "psf__requests-863",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/requests/models.py b/requests/models.py\nindex d8456375..404b4bf5 100644\n--- a/requests/models.py\n+++ b/requests/models.py\n@@ -463,7 +463,10 @@ class Request(object):\n     def register_hook(self, event, hook):\n         \"\"\"Properly register a hook.\"\"\"\n \n-        self.hooks[event].append(hook)\n+        if isinstance(hook, list):\n+            self.hooks[event].extend(hook)\n+        else:\n+            self.hooks[event].append(hook)\n \n     def deregister_hook(self, event, hook):\n         \"\"\"Deregister a previously registered hook.\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 150618,
+    "output_tokens": 1325,
+    "cache_read_tokens": 140283,
+    "cache_write_tokens": 10326
+  },
+  "timestamps": {
+    "task_start": 1777258071.823238,
+    "task_end": 1777258099.7344522,
+    "first_action": 1777258074.6441379
+  },
+  "total_cost_usd": 0.1013024,
+  "convergence_steps": 10,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":25084,\"duration_api_ms\":28209,\"num_turns\":10,\"result\":\"There's already a `test_multiple_hooks` test that passes a list — this is exactly the scenario described in the issue. The fix is correct. `register_hook` now uses `extend` when given a list, so each callable gets appended individually rather than nesting the list.\\n\\nThe change is minimal and targeted: `register_hook` at `models.py:463` now checks if the `hook` argument is a list and extends instead of appending. This means `hooks={'args': [fn1, fn2]}` in the `Request` constructor (or passed via session) now works correctly.\",\"stop_reason\":\"end_turn\",\"session_id\":\"4f3d9e3c-09b3-4bd1-872d-e1a6942a32dc\",\"total_cost_usd\":0.1013024,\"usage\":{\"input_tokens\":9,\"cache_creation_input_tokens\":10326,\"cache_read_input_tokens\":140283,\"output_tokens\":1325,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":10326,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":134,\"cache_read_input_tokens\":20020,\"cache_creation_input_tokens\":612,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":612},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-sonnet-4-6\":{\"inputTokens\":9,\"outputTokens\":1325,\"cacheReadInputTokens\":140283,\"cacheCreationInputTokens\":10326,\"webSearchRequests\":0,\"costUSD\":0.1007094,\"contextWindow\":1000000,\"maxOutputTokens\":32000},\"claude-haiku-4-5-20251001\":{\"inputTokens\":513,\"outputTokens\":16,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000593,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"9fc29914-5258-443a-8cc2-23778d17454c\"}\n",
+  "model_name": ""
+}
