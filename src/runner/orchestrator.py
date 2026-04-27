@@ -77,13 +77,17 @@ class Orchestrator:
 
         agent = agents[0]  # New layout: one agent per run
 
-        # Save run metadata
+        # Capture start time once and reuse for the completion record so that
+        # `completed_at - started_at` is a real duration, not ~0 from being
+        # re-stamped at end-of-run.
+        started_at = datetime.now().isoformat()
+
         save_run_metadata(self.run_id, {
             "run_id": self.run_id,
             "agent": agent.name,
             "model": self.model or "",
             "tier": self.config.tier,
-            "started_at": datetime.now().isoformat(),
+            "started_at": started_at,
             "num_tasks": len(tasks),
             "agents": [a.name for a in agents],
             "environment": self.config.env_info.summary(),
@@ -95,13 +99,14 @@ class Orchestrator:
             agent_results = self._run_agent(agent, tasks)
             all_results[agent.name] = agent_results
 
-        # Update metadata with completion
+        # Update metadata with completion. Reuse captured `started_at` so the
+        # delta to completed_at reflects the actual Step 1 wall-clock time.
         save_run_metadata(self.run_id, {
             "run_id": self.run_id,
             "agent": agents[0].name,
             "model": self.model or "",
             "tier": self.config.tier,
-            "started_at": datetime.now().isoformat(),
+            "started_at": started_at,
             "completed_at": datetime.now().isoformat(),
             "num_tasks": len(tasks),
             "agents": [a.name for a in agents],

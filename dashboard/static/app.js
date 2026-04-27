@@ -192,6 +192,22 @@ function renderDetail(runId, summary) {
     // Meta
     const metaGrid = document.getElementById('detail-meta');
     const started = summary.started_at || '';
+    const ended = summary.completed_at || '';
+    // Duration in wall-clock seconds between start and end of the run.
+    // If completed_at is missing (run still in progress, or older summary
+    // with the orchestrator stamp-twice bug) we just hide the field.
+    let durationStr = '-';
+    if (started && ended) {
+        const sec = (new Date(ended) - new Date(started)) / 1000;
+        if (sec >= 0 && isFinite(sec)) durationStr = formatDuration(sec);
+    }
+
+    // Aggregate cost and tokens summed across all per-task entries.
+    // These let users see "한 평가 전체에서 얼마 들었나" alongside the
+    // per-task averages exposed in the metric cards.
+    const perTask = summary.per_task || [];
+    const totalCost = perTask.reduce((s, t) => s + (t.cost_usd || 0), 0);
+    const totalTokens = perTask.reduce((s, t) => s + (t.tokens || 0), 0);
 
     metaGrid.innerHTML = `
         ${metaItem('Agent', summary.agent)}
@@ -199,6 +215,10 @@ function renderDetail(runId, summary) {
         ${metaItem('Tier', summary.tier)}
         ${metaItem('Tasks', summary.num_tasks)}
         ${metaItem('Started', formatTime(started))}
+        ${metaItem('Ended', ended ? formatTime(ended) : '-')}
+        ${metaItem('Duration', durationStr)}
+        ${metaItem('Total Cost', perTask.length ? '$' + totalCost.toFixed(3) : '-')}
+        ${metaItem('Total Tokens', perTask.length ? formatTokens(totalTokens) : '-')}
         ${metaItem('Environment', summary.environment || '')}
     `;
 
@@ -278,6 +298,7 @@ function renderDetail(runId, summary) {
             <td>${statusStr}</td>
             <td>${resolvedStr}</td>
             <td>${task.cost_usd ? '$' + task.cost_usd.toFixed(3) : '-'}</td>
+            <td>${task.tokens ? formatTokens(task.tokens) : '-'}</td>
             <td>${task.e2e_time ? task.e2e_time.toFixed(1) + 's' : '-'}</td>
             <td>${task.convergence_steps || '-'}</td>
             <td>${colorTestCount(f2p)}</td>
@@ -458,4 +479,13 @@ function formatDuration(seconds) {
     if (seconds < 60) return seconds.toFixed(0) + 's';
     if (seconds < 3600) return Math.floor(seconds / 60) + 'm ' + (seconds % 60).toFixed(0) + 's';
     return Math.floor(seconds / 3600) + 'h ' + Math.floor((seconds % 3600) / 60) + 'm';
+}
+
+// Format token counts compactly: 850 → "850", 42500 → "42.5K", 1240000 → "1.24M".
+// Used both in per-task table cells and in the run-level "Total Tokens" meta.
+function formatTokens(n) {
+    if (!n && n !== 0) return '-';
+    if (n < 1000) return String(n);
+    if (n < 1_000_000) return (n / 1000).toFixed(1) + 'K';
+    return (n / 1_000_000).toFixed(2) + 'M';
 }
