@@ -1,0 +1,22 @@
+{
+  "instance_id": "sphinx-doc__sphinx-8713",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/sphinx/ext/napoleon/docstring.py b/sphinx/ext/napoleon/docstring.py\nindex 755088ca5..a5a986e49 100644\n--- a/sphinx/ext/napoleon/docstring.py\n+++ b/sphinx/ext/napoleon/docstring.py\n@@ -682,7 +682,13 @@ class GoogleDocstring:\n         return self._parse_generic_section(_('Notes'), use_admonition)\n \n     def _parse_other_parameters_section(self, section: str) -> List[str]:\n-        return self._format_fields(_('Other Parameters'), self._consume_fields())\n+        if self._config.napoleon_use_param:\n+            # Allow to declare multiple parameters at once (ex: x, y: int)\n+            fields = self._consume_fields(multiple=True)\n+            return self._format_docutils_params(fields)\n+        else:\n+            fields = self._consume_fields()\n+            return self._format_fields(_('Other Parameters'), fields)\n \n     def _parse_parameters_section(self, section: str) -> List[str]:\n         if self._config.napoleon_use_param:\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 571182,
+    "output_tokens": 4656,
+    "cache_read_tokens": 543699,
+    "cache_write_tokens": 27460
+  },
+  "timestamps": {
+    "task_start": 1777267132.8716333,
+    "task_end": 1777267209.348679,
+    "first_action": 1777267136.6308439
+  },
+  "total_cost_usd": 0.5608734999999999,
+  "convergence_steps": 19,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":74564,\"duration_api_ms\":71425,\"num_turns\":19,\"result\":\"All 46 tests pass. The single deselected test fails for an unrelated reason (missing `docutils.utils.roman` module in the test environment, not related to napoleon).\\n\\nThe fix:\\n- `sphinx/ext/napoleon/docstring.py:684` — `_parse_other_parameters_section` now respects `napoleon_use_param`, mirroring `_parse_parameters_section`. When `napoleon_use_param=True`, it emits `:param:`/`:type:` roles; when False, it falls back to the existing `:Other Parameters:` field-list rendering.\\n\\nVerified against the user's reproduction:\\n- With `napoleon_use_param=True`: produces `:param y:` / `:type y: float` (matching the expected output)\\n- With `napoleon_use_param=False`: still produces `:Other Parameters: **y** (*float*)` (preserves prior behavior)\",\"stop_reason\":\"end_turn\",\"session_id\":\"1a6983b3-7191-4938-b54f-37c97a9442a4\",\"total_cost_usd\":0.5608734999999999,\"usage\":{\"input_tokens\":23,\"cache_creation_input_tokens\":27460,\"cache_read_input_tokens\":543699,\"output_tokens\":4656,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":27460,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":290,\"cache_read_input_tokens\":37013,\"cache_creation_input_tokens\":725,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":725},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":794,\"outputTokens\":18,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000884,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-7\":{\"inputTokens\":23,\"outputTokens\":4656,\"cacheReadInputTokens\":543699,\"cacheCreationInputTokens\":27460,\"webSearchRequests\":0,\"costUSD\":0.5599895,\"contextWindow\":1000000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"5fe9d492-f4d0-422d-ba9a-0a4c24768285\"}\n",
+  "model_name": ""
+}

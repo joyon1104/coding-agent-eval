@@ -1,0 +1,22 @@
+{
+  "instance_id": "scikit-learn__scikit-learn-10297",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/sklearn/linear_model/ridge.py b/sklearn/linear_model/ridge.py\nindex 911c74ae3b..6469cdbcfc 100644\n--- a/sklearn/linear_model/ridge.py\n+++ b/sklearn/linear_model/ridge.py\n@@ -1301,6 +1301,12 @@ class RidgeClassifierCV(LinearClassifierMixin, _BaseRidgeCV):\n         weights inversely proportional to class frequencies in the input data\n         as ``n_samples / (n_classes * np.bincount(y))``\n \n+    store_cv_values : boolean, default=False\n+        Flag indicating if the cross-validation values corresponding to\n+        each alpha should be stored in the `cv_values_` attribute (see\n+        below). This flag is only compatible with `cv=None` (i.e. using\n+        Generalized Cross-Validation).\n+\n     Attributes\n     ----------\n     cv_values_ : array, shape = [n_samples, n_alphas] or \\\n@@ -1333,10 +1339,11 @@ class RidgeClassifierCV(LinearClassifierMixin, _BaseRidgeCV):\n     advantage of the multi-variate response support in Ridge.\n     \"\"\"\n     def __init__(self, alphas=(0.1, 1.0, 10.0), fit_intercept=True,\n-                 normalize=False, scoring=None, cv=None, class_weight=None):\n+                 normalize=False, scoring=None, cv=None, class_weight=None,\n+                 store_cv_values=False):\n         super(RidgeClassifierCV, self).__init__(\n             alphas=alphas, fit_intercept=fit_intercept, normalize=normalize,\n-            scoring=scoring, cv=cv)\n+            scoring=scoring, cv=cv, store_cv_values=store_cv_values)\n         self.class_weight = class_weight\n \n     def fit(self, X, y, sample_weight=None):\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 213856,
+    "output_tokens": 2579,
+    "cache_read_tokens": 197801,
+    "cache_write_tokens": 16045
+  },
+  "timestamps": {
+    "task_start": 1777262079.7784188,
+    "task_end": 1777262128.7047093,
+    "first_action": 1777262085.1084187
+  },
+  "total_cost_usd": 0.15914705,
+  "convergence_steps": 9,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":47314,\"duration_api_ms\":47970,\"num_turns\":9,\"result\":\"The fix is in place. Here's a summary of the two changes made to `sklearn/linear_model/ridge.py`:\\n\\n1. **`RidgeClassifierCV.__init__`** (line 1341–1347): Added `store_cv_values=False` to the signature and passed it through to `super().__init__()`. Previously `store_cv_values` was silently ignored because it was never wired through from `RidgeClassifierCV` to `_BaseRidgeCV`.\\n\\n2. **`RidgeClassifierCV` docstring** (line 1304–1308): Added the missing `store_cv_values` parameter description, consistent with what `RidgeCV` already had.\\n\\nThe root cause was that `_BaseRidgeCV.__init__` (the parent class) *did* accept `store_cv_values`, and `_BaseRidgeCV.fit` *did* use it — but `RidgeClassifierCV.__init__` simply never declared or forwarded the parameter, making it impossible to set.\",\"stop_reason\":\"end_turn\",\"session_id\":\"e77355ca-cbcc-4309-abd4-2d079886ffd3\",\"total_cost_usd\":0.15914705,\"usage\":{\"input_tokens\":10,\"cache_creation_input_tokens\":16045,\"cache_read_input_tokens\":197801,\"output_tokens\":2579,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":16045,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":244,\"cache_read_input_tokens\":27186,\"cache_creation_input_tokens\":456,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":456},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":813,\"outputTokens\":22,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000923,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":10,\"outputTokens\":2579,\"cacheReadInputTokens\":197801,\"cacheCreationInputTokens\":16045,\"webSearchRequests\":0,\"costUSD\":0.15822405,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"436052e4-e841-4a15-979e-26cf4598a222\"}\n",
+  "model_name": ""
+}

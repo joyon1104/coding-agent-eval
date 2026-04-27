@@ -1,0 +1,299 @@
+2026-04-27 14:06:53,088 [INFO]   Docker image cleanup: Total reclaimed space: 0B
+2026-04-27 14:06:53,089 [INFO] 
+============================================================
+2026-04-27 14:06:53,089 [INFO] Agent: claude-code | Tasks: 10
+2026-04-27 14:06:53,089 [INFO] ============================================================
+2026-04-27 14:06:53,091 [INFO]   Running: psf__requests-863
+2026-04-27 14:06:53,091 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/psf__requests
+2026-04-27 14:06:53,091 [INFO]   Copying cached repo for psf__requests-863...
+2026-04-27 14:07:47,010 [INFO]   Completed: success | Cost: $0.319 | Time: 53.8s
+2026-04-27 14:07:47,020 [INFO]   Running: pytest-dev__pytest-11148
+2026-04-27 14:07:47,020 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pytest-dev__pytest
+2026-04-27 14:07:47,020 [INFO]   Copying cached repo for pytest-dev__pytest-11148...
+2026-04-27 14:11:43,456 [INFO]   Completed: success | Cost: $0.833 | Time: 236.2s
+2026-04-27 14:11:43,457 [INFO]   Running: pallets__flask-4045
+2026-04-27 14:11:43,457 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pallets__flask
+2026-04-27 14:11:43,457 [INFO]   Copying cached repo for pallets__flask-4045...
+2026-04-27 14:13:26,417 [INFO]   Completed: success | Cost: $0.651 | Time: 102.9s
+2026-04-27 14:13:26,424 [INFO]   Running: pylint-dev__pylint-5859
+2026-04-27 14:13:26,424 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pylint-dev__pylint
+2026-04-27 14:13:26,425 [INFO]   Copying cached repo for pylint-dev__pylint-5859...
+2026-04-27 14:18:52,504 [INFO]   Completed: success | Cost: $1.592 | Time: 325.7s
+2026-04-27 14:18:52,547 [INFO]   Running: sphinx-doc__sphinx-8713
+2026-04-27 14:18:52,548 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/sphinx-doc__sphinx
+2026-04-27 14:18:52,548 [INFO]   Copying cached repo for sphinx-doc__sphinx-8713...
+2026-04-27 14:20:09,414 [INFO]   Completed: success | Cost: $0.561 | Time: 76.5s
+2026-04-27 14:20:09,455 [INFO]   Running: mwaskom__seaborn-2848
+2026-04-27 14:20:09,456 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/mwaskom__seaborn
+2026-04-27 14:20:09,456 [INFO]   Copying cached repo for mwaskom__seaborn-2848...
+2026-04-27 14:25:53,253 [INFO]   Completed: success | Cost: $2.081 | Time: 343.7s
+2026-04-27 14:25:53,263 [INFO]   Running: sympy__sympy-11400
+2026-04-27 14:25:53,264 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/sympy__sympy
+2026-04-27 14:25:53,264 [INFO]   Copying cached repo for sympy__sympy-11400...
+2026-04-27 14:27:23,369 [INFO]   Completed: success | Cost: $0.668 | Time: 89.7s
+2026-04-27 14:27:23,406 [INFO]   Running: astropy__astropy-14995
+2026-04-27 14:27:23,406 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/astropy__astropy
+2026-04-27 14:27:23,406 [INFO]   Copying cached repo for astropy__astropy-14995...
+2026-04-27 14:29:30,880 [INFO]   Completed: success | Cost: $0.488 | Time: 127.0s
+2026-04-27 14:29:30,940 [INFO]   Running: django__django-10914
+2026-04-27 14:29:30,940 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/django__django
+2026-04-27 14:29:30,941 [INFO]   Copying cached repo for django__django-10914...
+2026-04-27 14:31:44,726 [INFO]   Completed: success | Cost: $0.938 | Time: 132.5s
+2026-04-27 14:31:44,914 [INFO]   Running: scikit-learn__scikit-learn-10508
+2026-04-27 14:31:44,915 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/scikit-learn__scikit-learn
+2026-04-27 14:31:44,915 [INFO]   Copying cached repo for scikit-learn__scikit-learn-10508...
+2026-04-27 14:35:18,362 [INFO]   Completed: success | Cost: $0.527 | Time: 213.1s
+2026-04-27 14:35:18,388 [INFO]   Done: 10 run, 0 skipped
+2026-04-27 14:35:18,395 [INFO] Evaluating: psf__requests-863
+2026-04-27 14:35:18,478 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.psf__requests-863:latest
+2026-04-27 14:35:18,478 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.psf__requests-863:latest
+2026-04-27 14:35:18,787 [INFO]   Container started: 84c9baa5b3b4
+2026-04-27 14:35:19,044 [INFO]   Patch applied successfully
+2026-04-27 14:35:19,308 [INFO]   Reset 1 test path(s) before test_patch
+2026-04-27 14:35:19,579 [INFO]   Running FAIL_TO_PASS tests (4)...
+2026-04-27 14:35:26,535 [INFO]   Test exit code: 0
+2026-04-27 14:35:26,535 [INFO]   Test output (last 500 chars): tionWarning: Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated since Python 3.3, and in 3.10 it will stop working
+    from collections import MutableMapping
+
+requests/models.py:798
+  /testbed/requests/models.py:798: SyntaxWarning: "is" with a literal. Did you mean "=="?
+    if self.status_code is 0:
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 4 passed, 2 warnings in 6.54s =========================
+
+2026-04-27 14:35:26,535 [INFO]   Running PASS_TO_PASS tests (60)...
+2026-04-27 14:36:23,048 [INFO]   Test exit code: 0
+2026-04-27 14:36:23,048 [INFO]   Test output (last 500 chars): mary ===============================
+requests/packages/urllib3/_collections.py:7
+  /testbed/requests/packages/urllib3/_collections.py:7: DeprecationWarning: Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated since Python 3.3, and in 3.10 it will stop working
+    from collections import MutableMapping
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 60 passed, 1 warning in 56.10s ========================
+
+2026-04-27 14:36:23,291 [INFO]   Container removed
+2026-04-27 14:36:23,291 [INFO]   Result: RESOLVED | F2P: 100% | P2P: 100%
+2026-04-27 14:36:23,291 [INFO] Evaluating: pytest-dev__pytest-11148
+2026-04-27 14:36:23,291 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-04-27 14:36:23,291 [INFO] Evaluating: pallets__flask-4045
+2026-04-27 14:36:23,377 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.pallets__flask-4045:latest
+2026-04-27 14:36:23,377 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.pallets__flask-4045:latest
+2026-04-27 14:36:23,704 [INFO]   Container started: 5f9abf699fd9
+2026-04-27 14:36:23,985 [INFO]   Patch applied successfully
+2026-04-27 14:36:24,223 [INFO]   Reset 2 test path(s) before test_patch
+2026-04-27 14:36:24,451 [INFO]   Running FAIL_TO_PASS tests (2)...
+2026-04-27 14:36:25,062 [INFO]   Test exit code: 1
+2026-04-27 14:36:25,062 [INFO]   Test output (last 500 chars): ame of the blueprint.
+        """
+        if endpoint:
+>           assert "." not in endpoint, "Blueprint endpoints should not contain dots"
+E           AssertionError: Blueprint endpoints should not contain dots
+
+src/flask/blueprints.py:368: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_blueprints.py::test_route_decorator_custom_endpoint_with_dots
+========================= 1 failed, 1 passed in 0.08s ==========================
+
+2026-04-27 14:36:25,062 [INFO]   Running PASS_TO_PASS tests (50)...
+2026-04-27 14:36:25,750 [INFO]   Test exit code: 0
+2026-04-27 14:36:25,750 [INFO]   Test output (last 500 chars): ASSED      [ 90%]
+tests/test_blueprints.py::test_template_test PASSED                      [ 92%]
+tests/test_blueprints.py::test_add_template_test PASSED                  [ 94%]
+tests/test_blueprints.py::test_template_test_with_name PASSED            [ 96%]
+tests/test_blueprints.py::test_add_template_test_with_name PASSED        [ 98%]
+tests/test_blueprints.py::test_template_global PASSED                    [100%]
+
+============================== 50 passed in 0.20s ==============================
+
+2026-04-27 14:36:26,025 [INFO]   Container removed
+2026-04-27 14:36:26,025 [INFO]   Result: NOT RESOLVED | F2P: 50% | P2P: 100%
+2026-04-27 14:36:26,025 [INFO] Evaluating: pylint-dev__pylint-5859
+2026-04-27 14:36:26,107 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.pylint-dev__pylint-5859:latest
+2026-04-27 14:36:26,107 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.pylint-dev__pylint-5859:latest
+2026-04-27 14:36:26,448 [INFO]   Container started: 329831e0278f
+2026-04-27 14:36:26,695 [INFO]   Patch applied successfully
+2026-04-27 14:36:26,936 [INFO]   Reset 1 test path(s) before test_patch
+2026-04-27 14:36:27,178 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-04-27 14:36:28,287 [INFO]   Test exit code: 0
+2026-04-27 14:36:28,287 [INFO]   Test output (last 500 chars): ======
+../opt/miniconda3/envs/testbed/lib/python3.9/site-packages/astroid/interpreter/_import/util.py:7
+  /opt/miniconda3/envs/testbed/lib/python3.9/site-packages/astroid/interpreter/_import/util.py:7: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+    import pkg_resources
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+========================= 1 passed, 1 warning in 0.01s =========================
+
+2026-04-27 14:36:28,287 [INFO]   Running PASS_TO_PASS tests (10)...
+2026-04-27 14:36:29,210 [INFO]   Test exit code: 0
+2026-04-27 14:36:29,211 [INFO]   Test output (last 500 chars): ======
+../opt/miniconda3/envs/testbed/lib/python3.9/site-packages/astroid/interpreter/_import/util.py:7
+  /opt/miniconda3/envs/testbed/lib/python3.9/site-packages/astroid/interpreter/_import/util.py:7: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+    import pkg_resources
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 10 passed, 1 warning in 0.01s =========================
+
+2026-04-27 14:36:29,502 [INFO]   Container removed
+2026-04-27 14:36:29,502 [INFO]   Result: RESOLVED | F2P: 100% | P2P: 100%
+2026-04-27 14:36:29,503 [INFO] Evaluating: sphinx-doc__sphinx-8713
+2026-04-27 14:36:29,581 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.sphinx-doc__sphinx-8713:latest
+2026-04-27 14:36:29,581 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.sphinx-doc__sphinx-8713:latest
+2026-04-27 14:36:29,898 [INFO]   Container started: 63f556c1036f
+2026-04-27 14:36:30,146 [INFO]   Patch applied successfully
+2026-04-27 14:36:30,402 [INFO]   Reset 1 test path(s) before test_patch
+2026-04-27 14:36:30,632 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-04-27 14:36:31,358 [INFO]   Test exit code: 0
+2026-04-27 14:36:31,358 [INFO]   Test output (last 500 chars): nit__.py:3154: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 1 passed, 6 warnings in 0.05s =========================
+
+2026-04-27 14:36:31,359 [INFO]   Running PASS_TO_PASS tests (45)...
+2026-04-27 14:36:32,000 [INFO]   Test exit code: 4
+2026-04-27 14:36:32,000 [INFO]   Test output (last 500 chars): nit__.py:3154: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+============================= 6 warnings in 0.03s ==============================
+
+2026-04-27 14:36:32,293 [INFO]   Container removed
+2026-04-27 14:36:32,293 [INFO]   Result: NOT RESOLVED | F2P: 100% | P2P: 0%
+2026-04-27 14:36:32,293 [INFO] Evaluating: mwaskom__seaborn-2848
+2026-04-27 14:36:32,374 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.mwaskom__seaborn-2848:latest
+2026-04-27 14:36:32,374 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.mwaskom__seaborn-2848:latest
+2026-04-27 14:36:32,670 [INFO]   Container started: d44ac0a22b42
+2026-04-27 14:36:32,911 [INFO]   Patch applied successfully
+2026-04-27 14:36:33,140 [INFO]   Reset 1 test path(s) before test_patch
+2026-04-27 14:36:33,379 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-04-27 14:36:34,844 [INFO]   Test exit code: 0
+2026-04-27 14:36:34,844 [INFO]   Test output (last 500 chars): 3
+seaborn/cm.py:1583
+seaborn/cm.py:1583
+seaborn/cm.py:1583
+seaborn/cm.py:1583
+  /testbed/seaborn/cm.py:1583: MatplotlibDeprecationWarning: The register_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps.register(name)`` instead.
+    mpl_cm.register_cmap(_name + "_r", _cmap_r)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 1 passed, 12 warnings in 0.48s ========================
+
+2026-04-27 14:36:34,844 [INFO]   Running PASS_TO_PASS tests (50)...
+2026-04-27 14:36:48,171 [INFO]   Test exit code: 0
+2026-04-27 14:36:48,171 [INFO]   Test output (last 500 chars): est_relational.py::TestScatterPlotter::test_size_norm_extrapolation
+  /testbed/tests/test_relational.py:1690: MatplotlibDeprecationWarning: The legendHandles attribute was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use legend_handles instead.
+    for label, handle in zip(legend.get_texts(), legend.legendHandles)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+====================== 50 passed, 151 warnings in 12.40s =======================
+
+2026-04-27 14:36:48,417 [INFO]   Container removed
+2026-04-27 14:36:48,417 [INFO]   Result: RESOLVED | F2P: 100% | P2P: 100%
+2026-04-27 14:36:48,417 [INFO] Evaluating: sympy__sympy-11400
+2026-04-27 14:36:48,494 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.sympy__sympy-11400:latest
+2026-04-27 14:36:48,494 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.sympy__sympy-11400:latest
+2026-04-27 14:36:48,788 [INFO]   Container started: 6767b878023e
+2026-04-27 14:36:49,053 [INFO]   Patch applied successfully
+2026-04-27 14:36:49,301 [INFO]   Reset 1 test path(s) before test_patch
+2026-04-27 14:36:49,551 [INFO]   Running FAIL_TO_PASS tests (2)...
+2026-04-27 14:36:49,862 [INFO]   Test exit code: 0
+2026-04-27 14:36:49,862 [INFO]   Test output (last 500 chars): 
+2026-04-27 14:36:49,862 [INFO]   Running PASS_TO_PASS tests (29)...
+2026-04-27 14:36:50,152 [INFO]   Test exit code: 0
+2026-04-27 14:36:50,152 [INFO]   Test output (last 500 chars): 
+2026-04-27 14:36:50,447 [INFO]   Container removed
+2026-04-27 14:36:50,447 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 0%
+2026-04-27 14:36:50,447 [INFO] Evaluating: astropy__astropy-14995
+2026-04-27 14:36:50,530 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.astropy__astropy-14995:latest
+2026-04-27 14:36:50,530 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.astropy__astropy-14995:latest
+2026-04-27 14:36:50,837 [INFO]   Container started: 01bf8fe08fe2
+2026-04-27 14:36:51,081 [INFO]   Patch applied successfully
+2026-04-27 14:36:51,326 [INFO]   Reset 1 test path(s) before test_patch
+2026-04-27 14:36:51,562 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-04-27 14:36:53,313 [INFO]   Test exit code: 0
+2026-04-27 14:36:53,314 [INFO]   Test output (last 500 chars):  numpy.ndarray size changed, may indicate binary incompatibility. Expected 80 from C header, got 96 from PyObject
+Internet access disabled
+[1m============================= test session starts ==============================[0m
+[1mcollecting ... [0mcollected 1 item
+
+astropy/nddata/mixins/tests/test_ndarithmetic.py::test_nddata_bitmask_arithmetic [32mPASSED[0m[32m [100%][0m
+
+[32m============================== [32m[1m1 passed[0m[32m in 0.22s[0m[32m ===============================[0m
+
+2026-04-27 14:36:53,314 [INFO]   Running PASS_TO_PASS tests (179)...
+2026-04-27 14:36:54,654 [INFO]   Test exit code: 0
+2026-04-27 14:36:54,654 [INFO]   Test output (last 500 chars): t_arg[multiply] [32mPASSED[0m[32m [ 98%][0m
+astropy/nddata/mixins/tests/test_ndarithmetic.py::test_arithmetics_unknown_uncertainties [32mPASSED[0m[32m [ 98%][0m
+astropy/nddata/mixins/tests/test_ndarithmetic.py::test_psf_warning [32mPASSED[0m[32m [ 99%][0m
+astropy/nddata/mixins/tests/test_ndarithmetic.py::test_raise_method_not_supported [32mPASSED[0m[32m [100%][0m
+
+[32m============================= [32m[1m179 passed[0m[32m in 0.42s[0m[32m ==============================[0m
+
+2026-04-27 14:36:54,932 [INFO]   Container removed
+2026-04-27 14:36:54,932 [INFO]   Result: RESOLVED | F2P: 100% | P2P: 100%
+2026-04-27 14:36:54,932 [INFO] Evaluating: django__django-10914
+2026-04-27 14:36:55,009 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-10914:latest
+2026-04-27 14:36:55,009 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-10914:latest
+2026-04-27 14:36:55,328 [INFO]   Container started: 79b1794b4b32
+2026-04-27 14:36:55,568 [INFO]   Patch applied successfully
+2026-04-27 14:36:55,824 [INFO]   Reset 1 test path(s) before test_patch
+2026-04-27 14:36:56,056 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-04-27 14:36:56,823 [INFO]   Test exit code: 0
+2026-04-27 14:36:56,823 [INFO]   Test output (last 500 chars): test_override_file_upload_permissions (test_utils.tests.OverrideSettingsTests) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+OK
+Testing against Django installed in '/testbed/django' with up to 12 processes
+Importing application test_utils
+Skipping setup of unused database(s): default, other.
+System check identified no issues (0 silenced).
+
+2026-04-27 14:36:56,823 [INFO]   Running PASS_TO_PASS tests (98)...
+2026-04-27 14:36:57,389 [INFO]   Test exit code: 1
+2026-04-27 14:36:57,389 [INFO]   Test output (last 500 chars): gs)
+  File "/testbed/django/core/management/commands/migrate.py", line 202, in handle
+    self.sync_apps(connection, executor.loader.unmigrated_apps)
+  File "/testbed/django/core/management/commands/migrate.py", line 323, in sync_apps
+    self.stdout.write("  Creating tables\u2026\n")
+  File "/testbed/django/core/management/base.py", line 145, in write
+    self._out.write(style_func(msg))
+UnicodeEncodeError: 'ascii' codec can't encode character '\u2026' in position 17: ordinal not in range(128)
+
+2026-04-27 14:36:57,673 [INFO]   Container removed
+2026-04-27 14:36:57,673 [INFO]   Result: NOT RESOLVED | F2P: 100% | P2P: 0%
+2026-04-27 14:36:57,673 [INFO] Evaluating: scikit-learn__scikit-learn-10508
+2026-04-27 14:36:57,752 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.scikit-learn__scikit-learn-10508:latest
+2026-04-27 14:36:57,752 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.scikit-learn__scikit-learn-10508:latest
+2026-04-27 14:36:58,069 [INFO]   Container started: 924be61122ef
+2026-04-27 14:36:58,331 [INFO]   Patch applied successfully
+2026-04-27 14:36:58,572 [INFO]   Reset 1 test path(s) before test_patch
+2026-04-27 14:36:58,817 [INFO]   Running FAIL_TO_PASS tests (2)...
+2026-04-27 14:36:59,640 [INFO]   Test exit code: 1
+2026-04-27 14:36:59,640 [INFO]   Test output (last 500 chars): = exceptions.__name__
+    
+            raise AssertionError("%s not raised by %s" %
+>                                (names, function.__name__))
+E           AssertionError: ValueError not raised by inverse_transform
+
+sklearn/utils/testing.py:385: AssertionError
+=========================== short test summary info ============================
+FAILED sklearn/preprocessing/tests/test_label.py::test_label_encoder_errors
+=================== 1 failed, 1 passed, 13 warnings in 0.29s ===================
+
+2026-04-27 14:36:59,640 [INFO]   Running PASS_TO_PASS tests (18)...
+2026-04-27 14:37:00,418 [INFO]   Test exit code: 0
+2026-04-27 14:37:00,418 [INFO]   Test output (last 500 chars): label_binarizer_non_unique PASSED [ 77%]
+sklearn/preprocessing/tests/test_label.py::test_multilabel_binarizer_inverse_validation PASSED [ 83%]
+sklearn/preprocessing/tests/test_label.py::test_label_binarize_with_class_order PASSED [ 88%]
+sklearn/preprocessing/tests/test_label.py::test_invalid_input_label_binarize PASSED [ 94%]
+sklearn/preprocessing/tests/test_label.py::test_inverse_binarize_multiclass PASSED [100%]
+
+======================== 18 passed, 9 warnings in 0.21s ========================
+
+2026-04-27 14:37:00,732 [INFO]   Container removed
+2026-04-27 14:37:00,732 [INFO]   Result: NOT RESOLVED | F2P: 50% | P2P: 100%

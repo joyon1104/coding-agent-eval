@@ -1,0 +1,22 @@
+{
+  "instance_id": "astropy__astropy-14309",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/astropy/io/fits/connect.py b/astropy/io/fits/connect.py\nindex 4b6150f4ac..1f51fe4835 100644\n--- a/astropy/io/fits/connect.py\n+++ b/astropy/io/fits/connect.py\n@@ -69,7 +69,7 @@ def is_fits(origin, filepath, fileobj, *args, **kwargs):\n             (\".fits\", \".fits.gz\", \".fit\", \".fit.gz\", \".fts\", \".fts.gz\")\n         ):\n             return True\n-    return isinstance(args[0], (HDUList, TableHDU, BinTableHDU, GroupsHDU))\n+    return len(args) > 0 and isinstance(args[0], (HDUList, TableHDU, BinTableHDU, GroupsHDU))\n \n \n def _decode_mixins(tbl):\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 57232,
+    "output_tokens": 635,
+    "cache_read_tokens": 49283,
+    "cache_write_tokens": 7945
+  },
+  "timestamps": {
+    "task_start": 1777261995.5950754,
+    "task_end": 1777262010.671471,
+    "first_action": 1777262000.2694087
+  },
+  "total_cost_usd": 0.05604365,
+  "convergence_steps": 3,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":13035,\"duration_api_ms\":14023,\"num_turns\":3,\"result\":\"The fix guards the `args[0]` access with a length check. When `identify_format` is called with an empty `args` list (as in the reported example), `len(args) > 0` is `False` so it short-circuits and returns `False` instead of raising `IndexError`.\\n\\nThe root cause: when `filepath` is a non-FITS extension string, the old code returned `None` (implicitly, from the `elif` branch not having a final return). After commit `2a0c5c6`, the function falls through to the `isinstance` check, which assumes `args[0]` exists — but `identify_format` is called with `args=[]`.\",\"stop_reason\":\"end_turn\",\"session_id\":\"899e9a90-6f37-44f4-9aff-a3f7f6162b29\",\"total_cost_usd\":0.05604365,\"usage\":{\"input_tokens\":4,\"cache_creation_input_tokens\":7945,\"cache_read_input_tokens\":49283,\"output_tokens\":635,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":7945,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":158,\"cache_read_input_tokens\":19191,\"cache_creation_input_tokens\":351,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":351},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1823,\"outputTokens\":21,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.001928,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":4,\"outputTokens\":635,\"cacheReadInputTokens\":49283,\"cacheCreationInputTokens\":7945,\"webSearchRequests\":0,\"costUSD\":0.05411565,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"681bd241-5d4a-453c-a2d0-eea5c44b4658\"}\n",
+  "model_name": ""
+}

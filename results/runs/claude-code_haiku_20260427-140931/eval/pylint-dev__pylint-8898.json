@@ -1,0 +1,32 @@
+{
+  "instance_id": "pylint-dev__pylint-8898",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "tests/config/test_config.py::test_csv_regex_error": false
+  },
+  "pass_to_pass_results": {
+    "tests/config/test_config.py::test_can_read_toml_env_variable": false,
+    "tests/config/test_config.py::test_unknown_message_id": false,
+    "tests/config/test_config.py::test_unknown_option_name": false,
+    "tests/config/test_config.py::test_unknown_short_option_name": false,
+    "tests/config/test_config.py::test_unknown_confidence": false,
+    "tests/config/test_config.py::test_empty_confidence": false,
+    "tests/config/test_config.py::test_unknown_yes_no": false,
+    "tests/config/test_config.py::test_unknown_py_version": false,
+    "tests/config/test_config.py::test_csv_regex_comma_in_quantifier[foo-expected0]": false,
+    "tests/config/test_config.py::test_csv_regex_comma_in_quantifier[foo,bar-expected1]": false,
+    "tests/config/test_config.py::test_csv_regex_comma_in_quantifier[foo,": false,
+    "tests/config/test_config.py::test_regex_error": false,
+    "tests/config/test_config.py::test_short_verbose": false,
+    "tests/config/test_config.py::test_argument_separator": false,
+    "tests/config/test_config.py::test_clear_cache_post_run": false,
+    "tests/config/test_config.py::test_enable_all_disable_all_mutually_exclusive": false,
+    "tests/config/test_config.py::test_disable_before_enable_all_takes_effect": false,
+    "tests/config/test_config.py::test_enable_before_disable_all_takes_effect": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

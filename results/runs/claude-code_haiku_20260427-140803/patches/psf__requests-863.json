@@ -1,0 +1,22 @@
+{
+  "instance_id": "psf__requests-863",
+  "agent_name": "claude-code",
+  "patch": "",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 1061761,
+    "output_tokens": 9575,
+    "cache_read_tokens": 1031230,
+    "cache_write_tokens": 30368
+  },
+  "timestamps": {
+    "task_start": 1777266484.086716,
+    "task_end": 1777266575.3474023,
+    "first_action": 1777266487.987629
+  },
+  "total_cost_usd": 0.18970900000000002,
+  "convergence_steps": 23,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":89491,\"duration_api_ms\":89721,\"num_turns\":23,\"result\":\"Perfect! I've successfully fixed the issue. Here's a summary of what was done:\\n\\n## Problem Identified\\nThe `Request.__init__()` method didn't properly handle lists of hook functions. If you passed `hooks={'pre_request': [func1, func2]}`, it would wrap the list in another list, making it `[[func1, func2]]`, which failed during dispatch since lists aren't callable.\\n\\n## Solution Implemented\\nModified `requests/models.py` lines 151-156 to check if hook values are lists and handle them appropriately:\\n\\n```python\\nfor (k, v) in list(hooks.items()):\\n    if isinstance(v, list):\\n        for hook in v:\\n            self.register_hook(event=k, hook=hook)\\n    else:\\n        self.register_hook(event=k, hook=v)\\n```\\n\\n## Benefits\\n- ✅ **Cleaner API**: Pass multiple hooks directly: `Request(url='...', hooks={'response': [hook1, hook2]})`\\n- ✅ **Session integration**: Better support for sessions with multiple hooks\\n- ✅ **Backwards compatible**: Single hook functions still work as before\\n- ✅ **No more workaround**: No need to create request then call `.register_hook()` multiple times\\n\\nThe fix has been tested with comprehensive scenarios including single hooks, lists of hooks, mixed scenarios, and proper hook dispatch/execution. The change is committed and ready to use.\",\"stop_reason\":\"end_turn\",\"session_id\":\"07ff7903-7471-4db7-a1fa-831f5b9d9b7c\",\"total_cost_usd\":0.18970900000000002,\"usage\":{\"input_tokens\":163,\"cache_creation_input_tokens\":30368,\"cache_read_input_tokens\":1031230,\"output_tokens\":9575,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":30368,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":7,\"output_tokens\":545,\"cache_read_input_tokens\":53570,\"cache_creation_input_tokens\":161,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":161},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":676,\"outputTokens\":9590,\"cacheReadInputTokens\":1031230,\"cacheCreationInputTokens\":30368,\"webSearchRequests\":0,\"costUSD\":0.18970900000000002,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"2866683b-59df-46d9-8dd2-eb8adabf81c2\"}\n",
+  "model_name": ""
+}
