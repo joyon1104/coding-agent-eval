@@ -448,6 +448,53 @@ python scripts/pick_small_instances.py --tier verified --n 20 --per-repo-max 2
 - Manifest 조회 결과는 `data/.image_size_cache.json`에 캐싱 → `--n`이나 `--per-repo-max` 값만 바꿔 재실행할 때 GHCR 재조회 없이 즉시 선택
 - Manifest를 가져올 수 없는 인스턴스(공개 안 됨 / 네트워크 차단)는 자동 제외
 
+## 층화 샘플링 (분포 보존 서브셋 추출)
+
+위의 "가벼운 서브셋 추출"이 **리소스 절약**(작은 이미지·짧은 텍스트 우선)에 초점을 맞춘다면, 층화 샘플링은 **통계적 변별력 확보**가 목적입니다. repo·난이도·patch 크기 분포를 원본과 유사하게 유지하면서 부분집합을 추출하므로, 적은 샘플로도 에이전트 성능을 편향 없이 평가할 수 있습니다.
+
+```bash
+# Lite에서 20개 추출 (repo × patch_size 2차원 층화)
+python scripts/swebench_sampler.py \
+    --input data/swebench_lite.jsonl \
+    --output data/swebench_lite_subset.jsonl \
+    --size 20 --dataset lite --seed 42
+
+# Verified에서 60개 추출 (repo × difficulty × patch_size 3차원 층화)
+python scripts/swebench_sampler.py \
+    --input data/swebench_verified.jsonl \
+    --output data/swebench_verified_subset.jsonl \
+    --size 60 --dataset verified --seed 42
+```
+
+**주요 옵션**
+- `--input PATH`: 원본 JSONL 경로 (필수)
+- `--output PATH`: 추출된 JSONL 저장 경로 (필수)
+- `--size N`: 추출할 인스턴스 수 (필수)
+- `--dataset {lite|verified}`: verified 지정 시 `difficulty` 필드를 층화 차원에 추가
+- `--seed N`: 재현성용 seed (기본 42)
+
+**동작 방식**
+- 층(strata) 정의: `(repo, patch_size_bucket)` — verified는 `difficulty` 추가
+- patch 크기 버킷: 라인 수 기준 `small (<30) / medium (<100) / large (≥100)`
+- 1단계: 각 층에서 비율대로 추출 (희소 층은 최소 1개 보장)
+- 2단계: size 초과 시 repo 다양성을 우선 보존하며 truncate, 부족 시 잔여 풀에서 보충
+- 부산물: `--output`과 동일 stem의 `.ids.txt`에 `instance_id` 목록 자동 저장
+
+**산출물 활용**
+```bash
+# 1) 추출된 서브셋으로 평가 실행
+python scripts/run_eval.py --tier lite --offline \
+    --agents claude-code --model sonnet \
+    --input data/swebench_lite_subset.jsonl
+
+# 2) 추출된 instance_id 목록을 사전 pull에 활용
+python scripts/prepull_images.py \
+    --dataset data/swebench_lite_subset.jsonl
+```
+
+실행 시 Original/Sampled 양쪽의 repo·patch size·difficulty 분포가 콘솔에 출력되어 층화 결과의 균형을 즉시 확인할 수 있습니다.
+
+
 ## Docker 이미지 사전 pull (pre-warm)
 
 평가 도중 `docker pull` 실패로 evaluation이 중단되지 않게, 대상 인스턴스의 이미지들을 **평가 시작 전에 미리** 받아둡니다. `pull_image()`를 그대로 재사용하므로 실패 분류 + 재시도 로직이 동일하게 적용되고, 이미 받은 이미지는 자동 skip되어 **중단 후 재실행 시 이어받기**가 됩니다.
