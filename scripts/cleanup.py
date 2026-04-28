@@ -1,16 +1,34 @@
 #!/usr/bin/env python3
-"""Clean up Docker resources and temp files from evaluation runs."""
+"""Clean up Docker resources and temp files from evaluation runs.
+
+Only touches resources owned by this eval harness — never global prune.
+On shared servers, `docker container/image prune` would wipe other developers'
+stopped containers and dangling build layers. We only delete:
+  - /tmp/cae_*        (our sandbox workdirs)
+  - cae_*  containers (our named eval containers)
+  - ghcr.io/epoch-research/swe-bench.eval.* images (only with confirmation)
+"""
 
 import subprocess
 import shutil
 import glob
-from pathlib import Path
+
+
+def _list_cae_containers() -> list[str]:
+    """Return names of containers matching `cae_*` (any state)."""
+    result = subprocess.run(
+        ["docker", "ps", "-a", "--format", "{{.Names}}",
+         "--filter", "name=^cae_"],
+        capture_output=True, text=True, timeout=10,
+    )
+    return [n for n in result.stdout.strip().splitlines() if n]
+
 
 def main():
     print("Coding-Agent-Eval Cleanup\n")
 
-    # 1. Stale temp directories
-    stale = glob.glob("/tmp/cape_*")
+    # 1. Stale temp directories (our workdirs only)
+    stale = glob.glob("/tmp/cae_*")
     if stale:
         print(f"Removing {len(stale)} temp directories...")
         for d in stale:
@@ -19,18 +37,23 @@ def main():
     else:
         print("No stale temp directories.")
 
-    # 2. Stopped containers
-    print("\nRemoving stopped containers...")
-    result = subprocess.run(
-        ["docker", "container", "prune", "-f"],
-        capture_output=True, text=True, timeout=30,
-    )
-    print(f"  {result.stdout.strip()}")
+    # 2. Our eval containers only (cae_* named) — never global prune
+    print("\nRemoving cae_* eval containers...")
+    cae_containers = _list_cae_containers()
+    if cae_containers:
+        for name in cae_containers:
+            subprocess.run(
+                ["docker", "rm", "-f", name],
+                capture_output=True, timeout=30,
+            )
+        print(f"  Removed {len(cae_containers)} container(s).")
+    else:
+        print("  None found.")
 
-    # 3. SWE-bench images
+    # 3. SWE-bench images (interactive — same as before)
     result = subprocess.run(
         ["docker", "images", "--format", "{{.Repository}}:{{.Tag}}\t{{.Size}}",
-         "--filter", "reference=ghcr.io/epoch-research/*"],
+         "--filter", "reference=ghcr.io/epoch-research/swe-bench.eval.*"],
         capture_output=True, text=True, timeout=10,
     )
     images = [l for l in result.stdout.strip().split("\n") if l]
@@ -54,13 +77,9 @@ def main():
     else:
         print("\nNo SWE-bench images found.")
 
-    # 4. Dangling images
-    print("\nRemoving dangling images...")
-    result = subprocess.run(
-        ["docker", "image", "prune", "-f"],
-        capture_output=True, text=True, timeout=60,
-    )
-    print(f"  {result.stdout.strip()}")
+    # NOTE: We intentionally do NOT run `docker image prune` or
+    # `docker container prune` here. Those are global and would delete
+    # other developers' resources on a shared server.
 
     print("\nCleanup complete.")
 

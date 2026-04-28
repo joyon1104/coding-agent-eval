@@ -54,7 +54,7 @@ class DiskAwareSandbox:
         then copied to a working directory per task. This avoids
         re-cloning large repos (e.g. django ~500MB) for every task.
         """
-        workdir = Path(tempfile.mkdtemp(prefix=f"cape_{instance_id}_"))
+        workdir = Path(tempfile.mkdtemp(prefix=f"cae_{instance_id}_"))
         self._workdirs[instance_id] = workdir
         repo_path = workdir / "repo"
 
@@ -152,9 +152,9 @@ class DiskAwareSandbox:
             self.cleanup(iid)
 
     def cleanup_stale_workdirs(self):
-        """Remove orphaned /tmp/cape_* directories from previous runs."""
+        """Remove orphaned /tmp/cae_* directories from previous runs."""
         count = 0
-        for d in glob.glob("/tmp/cape_*"):
+        for d in glob.glob("/tmp/cae_*"):
             p = Path(d)
             if p.is_dir():
                 shutil.rmtree(p, ignore_errors=True)
@@ -162,32 +162,42 @@ class DiskAwareSandbox:
         if count:
             logger.info(f"  Cleaned up {count} stale temp directories")
 
-    def _cleanup_old_images(self):
-        """Remove dangling Docker images to free space."""
-        try:
-            subprocess.run(
-                ["docker", "image", "prune", "-f"],
-                capture_output=True, timeout=60,
-            )
-        except (subprocess.TimeoutExpired, FileNotFoundError):
-            pass
+    # Only delete our own SWE-bench eval images — never global prune.
+    # On shared servers, `docker image prune` wipes other developers' dangling
+    # build layers, and `docker container prune` wipes their stopped containers.
+    SWEBENCH_IMAGE_REF = "ghcr.io/epoch-research/swe-bench.eval.*"
 
-    @staticmethod
-    def cleanup_docker_resources():
-        """Remove stopped containers and dangling images."""
+    def _cleanup_old_images(self):
+        """Remove our SWE-bench eval images to free space.
+
+        Only targets `ghcr.io/epoch-research/swe-bench.eval.*`. Images currently
+        in use by a running container are skipped automatically by `docker rmi`
+        (the call returns nonzero, which we ignore).
+        """
         try:
-            result = subprocess.run(
-                ["docker", "container", "prune", "-f"],
+            listing = subprocess.run(
+                ["docker", "images", "--format", "{{.Repository}}:{{.Tag}}",
+                 "--filter", f"reference={self.SWEBENCH_IMAGE_REF}"],
                 capture_output=True, text=True, timeout=30,
             )
-            if "Deleted" in result.stdout:
-                logger.info(f"  Docker container cleanup: {result.stdout.strip()}")
-
-            result = subprocess.run(
-                ["docker", "image", "prune", "-f"],
-                capture_output=True, text=True, timeout=60,
-            )
-            if "Total reclaimed" in result.stdout:
-                logger.info(f"  Docker image cleanup: {result.stdout.strip()}")
         except (subprocess.TimeoutExpired, FileNotFoundError):
-            pass
+            return
+
+        images = [line for line in listing.stdout.strip().splitlines() if line]
+        if not images:
+            return
+
+        removed = 0
+        for image in images:
+            try:
+                result = subprocess.run(
+                    ["docker", "rmi", image],
+                    capture_output=True, timeout=60,
+                )
+                if result.returncode == 0:
+                    removed += 1
+            except (subprocess.TimeoutExpired, FileNotFoundError):
+                continue
+
+        if removed:
+            logger.info(f"  Freed disk by removing {removed} SWE-bench eval image(s)")

@@ -71,9 +71,12 @@ class Orchestrator:
         """Run all tasks for all agents. Skips already completed tasks."""
         setup_logging(self.run_id)
 
-        # Clean up stale resources from previous runs
+        # Clean up stale resources from previous runs.
+        # NOTE: Only our own /tmp/cae_* workdirs — never touch Docker resources
+        # automatically, since this runs on shared servers where global
+        # `docker prune` would wipe other developers' stopped containers and
+        # dangling build layers.
         self.sandbox.cleanup_stale_workdirs()
-        self.sandbox.cleanup_docker_resources()
 
         agent = agents[0]  # New layout: one agent per run
 

@@ -339,7 +339,7 @@ def evaluate_single(
             error=f"Failed to pull image: {image}",
         )
 
-    container_name = f"cape_{task.instance_id}"
+    container_name = f"cae_{task.instance_id}"
     container_id = None
 
     try:
