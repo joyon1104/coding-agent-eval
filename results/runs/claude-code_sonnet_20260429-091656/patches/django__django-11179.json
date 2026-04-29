@@ -1,0 +1,22 @@
+{
+  "instance_id": "django__django-11179",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/django/db/models/deletion.py b/django/db/models/deletion.py\nindex 92fe4affb9..3a462f1c4c 100644\n--- a/django/db/models/deletion.py\n+++ b/django/db/models/deletion.py\n@@ -277,6 +277,7 @@ class Collector:\n             if self.can_fast_delete(instance):\n                 with transaction.mark_for_rollback_on_error():\n                     count = sql.DeleteQuery(model).delete_batch([instance.pk], self.using)\n+                setattr(instance, model._meta.pk.attname, None)\n                 return count, {model._meta.label: count}\n \n         with transaction.atomic(using=self.using, savepoint=False):\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 90662,
+    "output_tokens": 814,
+    "cache_read_tokens": 83316,
+    "cache_write_tokens": 7340
+  },
+  "timestamps": {
+    "task_start": 1777428039.4390867,
+    "task_end": 1777428063.8146882,
+    "first_action": 1777428044.1334867
+  },
+  "total_cost_usd": 0.0652468,
+  "convergence_steps": 5,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":22270,\"duration_api_ms\":23472,\"num_turns\":5,\"result\":\"The fix adds `setattr(instance, model._meta.pk.attname, None)` at line 280 (after the fast-delete batch), mirroring what the normal delete path already does at line 326. Now both code paths clear the PK after deletion.\",\"stop_reason\":\"end_turn\",\"session_id\":\"247f6fc9-9eb3-4b74-b5d0-bbd14180fe92\",\"total_cost_usd\":0.0652468,\"usage\":{\"input_tokens\":6,\"cache_creation_input_tokens\":7340,\"cache_read_input_tokens\":83316,\"output_tokens\":814,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":7340,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":63,\"cache_read_input_tokens\":18535,\"cache_creation_input_tokens\":436,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":436},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":409,\"outputTokens\":18,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000499,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":6,\"outputTokens\":814,\"cacheReadInputTokens\":83316,\"cacheCreationInputTokens\":7340,\"webSearchRequests\":0,\"costUSD\":0.0647478,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"c4aba176-e358-4c78-970e-8f1e65150fb6\"}\n",
+  "model_name": ""
+}

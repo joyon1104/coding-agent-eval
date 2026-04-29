@@ -1,0 +1,22 @@
+{
+  "instance_id": "pylint-dev__pylint-6386",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/pylint/config/callback_actions.py b/pylint/config/callback_actions.py\nindex 761995399..198f786c8 100644\n--- a/pylint/config/callback_actions.py\n+++ b/pylint/config/callback_actions.py\n@@ -45,6 +45,33 @@ class _DoNothingAction(_CallbackAction):\n     without erroring when they are then processed again by argparse.\n     \"\"\"\n \n+    def __init__(\n+        self,\n+        option_strings: Sequence[str],\n+        dest: str,\n+        nargs: None = None,\n+        const: None = None,\n+        default: None = None,\n+        type: None = None,\n+        choices: None = None,\n+        required: bool = False,\n+        help: str = \"\",\n+        metavar: str = \"\",\n+        **kwargs: Any,\n+    ) -> None:\n+        super().__init__(\n+            option_strings,\n+            dest,\n+            0,\n+            const,\n+            default,\n+            type,\n+            choices,\n+            required,\n+            help,\n+            metavar,\n+        )\n+\n     def __call__(\n         self,\n         parser: argparse.ArgumentParser,\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 4912431,
+    "output_tokens": 18428,
+    "cache_read_tokens": 4841776,
+    "cache_write_tokens": 70163
+  },
+  "timestamps": {
+    "task_start": 1777422274.7902231,
+    "task_end": 1777422544.14731,
+    "first_action": 1777422278.3975375
+  },
+  "total_cost_usd": 0.6651533500000001,
+  "convergence_steps": 70,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":267552,\"duration_api_ms\":252512,\"num_turns\":70,\"result\":\"## Summary\\n\\nI've successfully fixed the verbose option bug! Here's what was wrong and how it was fixed:\\n\\n### The Problem\\nThe short form of the verbose option (`-v`) was incorrectly expecting an argument, causing pylint to fail with:\\n```\\npylint: error: argument --verbose/-v: expected one argument\\n```\\n\\nThe long form (`--verbose`) worked correctly because it was handled specially by the preprocessing code before being passed to argparse.\\n\\n### Root Cause\\nThe `_DoNothingAction` class (which handles the verbose option) didn't specify `nargs=0`, so argparse defaulted to expecting one argument for options using this action. Other callback actions like `_ErrorsOnlyModeAction` explicitly set `nargs=0` to indicate they don't take arguments.\\n\\n### The Fix\\nI added an `__init__` method to `_DoNothingAction` in `pylint/config/callback_actions.py` that:\\n1. Accepts all standard argparse action parameters\\n2. Calls the parent class `__init__` with `nargs=0` to explicitly tell argparse the option doesn't expect arguments\\n\\n### Testing\\nThe fix has been validated to work with:\\n- ✅ `pylint -v file.py` (short form at the beginning)\\n- ✅ `pylint file.py -v` (short form at the end)\\n- ✅ `pylint --verbose file.py` (long form)\\n- ✅ Combined with other options like `-E`\\n\\nAll existing functionality remains intact and no regressions were introduced.\",\"stop_reason\":\"end_turn\",\"session_id\":\"82d30238-f78e-4258-b144-badfccb29dc8\",\"total_cost_usd\":0.6651533500000001,\"usage\":{\"input_tokens\":492,\"cache_creation_input_tokens\":70163,\"cache_read_input_tokens\":4841776,\"output_tokens\":18428,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":70163,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":7,\"output_tokens\":386,\"cache_read_input_tokens\":93271,\"cache_creation_input_tokens\":186,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":186},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1062,\"outputTokens\":18442,\"cacheReadInputTokens\":4841776,\"cacheCreationInputTokens\":70163,\"webSearchRequests\":0,\"costUSD\":0.6651533500000001,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"3a26a3d4-2ca2-4d4a-b4f4-16acbe3a427d\"}\n",
+  "model_name": ""
+}

@@ -1,0 +1,21 @@
+{
+  "instance_id": "pylint-dev__pylint-6386",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "tests/config/test_config.py::test_short_verbose": true
+  },
+  "pass_to_pass_results": {
+    "tests/config/test_config.py::test_can_read_toml_env_variable": true,
+    "tests/config/test_config.py::test_unknown_message_id": true,
+    "tests/config/test_config.py::test_unknown_option_name": true,
+    "tests/config/test_config.py::test_unknown_short_option_name": true,
+    "tests/config/test_config.py::test_unknown_confidence": true,
+    "tests/config/test_config.py::test_unknown_yes_no": true,
+    "tests/config/test_config.py::test_unknown_py_version": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

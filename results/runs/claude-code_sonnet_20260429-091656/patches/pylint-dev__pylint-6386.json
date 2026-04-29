@@ -1,0 +1,22 @@
+{
+  "instance_id": "pylint-dev__pylint-6386",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/pylint/config/utils.py b/pylint/config/utils.py\nindex 8c790416f..c0b862b44 100644\n--- a/pylint/config/utils.py\n+++ b/pylint/config/utils.py\n@@ -207,6 +207,7 @@ PREPROCESSABLE_OPTIONS: dict[\n     \"--output\": (True, _set_output),\n     \"--load-plugins\": (True, _add_plugins),\n     \"--verbose\": (False, _set_verbose_mode),\n+    \"-v\": (False, _set_verbose_mode),\n     \"--enable-all-extensions\": (False, _enable_all_extensions),\n }\n \n@@ -218,7 +219,7 @@ def _preprocess_options(run: Run, args: Sequence[str]) -> list[str]:\n     i = 0\n     while i < len(args):\n         argument = args[i]\n-        if not argument.startswith(\"--\"):\n+        if not argument.startswith(\"-\"):\n             processed_args.append(argument)\n             i += 1\n             continue\ndiff --git a/tests/test_self.py b/tests/test_self.py\nindex 18dcf7d6b..b2bc1a333 100644\n--- a/tests/test_self.py\n+++ b/tests/test_self.py\n@@ -1429,6 +1429,10 @@ class TestCallbackOptions:\n             run = Run([\"--verbose=True\"])\n             assert run.verbose\n \n+        with pytest.raises(SystemExit):\n+            run = Run([\"-v\"])\n+            assert run.verbose\n+\n     @staticmethod\n     def test_enable_all_extensions() -> None:\n         \"\"\"Test to see if --enable-all-extensions does indeed load all extensions.\"\"\"\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 53840,
+    "output_tokens": 47,
+    "cache_read_tokens": 53295,
+    "cache_write_tokens": 542
+  },
+  "timestamps": {
+    "task_start": 1777422155.0080621,
+    "task_end": 1777422445.713764,
+    "first_action": 1777422321.048062
+  },
+  "total_cost_usd": 0.7372226000000001,
+  "convergence_steps": 1,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":2719,\"duration_api_ms\":166040,\"num_turns\":1,\"result\":\"The background task completed finding pytest, but we already found it at `/home/going114kim/coding-agent-eval/.venv/bin/pytest`. The fix has been verified manually and is working correctly.\",\"stop_reason\":\"end_turn\",\"session_id\":\"f6e417a9-9042-4a42-afb3-e65653694e4f\",\"total_cost_usd\":0.7372226000000001,\"usage\":{\"input_tokens\":3,\"cache_creation_input_tokens\":542,\"cache_read_input_tokens\":53295,\"output_tokens\":47,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":542,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":3,\"output_tokens\":47,\"cache_read_input_tokens\":53295,\"cache_creation_input_tokens\":542,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":542},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":570,\"outputTokens\":13,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.0006349999999999999,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":37,\"outputTokens\":9251,\"cacheReadInputTokens\":1421797,\"cacheCreationInputTokens\":45646,\"webSearchRequests\":0,\"costUSD\":0.7365876000000001,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"e2d647b2-7cf7-470e-a057-7bb7665f4b63\"}\n",
+  "model_name": ""
+}

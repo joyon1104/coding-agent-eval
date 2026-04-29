@@ -1,0 +1,23 @@
+{
+  "instance_id": "sympy__sympy-21847",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "test_monomials": false
+  },
+  "pass_to_pass_results": {
+    "test_monomial_count": false,
+    "test_monomial_mul": false,
+    "test_monomial_div": false,
+    "test_monomial_gcd": false,
+    "test_monomial_lcm": false,
+    "test_monomial_max": false,
+    "test_monomial_pow": false,
+    "test_monomial_min": false,
+    "test_monomial_divides": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

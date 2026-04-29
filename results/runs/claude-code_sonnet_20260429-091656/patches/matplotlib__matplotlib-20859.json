@@ -1,0 +1,22 @@
+{
+  "instance_id": "matplotlib__matplotlib-20859",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/lib/matplotlib/legend.py b/lib/matplotlib/legend.py\nindex 44ab024698..9a2dedd0c2 100644\n--- a/lib/matplotlib/legend.py\n+++ b/lib/matplotlib/legend.py\n@@ -360,7 +360,7 @@ class Legend(Artist):\n         \"\"\"\n         # local import only to avoid circularity\n         from matplotlib.axes import Axes\n-        from matplotlib.figure import Figure\n+        from matplotlib.figure import Figure, FigureBase\n \n         super().__init__()\n \n@@ -434,9 +434,9 @@ class Legend(Artist):\n             self.isaxes = True\n             self.axes = parent\n             self.set_figure(parent.figure)\n-        elif isinstance(parent, Figure):\n+        elif isinstance(parent, FigureBase):\n             self.isaxes = False\n-            self.set_figure(parent)\n+            self.set_figure(parent.figure)\n         else:\n             raise TypeError(\"Legend needs either Axes or Figure as parent\")\n         self.parent = parent\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 305836,
+    "output_tokens": 2680,
+    "cache_read_tokens": 293473,
+    "cache_write_tokens": 12347
+  },
+  "timestamps": {
+    "task_start": 1777422587.6853979,
+    "task_end": 1777422636.7595837,
+    "first_action": 1777422590.6681478
+  },
+  "total_cost_usd": 0.17571615000000002,
+  "convergence_steps": 16,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":47169,\"duration_api_ms\":47724,\"num_turns\":16,\"result\":\"The fix works. Here's a summary of the two changes made to `lib/matplotlib/legend.py`:\\n\\n1. **Line 363**: Added `FigureBase` to the local import — `from matplotlib.figure import Figure, FigureBase`\\n2. **Line 437**: Changed `isinstance(parent, Figure)` to `isinstance(parent, FigureBase)`, so `SubFigure` (which inherits from `FigureBase` but not `Figure`) is accepted as a valid parent. Also changed `self.set_figure(parent)` to `self.set_figure(parent.figure)` so the legend's figure is always set to the root `Figure` instance — consistent with how the axes branch works (`parent.figure`), and correct because `SubFigure.figure` always resolves to the root figure.\",\"stop_reason\":\"end_turn\",\"session_id\":\"c052561e-328e-43da-ae60-d0ae0ac5425e\",\"total_cost_usd\":0.17571615000000002,\"usage\":{\"input_tokens\":16,\"cache_creation_input_tokens\":12347,\"cache_read_input_tokens\":293473,\"output_tokens\":2680,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":12347,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":191,\"cache_read_input_tokens\":23737,\"cache_creation_input_tokens\":241,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":241},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1040,\"outputTokens\":17,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.001125,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":16,\"outputTokens\":2680,\"cacheReadInputTokens\":293473,\"cacheCreationInputTokens\":12347,\"webSearchRequests\":0,\"costUSD\":0.17459115000000003,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"a7c736a7-991a-42d2-a139-e2b119ad6eef\"}\n",
+  "model_name": ""
+}

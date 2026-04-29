@@ -1,0 +1,22 @@
+{
+  "instance_id": "django__django-14376",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "test_options_non_deprecated_keys_preferred (dbshell.test_mysql.MySqlDbshellCommandTestCase)": false,
+    "test_options_override_settings_proper_values (dbshell.test_mysql.MySqlDbshellCommandTestCase)": true,
+    "test_parameters (dbshell.test_mysql.MySqlDbshellCommandTestCase)": true
+  },
+  "pass_to_pass_results": {
+    "test_basic_params_specified_in_settings (dbshell.test_mysql.MySqlDbshellCommandTestCase)": true,
+    "test_can_connect_using_sockets (dbshell.test_mysql.MySqlDbshellCommandTestCase)": true,
+    "test_crash_password_does_not_leak (dbshell.test_mysql.MySqlDbshellCommandTestCase)": true,
+    "test_fails_with_keyerror_on_incomplete_config (dbshell.test_mysql.MySqlDbshellCommandTestCase)": true,
+    "test_options_charset (dbshell.test_mysql.MySqlDbshellCommandTestCase)": true,
+    "test_ssl_certificate_is_added (dbshell.test_mysql.MySqlDbshellCommandTestCase)": true
+  },
+  "fail_to_pass_rate": 0.6666666666666666,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

@@ -1,0 +1,22 @@
+{
+  "instance_id": "sympy__sympy-21847",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/sympy/polys/monomials.py b/sympy/polys/monomials.py\nindex 0e84403307..0ff0f3458a 100644\n--- a/sympy/polys/monomials.py\n+++ b/sympy/polys/monomials.py\n@@ -127,7 +127,8 @@ def itermonomials(variables, max_degrees, min_degrees=None):\n                 for variable in item:\n                     if variable != 1:\n                         powers[variable] += 1\n-                if max(powers.values()) >= min_degree:\n+                total_degree_monom = sum(powers.values())\n+                if min_degree <= total_degree_monom <= max_degree:\n                     monomials_list_comm.append(Mul(*item))\n             yield from set(monomials_list_comm)\n         else:\n@@ -139,7 +140,8 @@ def itermonomials(variables, max_degrees, min_degrees=None):\n                 for variable in item:\n                     if variable != 1:\n                         powers[variable] += 1\n-                if max(powers.values()) >= min_degree:\n+                total_degree_monom = sum(powers.values())\n+                if min_degree <= total_degree_monom <= max_degree:\n                     monomials_list_non_comm.append(Mul(*item))\n             yield from set(monomials_list_non_comm)\n     else:\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 1168416,
+    "output_tokens": 13072,
+    "cache_read_tokens": 1127397,
+    "cache_write_tokens": 40856
+  },
+  "timestamps": {
+    "task_start": 1777363540.4295692,
+    "task_end": 1777363678.7939706,
+    "first_action": 1777363546.1088302
+  },
+  "total_cost_usd": 0.23008270000000003,
+  "convergence_steps": 23,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":136616,\"duration_api_ms\":130623,\"num_turns\":23,\"result\":\"Perfect! The fix is complete and committed. Here's what was done:\\n\\n## Fix Summary\\n\\n**Bug:** `itermonomials` was returning incorrect monomials when using the `min_degrees` argument with scalar (total degree) constraints.\\n\\n**Root Cause:** The function was checking if the **maximum degree of any single variable** was >= `min_degree`, rather than checking if the **total degree** (sum of all exponents) was within the specified range.\\n\\n**Changes Made:**\\n- **File:** `/sympy/polys/monomials.py`\\n- **Lines 130-131:** Fixed commutative variables case by replacing `if max(powers.values()) >= min_degree:` with:\\n  ```python\\n  total_degree_monom = sum(powers.values())\\n  if min_degree <= total_degree_monom <= max_degree:\\n  ```\\n- **Lines 143-144:** Applied the same fix to non-commutative variables case\\n\\n**Results:**\\n- ✅ Original example now returns **10 monomials** (correct) instead of 3 (incorrect)\\n- ✅ All 11 existing unit tests pass\\n- ✅ Both `min_degree = max_degree` and `min_degree < max_degree` work correctly\\n- ✅ List-based per-variable degree constraints still work as expected\\n- ✅ All docstring examples verified\\n\\nThe fix is minimal, focused, and maintains backward compatibility with all existing functionality while correctly implementing the documented behavior.\",\"stop_reason\":\"end_turn\",\"session_id\":\"1af8d0e2-d974-4474-837c-eaf6b3dce040\",\"total_cost_usd\":0.23008270000000003,\"usage\":{\"input_tokens\":163,\"cache_creation_input_tokens\":40856,\"cache_read_input_tokens\":1127397,\"output_tokens\":13072,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":40856,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":7,\"output_tokens\":375,\"cache_read_input_tokens\":64729,\"cache_creation_input_tokens\":439,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":439},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":823,\"outputTokens\":13090,\"cacheReadInputTokens\":1127397,\"cacheCreationInputTokens\":40856,\"webSearchRequests\":0,\"costUSD\":0.23008270000000003,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"86ccf7ee-0b23-41b6-90e8-f5750a37dd84\"}\n",
+  "model_name": ""
+}

@@ -1,0 +1,22 @@
+{
+  "instance_id": "sympy__sympy-22714",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/sympy/geometry/point.py b/sympy/geometry/point.py\nindex 73c20334d0..e8606524d2 100644\n--- a/sympy/geometry/point.py\n+++ b/sympy/geometry/point.py\n@@ -152,7 +152,7 @@ def __new__(cls, *args, **kwargs):\n                         'warn' or 'ignore'.'''))\n         if any(coords[dim:]):\n             raise ValueError('Nonzero coordinates cannot be removed.')\n-        if any(a.is_number and im(a) for a in coords):\n+        if any(a.is_number and not im(a).is_zero for a in coords):\n             raise ValueError('Imaginary coordinates are not permitted.')\n         if not all(isinstance(a, Expr) for a in coords):\n             raise TypeError('Coordinates must be valid SymPy expressions.')\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 460436,
+    "output_tokens": 6080,
+    "cache_read_tokens": 436620,
+    "cache_write_tokens": 23730
+  },
+  "timestamps": {
+    "task_start": 1777425474.3410702,
+    "task_end": 1777425539.4494927,
+    "first_action": 1777425479.1673203
+  },
+  "total_cost_usd": 0.10477750000000001,
+  "convergence_steps": 12,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":63331,\"duration_api_ms\":57915,\"num_turns\":12,\"result\":\"Perfect! The fix is complete. Let me create a summary:\\n\\n## Summary\\n\\n**Issue Fixed:** ValueError \\\"Imaginary coordinates are not permitted\\\" was incorrectly raised when using `with sp.evaluate(False):` with `Point2D` and `Point3D` creation.\\n\\n**Root Cause:** On line 155 of `sympy/geometry/point.py`, the check:\\n```python\\nif any(a.is_number and im(a) for a in coords):\\n```\\n\\nWhen `evaluate=False`, the `im()` function returns an unevaluated `im(1)` object instead of evaluating to `0`. This unevaluated object is truthy, causing the check to incorrectly fail for legitimate real coordinates.\\n\\n**Solution:** Changed the check to explicitly test if the imaginary part is actually zero:\\n```python\\nif any(a.is_number and not im(a).is_zero for a in coords):\\n```\\n\\nThe `.is_zero` property correctly evaluates to `True` for both evaluated `0` and unevaluated `im(1)` objects, while correctly identifying actual imaginary coordinates.\\n\\n**Testing:** \\n✅ All 12 existing Point tests pass  \\n✅ Original failing case now works with `evaluate(False)`  \\n✅ Still correctly rejects actual imaginary coordinates  \\n✅ Works with 2D, 3D, and higher-dimensional points  \\n✅ Works with symbolic coordinates and complex expressions\",\"stop_reason\":\"end_turn\",\"session_id\":\"1766dbd9-461b-4655-a0b9-f13ae3cf7ec7\",\"total_cost_usd\":0.10477750000000001,\"usage\":{\"input_tokens\":86,\"cache_creation_input_tokens\":23730,\"cache_read_input_tokens\":436620,\"output_tokens\":6080,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":23730,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":7,\"output_tokens\":371,\"cache_read_input_tokens\":42993,\"cache_creation_input_tokens\":3566,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":3566},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":973,\"outputTokens\":6096,\"cacheReadInputTokens\":436620,\"cacheCreationInputTokens\":23730,\"webSearchRequests\":0,\"costUSD\":0.10477750000000001,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"129b8fff-cf65-40f9-afd9-048b964d945c\"}\n",
+  "model_name": ""
+}

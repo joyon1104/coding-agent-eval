@@ -1,0 +1,22 @@
+{
+  "instance_id": "django__django-11583",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/django/utils/autoreload.py b/django/utils/autoreload.py\nindex 25c3b44250..eae1721f95 100644\n--- a/django/utils/autoreload.py\n+++ b/django/utils/autoreload.py\n@@ -139,7 +139,7 @@ def iter_modules_and_files(modules, extra_files):\n         path = Path(filename)\n         try:\n             resolved_path = path.resolve(strict=True).absolute()\n-        except FileNotFoundError:\n+        except (FileNotFoundError, ValueError):\n             # The module could have been removed, don't fail loudly if this\n             # is the case.\n             continue\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 60778,
+    "output_tokens": 730,
+    "cache_read_tokens": 51092,
+    "cache_write_tokens": 9682
+  },
+  "timestamps": {
+    "task_start": 1777365001.9239757,
+    "task_end": 1777365024.3261514,
+    "first_action": 1777365009.368309
+  },
+  "total_cost_usd": 0.06471009999999999,
+  "convergence_steps": 3,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":20566,\"duration_api_ms\":22333,\"num_turns\":3,\"result\":\"The fix adds `ValueError` to the exception tuple on line 142. When `path.resolve(strict=True)` encounters a path with an embedded null byte (which can happen due to OS-level issues like unmounted samba shares or pyenv symlinks), it now silently skips that path instead of crashing the entire StatReloader loop — the same behavior already applied to removed files via `FileNotFoundError`.\",\"stop_reason\":\"end_turn\",\"session_id\":\"995d633a-7045-46f0-9bb2-c664a2c3b8fd\",\"total_cost_usd\":0.06471009999999999,\"usage\":{\"input_tokens\":4,\"cache_creation_input_tokens\":9682,\"cache_read_input_tokens\":51092,\"output_tokens\":730,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":9682,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":93,\"cache_read_input_tokens\":20735,\"cache_creation_input_tokens\":578,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":578},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":2028,\"outputTokens\":17,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.002113,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":4,\"outputTokens\":730,\"cacheReadInputTokens\":51092,\"cacheCreationInputTokens\":9682,\"webSearchRequests\":0,\"costUSD\":0.0625971,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"80a3fe50-6c0d-49ce-a92f-6b8959078725\"}\n",
+  "model_name": ""
+}

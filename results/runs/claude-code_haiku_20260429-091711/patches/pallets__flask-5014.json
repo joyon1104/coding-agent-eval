@@ -1,0 +1,22 @@
+{
+  "instance_id": "pallets__flask-5014",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/src/flask/blueprints.py b/src/flask/blueprints.py\nindex eb50585d..5ebe83c2 100644\n--- a/src/flask/blueprints.py\n+++ b/src/flask/blueprints.py\n@@ -190,6 +190,9 @@ class Blueprint(Scaffold):\n             root_path=root_path,\n         )\n \n+        if not name:\n+            raise ValueError(\"'name' cannot be empty.\")\n+\n         if \".\" in name:\n             raise ValueError(\"'name' may not contain a dot '.' character.\")\n \ndiff --git a/tests/test_blueprints.py b/tests/test_blueprints.py\nindex d46b769b..bc5b6978 100644\n--- a/tests/test_blueprints.py\n+++ b/tests/test_blueprints.py\n@@ -251,6 +251,11 @@ def test_templates_list(test_apps):\n     assert templates == [\"admin/index.html\", \"frontend/index.html\"]\n \n \n+def test_empty_name_not_allowed(app, client):\n+    with pytest.raises(ValueError):\n+        flask.Blueprint(\"\", __name__)\n+\n+\n def test_dotted_name_not_allowed(app, client):\n     with pytest.raises(ValueError):\n         flask.Blueprint(\"app.ui\", __name__)\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 1161823,
+    "output_tokens": 4623,
+    "cache_read_tokens": 1123357,
+    "cache_write_tokens": 38310
+  },
+  "timestamps": {
+    "task_start": 1777423416.5223594,
+    "task_end": 1777423488.0033197,
+    "first_action": 1777423419.5071776
+  },
+  "total_cost_usd": 0.18396520000000005,
+  "convergence_steps": 22,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":69808,\"duration_api_ms\":65666,\"num_turns\":22,\"result\":\"Perfect! I've successfully implemented the feature to require non-empty Blueprint names. Here's a summary of the changes:\\n\\n## Changes Made\\n\\n**1. Modified `src/flask/blueprints.py`** (lines 193-194)\\n   - Added validation in the `Blueprint.__init__` method to raise a `ValueError` when the name is empty\\n   - The check is placed before the existing dotted name validation for logical ordering\\n\\n**2. Added test in `tests/test_blueprints.py`** (lines 254-256)\\n   - New test function `test_empty_name_not_allowed` that verifies empty Blueprint names raise a `ValueError`\\n\\n## Behavior\\n\\nThe implementation now correctly:\\n- ✅ Raises `ValueError: 'name' cannot be empty.` when attempting to create a Blueprint with an empty string\\n- ✅ Raises `ValueError: 'name' cannot be empty.` when attempting to create a Blueprint with `None`\\n- ✅ Accepts valid non-empty names (single characters, multi-word names, etc.)\\n- ✅ Maintains existing validation for dotted names\\n\\nThis prevents the incorrect behavior mentioned in #4944 where Blueprints with empty names would create issues.\",\"stop_reason\":\"end_turn\",\"session_id\":\"6b301254-89fe-4dfd-afea-bf755a04c749\",\"total_cost_usd\":0.18396520000000005,\"usage\":{\"input_tokens\":156,\"cache_creation_input_tokens\":38310,\"cache_read_input_tokens\":1123357,\"output_tokens\":4623,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":38310,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":7,\"output_tokens\":410,\"cache_read_input_tokens\":61140,\"cache_creation_input_tokens\":613,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":613},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":547,\"outputTokens\":4639,\"cacheReadInputTokens\":1123357,\"cacheCreationInputTokens\":38310,\"webSearchRequests\":0,\"costUSD\":0.18396520000000005,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"299ea6fe-1fb7-415a-befd-2a64b3951f07\"}\n",
+  "model_name": ""
+}

@@ -1,0 +1,22 @@
+{
+  "instance_id": "sympy__sympy-19495",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "test_subs_CondSet": false
+  },
+  "pass_to_pass_results": {
+    "test_CondSet": false,
+    "test_CondSet_intersect": false,
+    "test_issue_9849": false,
+    "test_simplified_FiniteSet_in_CondSet": false,
+    "test_free_symbols": false,
+    "test_subs_CondSet_tebr": false,
+    "test_dummy_eq": false,
+    "test_contains": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

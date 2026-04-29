@@ -1,0 +1,22 @@
+{
+  "instance_id": "astropy__astropy-14995",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/astropy/nddata/mixins/ndarithmetic.py b/astropy/nddata/mixins/ndarithmetic.py\nindex 4153dfccb2..56a8678791 100644\n--- a/astropy/nddata/mixins/ndarithmetic.py\n+++ b/astropy/nddata/mixins/ndarithmetic.py\n@@ -520,7 +520,7 @@ class NDArithmeticMixin:\n         elif self.mask is None and operand is not None:\n             # Make a copy so there is no reference in the result.\n             return deepcopy(operand.mask)\n-        elif operand is None:\n+        elif operand is None or operand.mask is None:\n             return deepcopy(self.mask)\n         else:\n             # Now lets calculate the resulting mask (operation enforces copy)\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 221540,
+    "output_tokens": 3303,
+    "cache_read_tokens": 207310,
+    "cache_write_tokens": 14217
+  },
+  "timestamps": {
+    "task_start": 1777427001.890569,
+    "task_end": 1777427183.2118278,
+    "first_action": 1777427015.062869
+  },
+  "total_cost_usd": 0.32221064999999993,
+  "convergence_steps": 10,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":179447,\"duration_api_ms\":131723,\"num_turns\":10,\"result\":\"All cases pass. Here's a summary of the fix:\\n\\n**Root cause:** In `_arithmetic_mask()` at line 523 of `astropy/nddata/mixins/ndarithmetic.py`, the condition `elif operand is None:` only handled collapse operations (where `operand` is `None`). When the operand *exists* but has `mask=None`, execution fell through to the `else` branch which called `handle_mask(self.mask, operand.mask)` — i.e., `np.bitwise_or(int_array, None)` — causing the `TypeError`.\\n\\n**Fix:** Changed line 523 from:\\n```python\\nelif operand is None:\\n```\\nto:\\n```python\\nelif operand is None or operand.mask is None:\\n```\\n\\nThis ensures that when `self` has a mask but the operand has no mask, `self.mask` is returned (copied), matching the v5.2 behavior and the documented expectation that \\\"if only one mask is present, that mask is returned.\\\"\",\"stop_reason\":\"end_turn\",\"session_id\":\"290563b4-69c5-43e0-bdaa-87cba6be006f\",\"total_cost_usd\":0.32221064999999993,\"usage\":{\"input_tokens\":13,\"cache_creation_input_tokens\":14217,\"cache_read_input_tokens\":207310,\"output_tokens\":3303,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":14217,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":243,\"cache_read_input_tokens\":24847,\"cache_creation_input_tokens\":1001,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":1001},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1223,\"outputTokens\":4862,\"cacheReadInputTokens\":733469,\"cacheCreationInputTokens\":46592,\"webSearchRequests\":0,\"costUSD\":0.15711989999999995,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":13,\"outputTokens\":3303,\"cacheReadInputTokens\":207310,\"cacheCreationInputTokens\":14217,\"webSearchRequests\":0,\"costUSD\":0.16509075,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"e8db8cda-61e2-4c47-97ac-e768942f7312\"}\n",
+  "model_name": ""
+}

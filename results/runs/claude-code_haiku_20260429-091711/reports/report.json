@@ -1,0 +1,40 @@
+{
+  "run_id": "claude-code_haiku_20260429-091711",
+  "tier": "verified",
+  "num_tasks": 50,
+  "generated_at": "2026-04-29T11:29:41.179759",
+  "agents": {
+    "claude-code": {
+      "task_resolution_rate": {
+        "value": 0.22,
+        "unit": "%",
+        "grade": "C"
+      },
+      "token_efficiency": {
+        "value": 1948208.2727272727,
+        "unit": "tokens/task",
+        "grade": "F"
+      },
+      "cost_per_resolved_task": {
+        "value": 1.4914587136363637,
+        "unit": "USD",
+        "grade": "B"
+      },
+      "e2e_time": {
+        "value": 154.71417654037475,
+        "unit": "sec",
+        "grade": "B"
+      },
+      "time_to_first_action": {
+        "value": 4.796869292855263,
+        "unit": "sec",
+        "grade": "A"
+      },
+      "convergence_steps": {
+        "value": 42.75,
+        "unit": "steps",
+        "grade": "D"
+      }
+    }
+  }
+}

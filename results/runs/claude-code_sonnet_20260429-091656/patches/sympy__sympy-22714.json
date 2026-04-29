@@ -1,0 +1,22 @@
+{
+  "instance_id": "sympy__sympy-22714",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/sympy/geometry/point.py b/sympy/geometry/point.py\nindex 73c20334d0..8bed1bd228 100644\n--- a/sympy/geometry/point.py\n+++ b/sympy/geometry/point.py\n@@ -152,7 +152,7 @@ def __new__(cls, *args, **kwargs):\n                         'warn' or 'ignore'.'''))\n         if any(coords[dim:]):\n             raise ValueError('Nonzero coordinates cannot be removed.')\n-        if any(a.is_number and im(a) for a in coords):\n+        if any(a.is_number and a.is_real is False for a in coords):\n             raise ValueError('Imaginary coordinates are not permitted.')\n         if not all(isinstance(a, Expr) for a in coords):\n             raise TypeError('Coordinates must be valid SymPy expressions.')\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 208838,
+    "output_tokens": 3918,
+    "cache_read_tokens": 193019,
+    "cache_write_tokens": 15809
+  },
+  "timestamps": {
+    "task_start": 1777425762.4314592,
+    "task_end": 1777425835.3114588,
+    "first_action": 1777425770.0620148
+  },
+  "total_cost_usd": 0.17697145,
+  "convergence_steps": 9,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":70818,\"duration_api_ms\":68675,\"num_turns\":9,\"result\":\"All 12 tests pass.\\n\\n**The fix** is in `point.py:155`. The original check:\\n\\n```python\\nif any(a.is_number and im(a) for a in coords):\\n```\\n\\nWhen `evaluate=False` is active globally, `im(Integer(1))` returns an unevaluated `im(1)` SymPy object. Since all non-None Python objects are truthy, the condition incorrectly fires and raises `ValueError`.\\n\\nThe fix replaces `im(a)` with `a.is_real is False`, which uses SymPy's three-valued logic property. This property is computed directly from the object's assumptions and never depends on the global `evaluate` flag:\\n- `Integer(1).is_real` → `True` → `True is False` → `False` (no error, correct)\\n- `(1 + I).is_real` → `False` → `False is False` → `True` (raises error, correct)\",\"stop_reason\":\"end_turn\",\"session_id\":\"08621327-8eb5-4e7c-a91f-385d85eccf0e\",\"total_cost_usd\":0.17697145,\"usage\":{\"input_tokens\":10,\"cache_creation_input_tokens\":15809,\"cache_read_input_tokens\":193019,\"output_tokens\":3918,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":15809,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":231,\"cache_read_input_tokens\":26005,\"cache_creation_input_tokens\":1188,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":1188},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":887,\"outputTokens\":19,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000982,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":10,\"outputTokens\":3918,\"cacheReadInputTokens\":193019,\"cacheCreationInputTokens\":15809,\"webSearchRequests\":0,\"costUSD\":0.17598945000000002,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"e583d264-a550-4945-a8e4-8a92721b4603\"}\n",
+  "model_name": ""
+}

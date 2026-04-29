@@ -1,0 +1,30 @@
+{
+  "instance_id": "matplotlib__matplotlib-24265",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "lib/matplotlib/tests/test_style.py::test_deprecated_seaborn_styles": true
+  },
+  "pass_to_pass_results": {
+    "lib/matplotlib/tests/test_style.py::test_invalid_rc_warning_includes_filename": true,
+    "lib/matplotlib/tests/test_style.py::test_available": true,
+    "lib/matplotlib/tests/test_style.py::test_use": true,
+    "lib/matplotlib/tests/test_style.py::test_use_url": true,
+    "lib/matplotlib/tests/test_style.py::test_single_path": true,
+    "lib/matplotlib/tests/test_style.py::test_context": true,
+    "lib/matplotlib/tests/test_style.py::test_context_with_dict": true,
+    "lib/matplotlib/tests/test_style.py::test_context_with_dict_after_namedstyle": true,
+    "lib/matplotlib/tests/test_style.py::test_context_with_dict_before_namedstyle": true,
+    "lib/matplotlib/tests/test_style.py::test_context_with_union_of_dict_and_namedstyle": true,
+    "lib/matplotlib/tests/test_style.py::test_context_with_badparam": true,
+    "lib/matplotlib/tests/test_style.py::test_alias[mpl20]": true,
+    "lib/matplotlib/tests/test_style.py::test_alias[mpl15]": true,
+    "lib/matplotlib/tests/test_style.py::test_xkcd_no_cm": true,
+    "lib/matplotlib/tests/test_style.py::test_xkcd_cm": true,
+    "lib/matplotlib/tests/test_style.py::test_up_to_date_blacklist": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

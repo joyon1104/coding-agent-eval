@@ -1,0 +1,15 @@
+{
+  "instance_id": "django__django-10924",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "test_callable_path (model_fields.test_filepathfield.FilePathFieldTests)": false
+  },
+  "pass_to_pass_results": {
+    "test_path (model_fields.test_filepathfield.FilePathFieldTests)": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

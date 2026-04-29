@@ -1,0 +1,35 @@
+{
+  "instance_id": "pydata__xarray-3677",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "xarray/tests/test_merge.py::TestMergeMethod::test_merge_dataarray": true
+  },
+  "pass_to_pass_results": {
+    "xarray/tests/test_merge.py::TestMergeInternals::test_broadcast_dimension_size": true,
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_arrays": true,
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_datasets": true,
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_dataarray_unnamed": true,
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_dicts_simple": true,
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_dicts_dims": true,
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_error": true,
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_alignment_error": true,
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_wrong_input_error": true,
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_no_conflicts_single_var": true,
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_no_conflicts_multi_var": true,
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_no_conflicts_preserve_attrs": true,
+    "xarray/tests/test_merge.py::TestMergeFunction::test_merge_no_conflicts_broadcast": true,
+    "xarray/tests/test_merge.py::TestMergeMethod::test_merge": true,
+    "xarray/tests/test_merge.py::TestMergeMethod::test_merge_broadcast_equals": true,
+    "xarray/tests/test_merge.py::TestMergeMethod::test_merge_compat": true,
+    "xarray/tests/test_merge.py::TestMergeMethod::test_merge_auto_align": true,
+    "xarray/tests/test_merge.py::TestMergeMethod::test_merge_fill_value[fill_value0]": true,
+    "xarray/tests/test_merge.py::TestMergeMethod::test_merge_fill_value[2]": true,
+    "xarray/tests/test_merge.py::TestMergeMethod::test_merge_fill_value[2.0]": true,
+    "xarray/tests/test_merge.py::TestMergeMethod::test_merge_no_conflicts": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

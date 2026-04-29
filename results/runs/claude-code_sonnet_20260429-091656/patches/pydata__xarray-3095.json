@@ -1,0 +1,22 @@
+{
+  "instance_id": "pydata__xarray-3095",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/xarray/core/variable.py b/xarray/core/variable.py\nindex 379be8f5..4dc056af 100644\n--- a/xarray/core/variable.py\n+++ b/xarray/core/variable.py\n@@ -1947,7 +1947,8 @@ class IndexVariable(Variable):\n                 # point, which doesn't have a copy method, so make a deep copy\n                 # of the underlying `pandas.MultiIndex` and create a new\n                 # `PandasIndexAdapter` instance with it.\n-                data = PandasIndexAdapter(self._data.array.copy(deep=True))\n+                data = PandasIndexAdapter(self._data.array.copy(deep=True),\n+                                          dtype=self._data.dtype)\n             else:\n                 data = self._data\n         else:\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 296697,
+    "output_tokens": 2765,
+    "cache_read_tokens": 285224,
+    "cache_write_tokens": 11456
+  },
+  "timestamps": {
+    "task_start": 1777422445.9328904,
+    "task_end": 1777422586.4283943,
+    "first_action": 1777422454.9880905
+  },
+  "total_cost_usd": 0.3104557499999999,
+  "convergence_steps": 15,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":138824,\"duration_api_ms\":135828,\"num_turns\":15,\"result\":\"pytest isn't available in this environment. The manual test already confirms the fix works correctly for all reported cases.\\n\\n---\\n\\n**Root cause:** `IndexVariable.copy(deep=True)` at `variable.py:1950` reconstructed a `PandasIndexAdapter` without passing `dtype`, so it fell through to `PandasIndexAdapter.__init__`'s dtype inference logic. pandas Index objects created from unicode arrays report a non-numpy dtype, which caused `is_valid_numpy_dtype()` to return `False` and the fallback `np.dtype('O')` (object) to be used.\\n\\n**Fix** (`variable.py:1950`): pass `dtype=self._data.dtype` when constructing the new `PandasIndexAdapter`, so the original `<U*` dtype is preserved through the deep copy.\",\"stop_reason\":\"end_turn\",\"session_id\":\"66334877-94cb-42bf-8df8-e59fa12570cf\",\"total_cost_usd\":0.3104557499999999,\"usage\":{\"input_tokens\":17,\"cache_creation_input_tokens\":11456,\"cache_read_input_tokens\":285224,\"output_tokens\":2765,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":11456,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":189,\"cache_read_input_tokens\":22569,\"cache_creation_input_tokens\":168,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":168},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":2314,\"outputTokens\":5992,\"cacheReadInputTokens\":590098,\"cacheCreationInputTokens\":39295,\"webSearchRequests\":0,\"costUSD\":0.14040255000000001,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":17,\"outputTokens\":2765,\"cacheReadInputTokens\":285224,\"cacheCreationInputTokens\":11456,\"webSearchRequests\":0,\"costUSD\":0.1700532,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"ce068a72-870a-4e88-8552-aa6ffc10964d\"}\n",
+  "model_name": ""
+}

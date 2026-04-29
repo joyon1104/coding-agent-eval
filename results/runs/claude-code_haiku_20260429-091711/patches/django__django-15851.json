@@ -1,0 +1,22 @@
+{
+  "instance_id": "django__django-15851",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/django/db/backends/postgresql/client.py b/django/db/backends/postgresql/client.py\nindex 4c9bd63546..3b5ddafaca 100644\n--- a/django/db/backends/postgresql/client.py\n+++ b/django/db/backends/postgresql/client.py\n@@ -32,9 +32,9 @@ class DatabaseClient(BaseDatabaseClient):\n             args += [\"-h\", host]\n         if port:\n             args += [\"-p\", str(port)]\n+        args.extend(parameters)\n         if dbname:\n             args += [dbname]\n-        args.extend(parameters)\n \n         env = {}\n         if passwd:\ndiff --git a/tests/dbshell/test_postgresql.py b/tests/dbshell/test_postgresql.py\nindex 02924d0bcc..53dedaca01 100644\n--- a/tests/dbshell/test_postgresql.py\n+++ b/tests/dbshell/test_postgresql.py\n@@ -154,7 +154,7 @@ class PostgreSqlDbshellCommandTestCase(SimpleTestCase):\n     def test_parameters(self):\n         self.assertEqual(\n             self.settings_to_cmd_args_env({\"NAME\": \"dbname\"}, [\"--help\"]),\n-            ([\"psql\", \"dbname\", \"--help\"], None),\n+            ([\"psql\", \"--help\", \"dbname\"], None),\n         )\n \n     @skipUnless(connection.vendor == \"postgresql\", \"Requires a PostgreSQL connection\")\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 976000,
+    "output_tokens": 5245,
+    "cache_read_tokens": 952094,
+    "cache_write_tokens": 23722
+  },
+  "timestamps": {
+    "task_start": 1777424347.9505424,
+    "task_end": 1777424426.0750139,
+    "first_action": 1777424350.7206194
+  },
+  "total_cost_usd": 0.1518619,
+  "convergence_steps": 26,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":76407,\"duration_api_ms\":72022,\"num_turns\":26,\"result\":\"## Summary\\n\\nI've successfully fixed the `dbshell` argument order issue for PostgreSQL. Here's what was done:\\n\\n**The Problem:** When passing additional parameters to `dbshell` with PostgreSQL, `psql` was ignoring them because the database name was placed before the additional parameters. According to `psql`'s requirements, all options must come before the database name.\\n\\n**The Fix:** \\n1. **Modified `/django/db/backends/postgresql/client.py` (lines 35-37)**: Reordered the argument construction to extend parameters before adding the database name.\\n   - Before: `args += [dbname]` then `args.extend(parameters)`\\n   - After: `args.extend(parameters)` then `args += [dbname]`\\n\\n2. **Updated the test** in `/tests/dbshell/test_postgresql.py`: Changed the expected output from `[\\\"psql\\\", \\\"dbname\\\", \\\"--help\\\"]` to `[\\\"psql\\\", \\\"--help\\\", \\\"dbname\\\"]`.\\n\\n**Verification:** All 21 dbshell tests pass successfully, confirming that the fix works correctly and doesn't break any existing functionality.\\n\\nNow commands like `./manage.py dbshell -- -c \\\"select * from some_table;\\\"` will work correctly with PostgreSQL.\",\"stop_reason\":\"end_turn\",\"session_id\":\"f8935450-56e4-47b4-a727-1e59e33d1173\",\"total_cost_usd\":0.1518619,\"usage\":{\"input_tokens\":184,\"cache_creation_input_tokens\":23722,\"cache_read_input_tokens\":952094,\"output_tokens\":5245,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":23722,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":7,\"output_tokens\":475,\"cache_read_input_tokens\":44347,\"cache_creation_input_tokens\":282,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":282},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":690,\"outputTokens\":5262,\"cacheReadInputTokens\":952094,\"cacheCreationInputTokens\":23722,\"webSearchRequests\":0,\"costUSD\":0.1518619,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"27e3b2c7-8ce4-4069-94e6-dc39a49244bd\"}\n",
+  "model_name": ""
+}

@@ -1,0 +1,22 @@
+{
+  "instance_id": "sympy__sympy-13437",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/sympy/functions/combinatorial/numbers.py b/sympy/functions/combinatorial/numbers.py\nindex 896729ac87..c0de20763d 100644\n--- a/sympy/functions/combinatorial/numbers.py\n+++ b/sympy/functions/combinatorial/numbers.py\n@@ -434,6 +434,8 @@ def _bell_incomplete_poly(n, k, symbols):\n \n     @classmethod\n     def eval(cls, n, k_sym=None, symbols=None):\n+        if n is S.Infinity:\n+            return S.Infinity\n         if n.is_Integer and n.is_nonnegative:\n             if k_sym is None:\n                 return Integer(cls._bell(int(n)))\ndiff --git a/sympy/functions/combinatorial/tests/test_comb_numbers.py b/sympy/functions/combinatorial/tests/test_comb_numbers.py\nindex ad0fd4fe85..33aa286b5f 100644\n--- a/sympy/functions/combinatorial/tests/test_comb_numbers.py\n+++ b/sympy/functions/combinatorial/tests/test_comb_numbers.py\n@@ -114,6 +114,10 @@ def test_bell():\n     m = Symbol('m', integer=True)\n     assert bell(-1).evalf() == bell(m).rewrite(Sum).evalf(subs={m: -1})\n \n+    assert bell(oo) == oo\n+    n = Symbol('n')\n+    assert bell(n).limit(n, oo) == oo\n+\n \n def test_harmonic():\n     n = Symbol(\"n\")\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 223512,
+    "output_tokens": 2388,
+    "cache_read_tokens": 212434,
+    "cache_write_tokens": 11064
+  },
+  "timestamps": {
+    "task_start": 1777361099.2015467,
+    "task_end": 1777361230.7597122,
+    "first_action": 1777361110.7054558
+  },
+  "total_cost_usd": 0.34865494999999996,
+  "convergence_steps": 11,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":129401,\"duration_api_ms\":126543,\"num_turns\":11,\"result\":\"The fix is in place. Here's a summary of the two changes made:\\n\\n**`sympy/functions/combinatorial/numbers.py`** — Added an early-return guard in `bell.eval()` at line 437:\\n```python\\nif n is S.Infinity:\\n    return S.Infinity\\n```\\nThis mirrors exactly what `fibonacci.eval()` and `lucas.eval()` already do. When SymPy substitutes `oo` for `n` during limit evaluation, `bell(oo)` now immediately returns `oo` instead of falling through unevaluated.\\n\\n**`sympy/functions/combinatorial/tests/test_comb_numbers.py`** — Added two assertions to `test_bell()`:\\n```python\\nassert bell(oo) == oo\\nassert bell(n).limit(n, oo) == oo\\n```\",\"stop_reason\":\"end_turn\",\"session_id\":\"eec6831b-eeac-4791-9de4-b6e946bd865d\",\"total_cost_usd\":0.34865494999999996,\"usage\":{\"input_tokens\":14,\"cache_creation_input_tokens\":11064,\"cache_read_input_tokens\":212434,\"output_tokens\":2388,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":11064,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":204,\"cache_read_input_tokens\":22349,\"cache_creation_input_tokens\":346,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":346},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":614,\"outputTokens\":4530,\"cacheReadInputTokens\":1278650,\"cacheCreationInputTokens\":45155,\"webSearchRequests\":0,\"costUSD\":0.20757274999999994,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":14,\"outputTokens\":2388,\"cacheReadInputTokens\":212434,\"cacheCreationInputTokens\":11064,\"webSearchRequests\":0,\"costUSD\":0.14108220000000002,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"5ec56283-bbf5-4bc8-89a2-dc872be22266\"}\n",
+  "model_name": ""
+}

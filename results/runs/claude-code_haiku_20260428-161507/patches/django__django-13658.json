@@ -1,0 +1,22 @@
+{
+  "instance_id": "django__django-13658",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/django/core/management/__init__.py b/django/core/management/__init__.py\nindex 1ba093e51f..095ad0ccf0 100644\n--- a/django/core/management/__init__.py\n+++ b/django/core/management/__init__.py\n@@ -344,7 +344,12 @@ class ManagementUtility:\n         # Preprocess options to extract --settings and --pythonpath.\n         # These options could affect the commands that are available, so they\n         # must be processed early.\n-        parser = CommandParser(usage='%(prog)s subcommand [options] [args]', add_help=False, allow_abbrev=False)\n+        parser = CommandParser(\n+            prog=self.prog_name,\n+            usage='%(prog)s subcommand [options] [args]',\n+            add_help=False,\n+            allow_abbrev=False\n+        )\n         parser.add_argument('--settings')\n         parser.add_argument('--pythonpath')\n         parser.add_argument('args', nargs='*')  # catch-all\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 1128176,
+    "output_tokens": 6178,
+    "cache_read_tokens": 1100260,
+    "cache_write_tokens": 27725
+  },
+  "timestamps": {
+    "task_start": 1777365593.4027185,
+    "task_end": 1777365693.1565259,
+    "first_action": 1777365596.933126
+  },
+  "total_cost_usd": 0.17657124999999999,
+  "convergence_steps": 27,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":97982,\"duration_api_ms\":95321,\"num_turns\":27,\"result\":\"Perfect! The fix is complete and working correctly. Here's a summary of what was done:\\n\\n## Summary\\n\\n**Issue Fixed:** `ManagementUtility` was computing the program name from the passed `argv` parameter but not using it when initializing `CommandParser`. This caused problems in embedded environments where `sys.argv[0]` is `None` or incorrect.\\n\\n**Change Made:**\\n- Modified `django/core/management/__init__.py` line 347-352\\n- Added `prog=self.prog_name` parameter to the `CommandParser` initialization\\n- This ensures the already-computed `prog_name` is used instead of falling back to `sys.argv[0]`\\n\\n**Testing:**\\n✅ All existing bash_completion tests pass (7/7)  \\n✅ Custom test verifies `prog_name` is correctly passed to `CommandParser`  \\n✅ Embedded environment scenario works (sys.argv[0] = None no longer causes issues)  \\n✅ Special case handling (__main__.py → 'python -m django') still works correctly\\n\\nThe fix is minimal, focused, and solves the exact issue described: users can now pass custom `argv` to `execute_from_command_line()` in embedded environments without needing to modify `sys.argv[0]` globally.\",\"stop_reason\":\"end_turn\",\"session_id\":\"3dd5115f-d273-4ced-a038-76d99d110bc3\",\"total_cost_usd\":0.17657124999999999,\"usage\":{\"input_tokens\":191,\"cache_creation_input_tokens\":27725,\"cache_read_input_tokens\":1100260,\"output_tokens\":6178,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":27725,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":7,\"output_tokens\":326,\"cache_read_input_tokens\":49034,\"cache_creation_input_tokens\":467,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":467},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":899,\"outputTokens\":6198,\"cacheReadInputTokens\":1100260,\"cacheCreationInputTokens\":27725,\"webSearchRequests\":0,\"costUSD\":0.17657124999999999,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"340c667f-df22-45cb-a793-971cd438b6d6\"}\n",
+  "model_name": ""
+}

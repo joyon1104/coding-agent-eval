@@ -1,0 +1,22 @@
+{
+  "instance_id": "pydata__xarray-3677",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/xarray/core/merge.py b/xarray/core/merge.py\nindex 10c7804d..4058ff36 100644\n--- a/xarray/core/merge.py\n+++ b/xarray/core/merge.py\n@@ -809,6 +809,11 @@ def dataset_merge_method(\n     # method due for backwards compatibility\n     # TODO: consider deprecating it?\n \n+    from .dataarray import DataArray\n+\n+    if isinstance(other, DataArray):\n+        other = other.to_dataset()\n+\n     if isinstance(overwrite_vars, Iterable) and not isinstance(overwrite_vars, str):\n         overwrite_vars = set(overwrite_vars)\n     else:\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 136743,
+    "output_tokens": 1681,
+    "cache_read_tokens": 126124,
+    "cache_write_tokens": 10611
+  },
+  "timestamps": {
+    "task_start": 1777427995.4922855,
+    "task_end": 1777428038.4404883,
+    "first_action": 1777428000.6727855
+  },
+  "total_cost_usd": 0.10378644999999997,
+  "convergence_steps": 8,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":41194,\"duration_api_ms\":41444,\"num_turns\":8,\"result\":\"The fix is clean and correct. The `DataArray` is converted to a `Dataset` via `to_dataset()` before any further processing — the same approach used by `coerce_pandas_values` for non-`Dataset` mappings, but applied earlier where it's more appropriate.\\n\\n**Root cause:** `dataset_merge_method` passed `other` directly to `merge_core`, which calls `coerce_pandas_values`. That function handles `Dataset` objects and dict-like objects (via `.items()`), but not `DataArray` — which has no `.items()` method.\\n\\n**Fix:** Added a check at the top of `dataset_merge_method` (`merge.py:814-815`) to convert a `DataArray` to a `Dataset` via `.to_dataset()` before processing. This is consistent with how the top-level `merge()` handles `DataArray` objects, and ensures the named `DataArray` is properly treated as a single-variable dataset.\",\"stop_reason\":\"end_turn\",\"session_id\":\"c5941444-41cc-49b4-bb0e-3d4487378854\",\"total_cost_usd\":0.10378644999999997,\"usage\":{\"input_tokens\":8,\"cache_creation_input_tokens\":10611,\"cache_read_input_tokens\":126124,\"output_tokens\":1681,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":10611,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":220,\"cache_read_input_tokens\":20719,\"cache_creation_input_tokens\":581,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":581},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":829,\"outputTokens\":18,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000919,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":8,\"outputTokens\":1681,\"cacheReadInputTokens\":126124,\"cacheCreationInputTokens\":10611,\"webSearchRequests\":0,\"costUSD\":0.10286744999999999,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"a4553e17-89ae-43a4-b168-5e298e2ab6eb\"}\n",
+  "model_name": ""
+}

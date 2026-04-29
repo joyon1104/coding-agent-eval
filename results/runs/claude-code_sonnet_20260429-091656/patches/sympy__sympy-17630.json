@@ -1,0 +1,22 @@
+{
+  "instance_id": "sympy__sympy-17630",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/sympy/matrices/expressions/blockmatrix.py b/sympy/matrices/expressions/blockmatrix.py\nindex 95302a05ca..ad859c2f56 100644\n--- a/sympy/matrices/expressions/blockmatrix.py\n+++ b/sympy/matrices/expressions/blockmatrix.py\n@@ -164,7 +164,21 @@ def structurally_equal(self, other):\n     def _blockmul(self, other):\n         if (isinstance(other, BlockMatrix) and\n                 self.colblocksizes == other.rowblocksizes):\n-            return BlockMatrix(self.blocks*other.blocks)\n+            result = self.blocks * other.blocks\n+            # Arithmetic on ZeroMatrix blocks can produce scalar S.Zero instead\n+            # of a ZeroMatrix, which lacks .rows/.cols. Replace with ZeroMatrix.\n+            from sympy.core import S\n+            new_rows = []\n+            for i in range(result.rows):\n+                row = []\n+                for j in range(result.cols):\n+                    cell = result[i, j]\n+                    if cell == S.Zero:\n+                        cell = ZeroMatrix(self.rowblocksizes[i],\n+                                          other.colblocksizes[j])\n+                    row.append(cell)\n+                new_rows.append(row)\n+            return BlockMatrix(new_rows)\n \n         return self * other\n \n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 166064,
+    "output_tokens": 5853,
+    "cache_read_tokens": 150113,
+    "cache_write_tokens": 15943
+  },
+  "timestamps": {
+    "task_start": 1777427183.7249198,
+    "task_end": 1777427268.2599103,
+    "first_action": 1777427195.3436341
+  },
+  "total_cost_usd": 0.19433415,
+  "convergence_steps": 7,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":82715,\"duration_api_ms\":81331,\"num_turns\":7,\"result\":\"All 15 existing tests pass.\\n\\n**Root cause:** In `_blockmul`, the line `self.blocks * other.blocks` multiplies two `ImmutableDenseMatrix` objects whose entries are matrix expressions (e.g. `ZeroMatrix`). SymPy's arithmetic on `ZeroMatrix` blocks can reduce results to the scalar `S.Zero` (which has no `.rows`/`.cols`). On the first multiplication `b*b` this happened to work because the next operation never tried to access block sizes of the reduced result — but on the second multiplication `(b*b)*b`, `colblocksizes` iterated over blocks of the intermediate result and hit `AttributeError: 'Zero' object has no attribute 'cols'`.\\n\\n**Fix:** After computing the block product in `_blockmul`, replace any `S.Zero` scalar entries with `ZeroMatrix(rowsize, colsize)` using the known block dimensions from `self.rowblocksizes` and `other.colblocksizes`.\",\"stop_reason\":\"end_turn\",\"session_id\":\"9c9cb2de-d975-47b1-8560-750290cc1ada\",\"total_cost_usd\":0.19433415,\"usage\":{\"input_tokens\":8,\"cache_creation_input_tokens\":15943,\"cache_read_input_tokens\":150113,\"output_tokens\":5853,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":15943,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":237,\"cache_read_input_tokens\":26939,\"cache_creation_input_tokens\":635,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":635},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1610,\"outputTokens\":17,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.0016950000000000001,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":8,\"outputTokens\":5853,\"cacheReadInputTokens\":150113,\"cacheCreationInputTokens\":15943,\"webSearchRequests\":0,\"costUSD\":0.19263915,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"f3b3c2c7-4626-45e9-88a6-a3bb05528e73\"}\n",
+  "model_name": ""
+}

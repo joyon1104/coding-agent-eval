@@ -1,0 +1,22 @@
+{
+  "instance_id": "pydata__xarray-3095",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/xarray/core/variable.py b/xarray/core/variable.py\nindex 379be8f5..4dc056af 100644\n--- a/xarray/core/variable.py\n+++ b/xarray/core/variable.py\n@@ -1947,7 +1947,8 @@ class IndexVariable(Variable):\n                 # point, which doesn't have a copy method, so make a deep copy\n                 # of the underlying `pandas.MultiIndex` and create a new\n                 # `PandasIndexAdapter` instance with it.\n-                data = PandasIndexAdapter(self._data.array.copy(deep=True))\n+                data = PandasIndexAdapter(self._data.array.copy(deep=True),\n+                                          dtype=self._data.dtype)\n             else:\n                 data = self._data\n         else:\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 2088527,
+    "output_tokens": 13836,
+    "cache_read_tokens": 2049741,
+    "cache_write_tokens": 38476
+  },
+  "timestamps": {
+    "task_start": 1777422544.3231506,
+    "task_end": 1777422709.4771035,
+    "first_action": 1777422547.945469
+  },
+  "total_cost_usd": 0.3237071,
+  "convergence_steps": 44,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":163319,\"duration_api_ms\":159382,\"num_turns\":44,\"result\":\"## Summary\\n\\nI've successfully fixed the regression where `copy(deep=True)` and other copy operations were casting unicode indices to object dtype. \\n\\n**Root Cause:** When `IndexVariable.copy(deep=True)` was called, it created a new `PandasIndexAdapter` from the copied pandas Index without preserving the original dtype. Since pandas Index has dtype 'str' (not a valid numpy dtype), the new adapter would default to object dtype instead of the original unicode dtype like '<U3'.\\n\\n**The Fix:** Modified `IndexVariable.copy()` in `xarray/core/variable.py` (line 1950-1951) to pass the original dtype when creating the new PandasIndexAdapter:\\n\\n```python\\ndata = PandasIndexAdapter(self._data.array.copy(deep=True),\\n                          dtype=self._data.dtype)\\n```\\n\\n**Verification:** The fix now correctly preserves unicode dtypes through:\\n- `ds.copy(deep=True)` ✓\\n- `ds.copy()` ✓  \\n- `copy.copy(ds)` ✓\\n- `copy.deepcopy(ds)` ✓\\n- DataArray copy operations ✓\\n\\nThe change is minimal and focused, affecting only the specific regression without impacting other behavior.\",\"stop_reason\":\"end_turn\",\"session_id\":\"ca3d9f2f-4942-444f-a481-dd181c81152a\",\"total_cost_usd\":0.3237071,\"usage\":{\"input_tokens\":310,\"cache_creation_input_tokens\":38476,\"cache_read_input_tokens\":2049741,\"output_tokens\":13836,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":38476,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":7,\"output_tokens\":520,\"cache_read_input_tokens\":59766,\"cache_creation_input_tokens\":282,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":282},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1378,\"outputTokens\":13852,\"cacheReadInputTokens\":2049741,\"cacheCreationInputTokens\":38476,\"webSearchRequests\":0,\"costUSD\":0.3237071,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"13223dce-e7b6-42bf-a0ca-7fdab1c052f6\"}\n",
+  "model_name": ""
+}

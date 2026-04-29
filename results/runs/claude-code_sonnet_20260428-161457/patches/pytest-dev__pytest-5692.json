@@ -1,0 +1,22 @@
+{
+  "instance_id": "pytest-dev__pytest-5692",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/src/_pytest/junitxml.py b/src/_pytest/junitxml.py\nindex 15c630b1d..969e2074d 100644\n--- a/src/_pytest/junitxml.py\n+++ b/src/_pytest/junitxml.py\n@@ -11,6 +11,7 @@ src/main/resources/org/jenkinsci/plugins/xunit/types/model/xsd/junit-10.xsd\n import functools\n import os\n import re\n+import socket\n import sys\n import time\n \n@@ -639,6 +640,9 @@ class LogXML:\n \n     def pytest_sessionstart(self):\n         self.suite_start_time = time.time()\n+        self.suite_start_timestamp = time.strftime(\n+            \"%Y-%m-%dT%H:%M:%S\", time.localtime(self.suite_start_time)\n+        )\n \n     def pytest_sessionfinish(self):\n         dirname = os.path.dirname(os.path.abspath(self.logfile))\n@@ -666,6 +670,8 @@ class LogXML:\n             skipped=self.stats[\"skipped\"],\n             tests=numtests,\n             time=\"%.3f\" % suite_time_delta,\n+            timestamp=self.suite_start_timestamp,\n+            hostname=socket.gethostname(),\n         )\n         logfile.write(Junit.testsuites([suite_node]).unicode(indent=0))\n         logfile.close()\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 384272,
+    "output_tokens": 2849,
+    "cache_read_tokens": 363649,
+    "cache_write_tokens": 20608
+  },
+  "timestamps": {
+    "task_start": 1777366513.3579128,
+    "task_end": 1777366580.8462105,
+    "first_action": 1777366517.8446984
+  },
+  "total_cost_usd": 0.2299987,
+  "convergence_steps": 14,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":65658,\"duration_api_ms\":62815,\"num_turns\":14,\"result\":\"The output matches the desired JUnit format exactly. Here's a summary of the changes made to `src/_pytest/junitxml.py`:\\n\\n1. **Added `import socket`** at the top of the file.\\n\\n2. **`pytest_sessionstart`** now also records the formatted ISO 8601 timestamp at session start:\\n   ```python\\n   self.suite_start_timestamp = time.strftime(\\\"%Y-%m-%dT%H:%M:%S\\\", time.localtime(self.suite_start_time))\\n   ```\\n\\n3. **`pytest_sessionfinish`** passes two new attributes to the `testsuite` node:\\n   ```python\\n   timestamp=self.suite_start_timestamp,\\n   hostname=socket.gethostname(),\\n   ```\\n\\nThe resulting XML now looks like:\\n```xml\\n<testsuite errors=\\\"0\\\" failures=\\\"0\\\" hostname=\\\"my-machine.local\\\" name=\\\"pytest\\\"\\n           skipped=\\\"0\\\" tests=\\\"4\\\" time=\\\"0.049\\\" timestamp=\\\"2026-04-28T17:56:14\\\">\\n```\\n\\nNo new option or ini setting is needed — `hostname` and `timestamp` are always included, which matches JUnit's standard schema.\",\"stop_reason\":\"end_turn\",\"session_id\":\"f04d95ab-55ec-47c0-9c85-e415568e5602\",\"total_cost_usd\":0.2299987,\"usage\":{\"input_tokens\":15,\"cache_creation_input_tokens\":20608,\"cache_read_input_tokens\":363649,\"output_tokens\":2849,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":20608,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":278,\"cache_read_input_tokens\":31838,\"cache_creation_input_tokens\":401,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":401},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":754,\"outputTokens\":18,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000844,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":15,\"outputTokens\":2849,\"cacheReadInputTokens\":363649,\"cacheCreationInputTokens\":20608,\"webSearchRequests\":0,\"costUSD\":0.2291547,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"28359916-f895-4121-a75e-63fece198513\"}\n",
+  "model_name": ""
+}

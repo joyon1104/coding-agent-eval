@@ -1,0 +1,22 @@
+{
+  "instance_id": "scikit-learn__scikit-learn-11040",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/sklearn/neighbors/base.py b/sklearn/neighbors/base.py\nindex 3e5e729c27..75792f0e90 100644\n--- a/sklearn/neighbors/base.py\n+++ b/sklearn/neighbors/base.py\n@@ -253,6 +253,11 @@ class NeighborsBase(six.with_metaclass(ABCMeta, BaseEstimator)):\n                              % self.algorithm)\n \n         if self.n_neighbors is not None:\n+            if not np.issubdtype(type(self.n_neighbors), np.integer):\n+                raise TypeError(\n+                    \"n_neighbors does not take %s value, \"\n+                    \"enter integer value\" %\n+                    type(self.n_neighbors))\n             if self.n_neighbors <= 0:\n                 raise ValueError(\n                     \"Expected n_neighbors > 0. Got %d\" %\n@@ -327,6 +332,11 @@ class KNeighborsMixin(object):\n \n         if n_neighbors is None:\n             n_neighbors = self.n_neighbors\n+        elif not np.issubdtype(type(n_neighbors), np.integer):\n+            raise TypeError(\n+                \"n_neighbors does not take %s value, \"\n+                \"enter integer value\" %\n+                type(n_neighbors))\n \n         if X is not None:\n             query_is_train = False\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 259669,
+    "output_tokens": 3474,
+    "cache_read_tokens": 246349,
+    "cache_write_tokens": 13305
+  },
+  "timestamps": {
+    "task_start": 1777366325.693677,
+    "task_end": 1777366449.8886538,
+    "first_action": 1777366335.0476
+  },
+  "total_cost_usd": 0.30051759999999994,
+  "convergence_steps": 13,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":122071,\"duration_api_ms\":121601,\"num_turns\":13,\"result\":\"The check works correctly for all types. Here's a summary of the changes made to `sklearn/neighbors/base.py`:\\n\\n**In `_fit()` (line 255)** — validates `self.n_neighbors` set at construction time:\\n```python\\nif not np.issubdtype(type(self.n_neighbors), np.integer):\\n    raise TypeError(\\n        \\\"n_neighbors does not take %s value, \\\"\\n        \\\"enter integer value\\\" % type(self.n_neighbors))\\n```\\n\\n**In `kneighbors()` (line 335)** — validates the `n_neighbors` argument passed directly to the method:\\n```python\\nelif not np.issubdtype(type(n_neighbors), np.integer):\\n    raise TypeError(\\n        \\\"n_neighbors does not take %s value, \\\"\\n        \\\"enter integer value\\\" % type(n_neighbors))\\n```\\n\\nThis catches both `NearestNeighbors(n_neighbors=3.)` at `.fit()` time and `neighbors.kneighbors(X, n_neighbors=3.)` at query time, giving a clear `TypeError` instead of the cryptic one from deep inside the binary tree. The check accepts Python `int` and all numpy integer dtypes (`np.int32`, `np.int64`, etc.) while rejecting floats.\",\"stop_reason\":\"end_turn\",\"session_id\":\"ba109570-ca0a-4924-b130-0f2c49bfe8d5\",\"total_cost_usd\":0.30051759999999994,\"usage\":{\"input_tokens\":15,\"cache_creation_input_tokens\":13305,\"cache_read_input_tokens\":246349,\"output_tokens\":3474,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":13305,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":310,\"cache_read_input_tokens\":23876,\"cache_creation_input_tokens\":1060,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":1060},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":636,\"outputTokens\":3802,\"cacheReadInputTokens\":524019,\"cacheCreationInputTokens\":42013,\"webSearchRequests\":0,\"costUSD\":0.12456415,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":15,\"outputTokens\":3474,\"cacheReadInputTokens\":246349,\"cacheCreationInputTokens\":13305,\"webSearchRequests\":0,\"costUSD\":0.17595344999999998,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"a1793eb1-b97f-4fc4-ba42-113fa0a2b107\"}\n",
+  "model_name": ""
+}

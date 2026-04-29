@@ -1,0 +1,29 @@
+{
+  "instance_id": "sympy__sympy-13437",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "test_bell": false
+  },
+  "pass_to_pass_results": {
+    "test_bernoulli": false,
+    "test_fibonacci": false,
+    "test_harmonic": false,
+    "test_harmonic_rational": false,
+    "test_harmonic_evalf": false,
+    "test_harmonic_rewrite_polygamma": false,
+    "test_harmonic_rewrite_sum": false,
+    "test_euler": false,
+    "test_euler_odd": false,
+    "test_euler_polynomials": false,
+    "test_euler_polynomial_rewrite": false,
+    "test_catalan": false,
+    "test_genocchi": false,
+    "test_nC_nP_nT": false,
+    "test_issue_8496": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

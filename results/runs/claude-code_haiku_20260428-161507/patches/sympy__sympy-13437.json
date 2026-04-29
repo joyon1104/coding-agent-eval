@@ -1,0 +1,22 @@
+{
+  "instance_id": "sympy__sympy-13437",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/sympy/functions/combinatorial/numbers.py b/sympy/functions/combinatorial/numbers.py\nindex 896729ac87..6437ee8f8c 100644\n--- a/sympy/functions/combinatorial/numbers.py\n+++ b/sympy/functions/combinatorial/numbers.py\n@@ -434,6 +434,9 @@ def _bell_incomplete_poly(n, k, symbols):\n \n     @classmethod\n     def eval(cls, n, k_sym=None, symbols=None):\n+        if n is S.Infinity:\n+            return S.Infinity\n+\n         if n.is_Integer and n.is_nonnegative:\n             if k_sym is None:\n                 return Integer(cls._bell(int(n)))\ndiff --git a/sympy/functions/combinatorial/tests/test_comb_numbers.py b/sympy/functions/combinatorial/tests/test_comb_numbers.py\nindex ad0fd4fe85..8f6a816179 100644\n--- a/sympy/functions/combinatorial/tests/test_comb_numbers.py\n+++ b/sympy/functions/combinatorial/tests/test_comb_numbers.py\n@@ -114,6 +114,10 @@ def test_bell():\n     m = Symbol('m', integer=True)\n     assert bell(-1).evalf() == bell(m).rewrite(Sum).evalf(subs={m: -1})\n \n+    # issue #13437\n+    n = Dummy('n')\n+    assert bell(n).limit(n, S.Infinity) == S.Infinity\n+\n \n def test_harmonic():\n     n = Symbol(\"n\")\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 712589,
+    "output_tokens": 3859,
+    "cache_read_tokens": 669480,
+    "cache_write_tokens": 43009
+  },
+  "timestamps": {
+    "task_start": 1777360852.3429966,
+    "task_end": 1777360898.8973458,
+    "first_action": 1777360855.529568
+  },
+  "total_cost_usd": 0.14070924999999998,
+  "convergence_steps": 14,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":44722,\"duration_api_ms\":44612,\"num_turns\":14,\"result\":\"Excellent! I've successfully implemented the fix. Here's a summary of what I did:\\n\\n## Changes Made\\n\\n### 1. Fixed `bell.eval()` in `sympy/functions/combinatorial/numbers.py` (lines 437-438)\\n\\nAdded a check to handle `n is S.Infinity`:\\n\\n```python\\n@classmethod\\ndef eval(cls, n, k_sym=None, symbols=None):\\n    if n is S.Infinity:\\n        return S.Infinity\\n    \\n    if n.is_Integer and n.is_nonnegative:\\n        # ... rest of the code\\n```\\n\\nThis follows the same pattern used by the `fibonacci` and `lucas` functions, which were recently fixed for the same issue.\\n\\n### 2. Added test in `sympy/functions/combinatorial/tests/test_comb_numbers.py` (lines 117-119)\\n\\nAdded a test case to verify the fix:\\n\\n```python\\n# issue #13437\\nn = Dummy('n')\\nassert bell(n).limit(n, S.Infinity) == S.Infinity\\n```\\n\\n## Why This Fix Works\\n\\nBell numbers represent the number of partitions of a set. As the size of the set approaches infinity, the number of partitions grows without bound, approaching infinity. The fix evaluates `bell(oo)` directly to `oo` rather than returning the unevaluated expression, which is consistent with the mathematical interpretation and aligns with how similar functions like `fibonacci` and `lucas` handle this limit.\\n\\nThe fix is minimal, focused, and follows the established pattern in the codebase. When `bell(n).limit(n, oo)` is called, the limit computation will now properly evaluate `bell(oo)` to `oo` instead of returning the unevaluated `bell(oo)`.\",\"stop_reason\":\"end_turn\",\"session_id\":\"e22bc11c-ab5e-4c1c-ba30-e6c0b132a74f\",\"total_cost_usd\":0.14070924999999998,\"usage\":{\"input_tokens\":100,\"cache_creation_input_tokens\":43009,\"cache_read_input_tokens\":669480,\"output_tokens\":3859,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":43009,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":7,\"output_tokens\":455,\"cache_read_input_tokens\":66925,\"cache_creation_input_tokens\":396,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":396},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":620,\"outputTokens\":3876,\"cacheReadInputTokens\":669480,\"cacheCreationInputTokens\":43009,\"webSearchRequests\":0,\"costUSD\":0.14070924999999998,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"cc7d0daf-bd31-4d9b-bcc2-6aa40be99b4a\"}\n",
+  "model_name": ""
+}

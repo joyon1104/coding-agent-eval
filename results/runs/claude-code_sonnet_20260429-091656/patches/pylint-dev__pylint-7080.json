@@ -1,0 +1,22 @@
+{
+  "instance_id": "pylint-dev__pylint-7080",
+  "agent_name": "claude-code",
+  "patch": "",
+  "status": "error",
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 0
+  },
+  "timestamps": {
+    "task_start": 1777428118.931356,
+    "task_end": 1777429549.5812166,
+    "first_action": 0.0
+  },
+  "total_cost_usd": 0.0,
+  "convergence_steps": 0,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":true,\"api_error_status\":429,\"duration_ms\":1428684,\"duration_api_ms\":1422921,\"num_turns\":81,\"result\":\"You've hit your limit · resets 1:30pm (Asia/Seoul)\",\"stop_reason\":\"stop_sequence\",\"session_id\":\"44340cd4-05d6-425e-997d-fc119faafa64\",\"total_cost_usd\":3.621252450000001,\"usage\":{\"input_tokens\":79,\"cache_creation_input_tokens\":134581,\"cache_read_input_tokens\":5782448,\"output_tokens\":81765,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":134581,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":230,\"cache_read_input_tokens\":137291,\"cache_creation_input_tokens\":877,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":877},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":10272,\"outputTokens\":4320,\"cacheReadInputTokens\":741453,\"cacheCreationInputTokens\":39288,\"webSearchRequests\":0,\"costUSD\":0.15512730000000002,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":79,\"outputTokens\":81765,\"cacheReadInputTokens\":5782448,\"cacheCreationInputTokens\":134581,\"webSearchRequests\":0,\"costUSD\":3.4661251500000003,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"cd9b9967-26cb-4613-b6e6-bb717deb86f8\"}\n",
+  "model_name": ""
+}

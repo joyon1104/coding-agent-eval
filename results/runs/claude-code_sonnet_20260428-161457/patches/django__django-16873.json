@@ -1,0 +1,22 @@
+{
+  "instance_id": "django__django-16873",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/django/template/defaultfilters.py b/django/template/defaultfilters.py\nindex 03676533b7..671971a846 100644\n--- a/django/template/defaultfilters.py\n+++ b/django/template/defaultfilters.py\n@@ -587,7 +587,8 @@ def join(value, arg, autoescape=True):\n     try:\n         if autoescape:\n             value = [conditional_escape(v) for v in value]\n-        data = conditional_escape(arg).join(value)\n+            arg = conditional_escape(arg)\n+        data = arg.join(value)\n     except TypeError:  # Fail silently if arg isn't iterable.\n         return value\n     return mark_safe(data)\ndiff --git a/tests/template_tests/filter_tests/test_join.py b/tests/template_tests/filter_tests/test_join.py\nindex 08f68537ee..d431497cfc 100644\n--- a/tests/template_tests/filter_tests/test_join.py\n+++ b/tests/template_tests/filter_tests/test_join.py\n@@ -69,7 +69,7 @@ class FunctionTests(SimpleTestCase):\n     def test_autoescape_off(self):\n         self.assertEqual(\n             join([\"<a>\", \"<img>\", \"</a>\"], \"<br>\", autoescape=False),\n-            \"<a>&lt;br&gt;<img>&lt;br&gt;</a>\",\n+            \"<a><br><img><br></a>\",\n         )\n \n     def test_noniterable_arg(self):\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 288980,
+    "output_tokens": 2318,
+    "cache_read_tokens": 276439,
+    "cache_write_tokens": 12526
+  },
+  "timestamps": {
+    "task_start": 1777363069.1781807,
+    "task_end": 1777363125.450256,
+    "first_action": 1777363072.7794473
+  },
+  "total_cost_usd": 0.16586320000000002,
+  "convergence_steps": 15,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":54236,\"duration_api_ms\":54019,\"num_turns\":15,\"result\":\"All 13 tests pass. Here's a summary of the fix:\\n\\n**Root cause:** In `django/template/defaultfilters.py`, the `join` filter always called `conditional_escape(arg)` on the joining string regardless of the `autoescape` setting. The list items were correctly skipped when `autoescape=False`, but the joiner was not.\\n\\n**Fix (two changes):**\\n\\n1. `django/template/defaultfilters.py:588-591` — moved `conditional_escape(arg)` inside the `if autoescape:` block so the joiner is only escaped when autoescaping is on.\\n\\n2. `tests/template_tests/filter_tests/test_join.py:69-73` — updated `test_autoescape_off` which was asserting the old buggy behavior (joiner escaped even with `autoescape=False`); now it correctly expects the raw joiner string in the output.\",\"stop_reason\":\"end_turn\",\"session_id\":\"42746069-6e96-4b40-8db0-db89af68b099\",\"total_cost_usd\":0.16586320000000002,\"usage\":{\"input_tokens\":15,\"cache_creation_input_tokens\":12526,\"cache_read_input_tokens\":276439,\"output_tokens\":2318,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":12526,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":217,\"cache_read_input_tokens\":23819,\"cache_creation_input_tokens\":338,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":338},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1054,\"outputTokens\":18,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.001144,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":15,\"outputTokens\":2318,\"cacheReadInputTokens\":276439,\"cacheCreationInputTokens\":12526,\"webSearchRequests\":0,\"costUSD\":0.1647192,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"40e7b6be-32d8-41f2-9a81-bd1d8b9ac0a6\"}\n",
+  "model_name": ""
+}

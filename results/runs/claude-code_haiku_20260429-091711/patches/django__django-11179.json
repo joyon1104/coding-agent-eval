@@ -1,0 +1,22 @@
+{
+  "instance_id": "django__django-11179",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/django/db/models/deletion.py b/django/db/models/deletion.py\nindex 92fe4affb9..3a462f1c4c 100644\n--- a/django/db/models/deletion.py\n+++ b/django/db/models/deletion.py\n@@ -277,6 +277,7 @@ class Collector:\n             if self.can_fast_delete(instance):\n                 with transaction.mark_for_rollback_on_error():\n                     count = sql.DeleteQuery(model).delete_batch([instance.pk], self.using)\n+                setattr(instance, model._meta.pk.attname, None)\n                 return count, {model._meta.label: count}\n \n         with transaction.atomic(using=self.using, savepoint=False):\ndiff --git a/tests/delete/tests.py b/tests/delete/tests.py\nindex 55eeb226ea..11fe3cd780 100644\n--- a/tests/delete/tests.py\n+++ b/tests/delete/tests.py\n@@ -522,3 +522,13 @@ class FastDeleteTests(TestCase):\n                 User.objects.filter(avatar__desc='missing').delete(),\n                 (0, {'delete.User': 0})\n             )\n+\n+    def test_fast_delete_instance_clears_pk(self):\n+        \"\"\"\n+        Fast deleting an instance without dependencies should clear its PK.\n+        \"\"\"\n+        user = User.objects.create()\n+        user_id = user.pk\n+        self.assertIsNotNone(user.pk)\n+        user.delete()\n+        self.assertIsNone(user.pk)\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 1417242,
+    "output_tokens": 6652,
+    "cache_read_tokens": 1388541,
+    "cache_write_tokens": 28468
+  },
+  "timestamps": {
+    "task_start": 1777429276.8768218,
+    "task_end": 1777429391.4045177,
+    "first_action": 1777429280.1221247
+  },
+  "total_cost_usd": 0.20843110000000004,
+  "convergence_steps": 33,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":112797,\"duration_api_ms\":107095,\"num_turns\":33,\"result\":\"Perfect! The fix is complete and verified. Here's a summary of what I did:\\n\\n## Summary\\n\\n**Issue**: When deleting a model instance with no dependencies using the fast-delete optimization path, the PK wasn't being set to `None` after deletion, even though it should be cleared like in the normal deletion path.\\n\\n**Fix**: Added a single line to `django/db/models/deletion.py:280` that clears the PK in the fast-delete path:\\n\\n```python\\nsetattr(instance, model._meta.pk.attname, None)\\n```\\n\\nThis makes the fast-delete path consistent with the normal deletion path (lines 324-326), which also clears the PK for all deleted instances.\\n\\n**Testing**: \\n- All 42 existing deletion tests pass\\n- Added a new specific test (`test_fast_delete_instance_clears_pk`) that verifies the PK is cleared when a single instance with no dependencies is fast-deleted\\n- The existing test `test_instance_update` also validates this behavior\\n\\nThe fix is minimal, focused, and maintains consistency with the existing code pattern.\",\"stop_reason\":\"end_turn\",\"session_id\":\"1388bf54-b59b-46aa-95df-fc262cc3d430\",\"total_cost_usd\":0.20843110000000004,\"usage\":{\"input_tokens\":233,\"cache_creation_input_tokens\":28468,\"cache_read_input_tokens\":1388541,\"output_tokens\":6652,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":28468,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":7,\"output_tokens\":477,\"cache_read_input_tokens\":51332,\"cache_creation_input_tokens\":385,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":385},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":642,\"outputTokens\":6670,\"cacheReadInputTokens\":1388541,\"cacheCreationInputTokens\":28468,\"webSearchRequests\":0,\"costUSD\":0.20843110000000004,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"f360d46e-bce3-4092-a586-9e3d90280ffb\"}\n",
+  "model_name": ""
+}

@@ -1,0 +1,22 @@
+{
+  "instance_id": "django__django-12325",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/django/db/models/base.py b/django/db/models/base.py\nindex 8ea6c05ef9..0410b3b6fe 100644\n--- a/django/db/models/base.py\n+++ b/django/db/models/base.py\n@@ -204,7 +204,11 @@ class ModelBase(type):\n             for field in base._meta.local_fields:\n                 if isinstance(field, OneToOneField):\n                     related = resolve_relation(new_class, field.remote_field.model)\n-                    parent_links[make_model_tuple(related)] = field\n+                    parent_key = make_model_tuple(related)\n+                    if field.remote_field.parent_link:\n+                        parent_links[parent_key] = field\n+                    elif parent_key not in parent_links:\n+                        parent_links[parent_key] = field\n \n         # Track fields inherited from base models.\n         inherited_attributes = set()\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 342050,
+    "output_tokens": 4205,
+    "cache_read_tokens": 327657,
+    "cache_write_tokens": 14375
+  },
+  "timestamps": {
+    "task_start": 1777423861.61092,
+    "task_end": 1777423969.9182448,
+    "first_action": 1777423868.6191866
+  },
+  "total_cost_usd": 0.2839079,
+  "convergence_steps": 15,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":106416,\"duration_api_ms\":105124,\"num_turns\":15,\"result\":\"All 46 existing tests pass. Here's a summary of the fix:\\n\\n**Root cause:** In `base.py` lines 204-207, the `parent_links` dict is built by iterating `local_fields` in declaration order. Both `document_ptr` and `origin` point to `Document`, so they share the same key — whichever is declared last overwrites the other. When `document_ptr` (the real parent link) comes first, `origin` overwrites it, and Django then tries to use `origin` as the parent link and raises the error.\\n\\n**Fix** (`django/db/models/base.py`, lines 204-212): Fields with `parent_link=True` now always win. A non-parent-link field only enters the dict if no entry exists yet for that target model:\\n\\n```python\\n# before (last field wins regardless of parent_link):\\nparent_links[make_model_tuple(related)] = field\\n\\n# after (explicit parent_link=True takes priority):\\nparent_key = make_model_tuple(related)\\nif field.remote_field.parent_link:\\n    parent_links[parent_key] = field\\nelif parent_key not in parent_links:\\n    parent_links[parent_key] = field\\n```\",\"stop_reason\":\"end_turn\",\"session_id\":\"65d3ce4a-656f-41a6-83a1-853ddd0d81ba\",\"total_cost_usd\":0.2839079,\"usage\":{\"input_tokens\":18,\"cache_creation_input_tokens\":14375,\"cache_read_input_tokens\":327657,\"output_tokens\":4205,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":14375,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":291,\"cache_read_input_tokens\":24817,\"cache_creation_input_tokens\":775,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":775},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":646,\"outputTokens\":2557,\"cacheReadInputTokens\":191658,\"cacheCreationInputTokens\":28783,\"webSearchRequests\":0,\"costUSD\":0.06857555,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":18,\"outputTokens\":4205,\"cacheReadInputTokens\":327657,\"cacheCreationInputTokens\":14375,\"webSearchRequests\":0,\"costUSD\":0.21533235,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"d67c1983-e4f0-47f1-8c53-6fd052993304\"}\n",
+  "model_name": ""
+}

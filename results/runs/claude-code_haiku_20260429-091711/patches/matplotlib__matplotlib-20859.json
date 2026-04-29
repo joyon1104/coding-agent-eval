@@ -1,0 +1,22 @@
+{
+  "instance_id": "matplotlib__matplotlib-20859",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/lib/matplotlib/legend.py b/lib/matplotlib/legend.py\nindex 44ab024698..b2e8d9b914 100644\n--- a/lib/matplotlib/legend.py\n+++ b/lib/matplotlib/legend.py\n@@ -360,7 +360,7 @@ class Legend(Artist):\n         \"\"\"\n         # local import only to avoid circularity\n         from matplotlib.axes import Axes\n-        from matplotlib.figure import Figure\n+        from matplotlib.figure import Figure, FigureBase\n \n         super().__init__()\n \n@@ -434,7 +434,7 @@ class Legend(Artist):\n             self.isaxes = True\n             self.axes = parent\n             self.set_figure(parent.figure)\n-        elif isinstance(parent, Figure):\n+        elif isinstance(parent, FigureBase):\n             self.isaxes = False\n             self.set_figure(parent)\n         else:\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 914673,
+    "output_tokens": 6439,
+    "cache_read_tokens": 894068,
+    "cache_write_tokens": 20435
+  },
+  "timestamps": {
+    "task_start": 1777422710.394862,
+    "task_end": 1777422799.681356,
+    "first_action": 1777422713.6864004
+  },
+  "total_cost_usd": 0.14844055000000003,
+  "convergence_steps": 26,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":87482,\"duration_api_ms\":85580,\"num_turns\":26,\"result\":\"## Summary\\n\\nI've successfully fixed the bug where adding a legend to a `SubFigure` was raising a `TypeError`. The issue was in the `Legend.__init__` method in `lib/matplotlib/legend.py`.\\n\\n### Changes Made:\\n1. **Added import**: Imported `FigureBase` from `matplotlib.figure` (line 363)\\n2. **Updated type check**: Changed the `isinstance` check from `Figure` to `FigureBase` (line 437)\\n\\n### Why This Works:\\n- Both `Figure` and `SubFigure` inherit from `FigureBase`\\n- The original code only checked for `Figure` instances, excluding `SubFigure`\\n- Checking against `FigureBase` accepts both class types, fixing the issue\\n\\n### Testing:\\n✅ Original reproduction code now works  \\n✅ Regular `Figure.legend()` still works  \\n✅ Multiple subfigures with separate legends work  \\n✅ Nested subfigures work  \\n✅ Custom legend locations work with subfigures  \\n\\nThe fix is minimal, focused, and doesn't break any existing functionality.\",\"stop_reason\":\"end_turn\",\"session_id\":\"41b35faa-4067-49e4-bd6f-d80262ea9429\",\"total_cost_usd\":0.14844055000000003,\"usage\":{\"input_tokens\":170,\"cache_creation_input_tokens\":20435,\"cache_read_input_tokens\":894068,\"output_tokens\":6439,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":20435,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":7,\"output_tokens\":293,\"cache_read_input_tokens\":43169,\"cache_creation_input_tokens\":562,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":562},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1210,\"outputTokens\":6456,\"cacheReadInputTokens\":894068,\"cacheCreationInputTokens\":20435,\"webSearchRequests\":0,\"costUSD\":0.14844055000000003,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"1d648a5f-29f1-4fd0-ace7-0e8f8ca4aa79\"}\n",
+  "model_name": ""
+}

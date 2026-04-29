@@ -1,0 +1,22 @@
+{
+  "instance_id": "sympy__sympy-15345",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/sympy/printing/mathematica.py b/sympy/printing/mathematica.py\nindex ea7e3a2d94..806ac3e994 100644\n--- a/sympy/printing/mathematica.py\n+++ b/sympy/printing/mathematica.py\n@@ -116,6 +116,12 @@ def _print_Derivative(self, expr):\n         dvars = [i[0] if i[1] == 1 else i for i in expr.variable_count]\n         return \"Hold[D[\" + ', '.join(self.doprint(a) for a in [dexpr] + dvars) + \"]]\"\n \n+    def _print_Max(self, expr):\n+        return \"Max[%s]\" % self.stringify(expr.args, \", \")\n+\n+    def _print_Min(self, expr):\n+        return \"Min[%s]\" % self.stringify(expr.args, \", \")\n+\n \n def mathematica_code(expr, **settings):\n     r\"\"\"Converts an expr to a string of the Wolfram Mathematica code\ndiff --git a/sympy/printing/tests/test_mathematica.py b/sympy/printing/tests/test_mathematica.py\nindex dd636d0623..ad4478031c 100644\n--- a/sympy/printing/tests/test_mathematica.py\n+++ b/sympy/printing/tests/test_mathematica.py\n@@ -2,7 +2,7 @@\n                         Rational, Integer, Tuple, Derivative)\n from sympy.integrals import Integral\n from sympy.concrete import Sum\n-from sympy.functions import exp, sin, cos, conjugate\n+from sympy.functions import exp, sin, cos, conjugate, Max, Min\n \n from sympy import mathematica_code as mcode\n \n@@ -83,6 +83,13 @@ def test_Derivative():\n     assert mcode(Derivative(sin(x)*y**4, x, y, 3, x)) == \"Hold[D[y^4*Sin[x], x, {y, 3}, x]]\"\n \n \n+def test_Max():\n+    assert mcode(Max(x, 2)) == \"Max[2, x]\"\n+    assert mcode(Max(x, y, z)) == \"Max[x, y, z]\"\n+    assert mcode(Min(x, 2)) == \"Min[2, x]\"\n+    assert mcode(Min(x, y, z)) == \"Min[x, y, z]\"\n+\n+\n def test_Sum():\n     assert mcode(Sum(sin(x), (x, 0, 10))) == \"Hold[Sum[Sin[x], {x, 0, 10}]]\"\n     assert mcode(Sum(exp(-x**2 - y**2),\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 241034,
+    "output_tokens": 2569,
+    "cache_read_tokens": 227852,
+    "cache_write_tokens": 13168
+  },
+  "timestamps": {
+    "task_start": 1777421907.5873275,
+    "task_end": 1777421999.3652432,
+    "first_action": 1777421915.6105094
+  },
+  "total_cost_usd": 0.249367,
+  "convergence_steps": 11,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":90118,\"duration_api_ms\":88255,\"num_turns\":11,\"result\":\"All 11 tests pass (including the new `test_Max`). \\n\\nThe fix was to add `_print_Max` and `_print_Min` methods to `MCodePrinter` in `sympy/printing/mathematica.py`. The root cause: `Max` and `Min` aren't subclasses of `sympy.Function`, so they bypassed `_print_Function` entirely and fell back to the default printer which outputs `Max(2, x)` with parentheses instead of Mathematica's required square brackets.\",\"stop_reason\":\"end_turn\",\"session_id\":\"c7a90ab8-10a9-4cfb-b6be-1f579bd351dc\",\"total_cost_usd\":0.249367,\"usage\":{\"input_tokens\":14,\"cache_creation_input_tokens\":13168,\"cache_read_input_tokens\":227852,\"output_tokens\":2569,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":13168,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":125,\"cache_read_input_tokens\":24300,\"cache_creation_input_tokens\":306,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":306},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":494,\"outputTokens\":3281,\"cacheReadInputTokens\":381304,\"cacheCreationInputTokens\":30420,\"webSearchRequests\":0,\"costUSD\":0.09305439999999998,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":14,\"outputTokens\":2569,\"cacheReadInputTokens\":227852,\"cacheCreationInputTokens\":13168,\"webSearchRequests\":0,\"costUSD\":0.1563126,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"fc0e9be3-435f-47f9-9324-8b312c9474c8\"}\n",
+  "model_name": ""
+}

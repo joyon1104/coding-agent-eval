@@ -1,0 +1,11 @@
+{
+  "instance_id": "sphinx-doc__sphinx-9461",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "fail",
+  "fail_to_pass_results": {},
+  "pass_to_pass_results": {},
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 1.0,
+  "error": "No patch generated"
+}

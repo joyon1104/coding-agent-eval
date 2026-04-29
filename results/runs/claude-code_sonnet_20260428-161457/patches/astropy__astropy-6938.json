@@ -1,0 +1,22 @@
+{
+  "instance_id": "astropy__astropy-6938",
+  "agent_name": "claude-code",
+  "patch": "",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 1123883,
+    "output_tokens": 9578,
+    "cache_read_tokens": 1091665,
+    "cache_write_tokens": 32178
+  },
+  "timestamps": {
+    "task_start": 1777360498.715034,
+    "task_end": 1777360686.0624478,
+    "first_action": 1777360503.4350853
+  },
+  "total_cost_usd": 0.5925079999999998,
+  "convergence_steps": 39,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":184493,\"duration_api_ms\":184082,\"num_turns\":39,\"result\":\"The repo directory has been cleaned up by the environment. Here's a summary of what was done:\\n\\n**Bug:** In `fitsrec.py:1264`, `_scale_back_ascii` called `output_field.replace(...)` but discarded the return value — `chararray.replace` (like `str.replace`) is not in-place.\\n\\n**Fix in `astropy/io/fits/fitsrec.py:1264`:**\\n```python\\n# Before (broken):\\noutput_field.replace(encode_ascii('E'), encode_ascii('D'))\\n\\n# After (correct, matching the reading path at line 837):\\noutput_field[:] = np.char.replace(output_field, encode_ascii('E'),\\n                                  encode_ascii('D'))\\n```\\n\\nThe reading path at line 837 already used `np.char.replace` correctly with `dummy = np.char.replace(...)`. The write path was missing the assignment.\\n\\n**Test added in `astropy/io/fits/tests/test_table.py`** — `TestTableFunctions.test_ascii_table_d_exponent`:\\n- Creates an ASCII `TableHDU` with a `D25.17`-format column containing values with large exponents\\n- Writes to file, reads raw bytes and asserts `D+`/`D-` appears (not `E+100`/`E-200`)\\n- Reads data back and asserts values round-trip correctly with `np.testing.assert_allclose`\",\"stop_reason\":\"end_turn\",\"session_id\":\"67db49e1-9bf5-486d-8c77-a78d9891b406\",\"total_cost_usd\":0.5925079999999998,\"usage\":{\"input_tokens\":40,\"cache_creation_input_tokens\":32178,\"cache_read_input_tokens\":1091665,\"output_tokens\":9578,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":32178,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":640,\"cache_read_input_tokens\":39747,\"cache_creation_input_tokens\":634,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":634},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":471,\"outputTokens\":16,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.0005510000000000001,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":40,\"outputTokens\":9578,\"cacheReadInputTokens\":1091665,\"cacheCreationInputTokens\":32178,\"webSearchRequests\":0,\"costUSD\":0.5919569999999998,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"c7ab11aa-2e1d-43d8-bb62-fc29beb89704\"}\n",
+  "model_name": ""
+}

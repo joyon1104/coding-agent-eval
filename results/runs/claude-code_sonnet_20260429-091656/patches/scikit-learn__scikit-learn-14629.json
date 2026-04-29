@@ -1,0 +1,22 @@
+{
+  "instance_id": "scikit-learn__scikit-learn-14629",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/sklearn/multioutput.py b/sklearn/multioutput.py\nindex 463b72d40f..a456168132 100644\n--- a/sklearn/multioutput.py\n+++ b/sklearn/multioutput.py\n@@ -320,11 +320,20 @@ class MultiOutputClassifier(MultiOutputEstimator, ClassifierMixin):\n     ----------\n     estimators_ : list of ``n_output`` estimators\n         Estimators used for predictions.\n+\n+    classes_ : list of arrays, shape = [n_output], where each element is an\n+        array of shape (n_classes,)\n+        Class labels.\n     \"\"\"\n \n     def __init__(self, estimator, n_jobs=None):\n         super().__init__(estimator, n_jobs)\n \n+    @property\n+    def classes_(self):\n+        check_is_fitted(self)\n+        return [estimator.classes_ for estimator in self.estimators_]\n+\n     def predict_proba(self, X):\n         \"\"\"Probability estimates.\n         Returns prediction probabilities for each class of each output.\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 440077,
+    "output_tokens": 3819,
+    "cache_read_tokens": 423167,
+    "cache_write_tokens": 16890
+  },
+  "timestamps": {
+    "task_start": 1777424707.3205802,
+    "task_end": 1777424906.5394895,
+    "first_action": 1777424711.1488802
+  },
+  "total_cost_usd": 0.24867960000000003,
+  "convergence_steps": 20,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":197573,\"duration_api_ms\":76566,\"num_turns\":20,\"result\":\"The fix is in place. Here's a summary of the change:\\n\\n**Root cause:** `MultiOutputClassifier` had no `classes_` attribute. In `_validation.py:859`, `cross_val_predict` calls `estimator.classes_[i_label]` when predictions are a list (which happens with multi-output classifiers), causing `AttributeError`.\\n\\n**Fix:** Added a `classes_` property to `MultiOutputClassifier` in `sklearn/multioutput.py:332-335` that returns `[estimator.classes_ for estimator in self.estimators_]` — consistent with how `ClassifierChain` already exposes the same attribute (line 595).\\n\\nThis makes `estimator.classes_[i_label]` in `_validation.py` work correctly: `classes_` is now a list of arrays (one per output), so indexing by `i_label` returns the correct class labels for that output, which `_enforce_prediction_order` then uses to align columns across CV folds.\",\"stop_reason\":\"end_turn\",\"session_id\":\"edc29ff9-adc7-4109-bf94-a748fd141888\",\"total_cost_usd\":0.24867960000000003,\"usage\":{\"input_tokens\":20,\"cache_creation_input_tokens\":16890,\"cache_read_input_tokens\":423167,\"output_tokens\":3819,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":16890,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":236,\"cache_read_input_tokens\":26859,\"cache_creation_input_tokens\":781,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":781},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":932,\"outputTokens\":23,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.001047,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":20,\"outputTokens\":3819,\"cacheReadInputTokens\":423167,\"cacheCreationInputTokens\":16890,\"webSearchRequests\":0,\"costUSD\":0.2476326,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"098a3524-3a17-42ae-bb80-52b4c093d474\"}\n",
+  "model_name": ""
+}

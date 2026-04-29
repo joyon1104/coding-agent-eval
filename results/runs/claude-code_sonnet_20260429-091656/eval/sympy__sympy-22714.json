@@ -1,0 +1,25 @@
+{
+  "instance_id": "sympy__sympy-22714",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "test_issue_22684": false
+  },
+  "pass_to_pass_results": {
+    "test_point": false,
+    "test_point3D": false,
+    "test_Point2D": false,
+    "test_issue_9214": false,
+    "test_issue_11617": false,
+    "test_transform": false,
+    "test_concyclic_doctest_bug": false,
+    "test_arguments": false,
+    "test_unit": false,
+    "test_dot": false,
+    "test__normalize_dimension": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

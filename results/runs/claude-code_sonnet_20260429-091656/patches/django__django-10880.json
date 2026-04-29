@@ -1,0 +1,22 @@
+{
+  "instance_id": "django__django-10880",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/django/db/models/aggregates.py b/django/db/models/aggregates.py\nindex ac0b62d0bf..ea88c54b0d 100644\n--- a/django/db/models/aggregates.py\n+++ b/django/db/models/aggregates.py\n@@ -68,7 +68,7 @@ class Aggregate(Func):\n         return []\n \n     def as_sql(self, compiler, connection, **extra_context):\n-        extra_context['distinct'] = 'DISTINCT' if self.distinct else ''\n+        extra_context['distinct'] = 'DISTINCT ' if self.distinct else ''\n         if self.filter:\n             if connection.features.supports_aggregate_filter_clause:\n                 filter_sql, filter_params = self.filter.as_sql(compiler, connection)\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 96651,
+    "output_tokens": 1395,
+    "cache_read_tokens": 87254,
+    "cache_write_tokens": 9389
+  },
+  "timestamps": {
+    "task_start": 1777428065.203813,
+    "task_end": 1777428118.2892735,
+    "first_action": 1777428075.6010132
+  },
+  "total_cost_usd": 0.1214632,
+  "convergence_steps": 5,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":51377,\"duration_api_ms\":51986,\"num_turns\":5,\"result\":\"All three cases are correct:\\n- `COUNT(DISTINCT CASE WHEN x THEN 1 ELSE NULL END)` — bug fixed, space now present\\n- `COUNT(DISTINCT field)` — still correct\\n- `COUNT(field)` — still correct (empty string, no trailing space issue)\\n\\nThe fix is a one-character change on `aggregates.py:71`: `'DISTINCT'` → `'DISTINCT '`. The trailing space separates the keyword from whatever expression follows, fixing `COUNT(DISTINCTCASE WHEN ...)` → `COUNT(DISTINCT CASE WHEN ...)` while leaving the normal `COUNT(DISTINCT field)` case unchanged.\",\"stop_reason\":\"end_turn\",\"session_id\":\"489ae096-6182-4263-9250-1ea247269328\",\"total_cost_usd\":0.1214632,\"usage\":{\"input_tokens\":8,\"cache_creation_input_tokens\":9389,\"cache_read_input_tokens\":87254,\"output_tokens\":1395,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":9389,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":155,\"cache_read_input_tokens\":20491,\"cache_creation_input_tokens\":529,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":529},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":444,\"outputTokens\":1730,\"cacheReadInputTokens\":186015,\"cacheCreationInputTokens\":9147,\"webSearchRequests\":0,\"costUSD\":0.039129250000000004,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":8,\"outputTokens\":1395,\"cacheReadInputTokens\":87254,\"cacheCreationInputTokens\":9389,\"webSearchRequests\":0,\"costUSD\":0.08233394999999999,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"06a15f59-0a74-45c3-8a76-89237e2b3705\"}\n",
+  "model_name": ""
+}

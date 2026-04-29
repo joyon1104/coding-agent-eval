@@ -1,0 +1,22 @@
+{
+  "instance_id": "sympy__sympy-18199",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/sympy/ntheory/residue_ntheory.py b/sympy/ntheory/residue_ntheory.py\nindex 9a3052d4c3..cd9d076ff9 100644\n--- a/sympy/ntheory/residue_ntheory.py\n+++ b/sympy/ntheory/residue_ntheory.py\n@@ -768,6 +768,8 @@ def nthroot_mod(a, n, p, all_roots=False):\n     \"\"\"\n     from sympy.core.numbers import igcdex\n     a, n, p = as_int(a), as_int(n), as_int(p)\n+    if a % p == 0:\n+        return [0] if all_roots else 0\n     if n == 2:\n         return sqrt_mod(a, p, all_roots)\n     # see Hackman \"Elementary Number Theory\" (2009), page 76\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 331758,
+    "output_tokens": 4749,
+    "cache_read_tokens": 314804,
+    "cache_write_tokens": 16939
+  },
+  "timestamps": {
+    "task_start": 1777367442.78321,
+    "task_end": 1777367527.1276667,
+    "first_action": 1777367448.5152102
+  },
+  "total_cost_usd": 0.22978444999999997,
+  "convergence_steps": 14,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":82639,\"duration_api_ms\":80248,\"num_turns\":14,\"result\":\"All tests pass. The fix is a 2-line addition in `nthroot_mod` at `sympy/ntheory/residue_ntheory.py:770`:\\n\\n```python\\nif a % p == 0:\\n    return [0] if all_roots else 0\\n```\\n\\n**Why this works:** When `p` is prime and `p | a`, the equation `x^n ≡ a (mod p)` reduces to `x^n ≡ 0 (mod p)`. Since `p` is prime, `p | x^n` implies `p | x`, so `x = 0` is the only solution. The fix intercepts this case before the algorithm attempts to use discrete logarithms (which require nonzero elements and would fail or give wrong results).\",\"stop_reason\":\"end_turn\",\"session_id\":\"2a9a4687-1857-4db2-89e4-c5d0d2d715c5\",\"total_cost_usd\":0.22978444999999997,\"usage\":{\"input_tokens\":15,\"cache_creation_input_tokens\":16939,\"cache_read_input_tokens\":314804,\"output_tokens\":4749,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":16939,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":186,\"cache_read_input_tokens\":28138,\"cache_creation_input_tokens\":432,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":432},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":447,\"outputTokens\":19,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.0005420000000000001,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":15,\"outputTokens\":4749,\"cacheReadInputTokens\":314804,\"cacheCreationInputTokens\":16939,\"webSearchRequests\":0,\"costUSD\":0.22924245,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"63daf3a9-1d5c-49bc-ad5c-1f71501a0140\"}\n",
+  "model_name": ""
+}

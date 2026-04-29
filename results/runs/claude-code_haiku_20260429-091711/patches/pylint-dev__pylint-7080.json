@@ -1,0 +1,22 @@
+{
+  "instance_id": "pylint-dev__pylint-7080",
+  "agent_name": "claude-code",
+  "patch": "",
+  "status": "error",
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 0
+  },
+  "timestamps": {
+    "task_start": 1777429525.4554324,
+    "task_end": 1777429539.7231922,
+    "first_action": 0.0
+  },
+  "total_cost_usd": 0.0,
+  "convergence_steps": 0,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":true,\"api_error_status\":429,\"duration_ms\":12413,\"duration_api_ms\":13257,\"num_turns\":4,\"result\":\"You've hit your limit · resets 1:30pm (Asia/Seoul)\",\"stop_reason\":\"stop_sequence\",\"session_id\":\"1104d8d5-75cf-4da2-b7b4-e79494731a82\",\"total_cost_usd\":0.04278765,\"usage\":{\"input_tokens\":23,\"cache_creation_input_tokens\":16125,\"cache_read_input_tokens\":101564,\"output_tokens\":716,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":16125,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":7,\"output_tokens\":137,\"cache_read_input_tokens\":39075,\"cache_creation_input_tokens\":1362,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":1362},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":8815,\"outputTokens\":732,\"cacheReadInputTokens\":101564,\"cacheCreationInputTokens\":16125,\"webSearchRequests\":0,\"costUSD\":0.04278765,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"326bed48-3fc9-4c3a-b57a-5375c896d305\"}\n",
+  "model_name": ""
+}

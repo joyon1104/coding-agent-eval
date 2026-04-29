@@ -1,0 +1,22 @@
+{
+  "instance_id": "mwaskom__seaborn-3010",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/seaborn/_stats/regression.py b/seaborn/_stats/regression.py\nindex 7b7ddc8d..636695e0 100644\n--- a/seaborn/_stats/regression.py\n+++ b/seaborn/_stats/regression.py\n@@ -21,8 +21,9 @@ class PolyFit(Stat):\n \n     def _fit_predict(self, data):\n \n-        x = data[\"x\"]\n-        y = data[\"y\"]\n+        data_clean = data.dropna(subset=[\"x\", \"y\"])\n+        x = data_clean[\"x\"]\n+        y = data_clean[\"y\"]\n         if x.nunique() <= self.order:\n             # TODO warn?\n             xx = yy = []\ndiff --git a/tests/_stats/test_regression.py b/tests/_stats/test_regression.py\nindex 7facf75d..bb22d379 100644\n--- a/tests/_stats/test_regression.py\n+++ b/tests/_stats/test_regression.py\n@@ -50,3 +50,19 @@ class TestPolyFit:\n             grid = np.linspace(part[\"x\"].min(), part[\"x\"].max(), gridsize)\n             assert_array_equal(part[\"x\"], grid)\n             assert part[\"y\"].diff().diff().dropna().abs().gt(0).all()\n+\n+    def test_missing_data(self, df):\n+\n+        df_missing = df.copy()\n+        df_missing.loc[0, \"x\"] = np.nan\n+        df_missing.loc[5, \"y\"] = np.nan\n+\n+        groupby = GroupBy([\"group\"])\n+        res = PolyFit(order=1, gridsize=100)(df_missing[[\"x\", \"y\", \"group\"]], groupby, \"x\", {})\n+\n+        assert not res.empty\n+        assert \"x\" in res.columns\n+        assert \"y\" in res.columns\n+        # Check that all values are finite\n+        assert res[\"x\"].notna().all()\n+        assert res[\"y\"].notna().all()\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 507549,
+    "output_tokens": 4498,
+    "cache_read_tokens": 490568,
+    "cache_write_tokens": 16881
+  },
+  "timestamps": {
+    "task_start": 1777360899.1204197,
+    "task_end": 1777360964.3218298,
+    "first_action": 1777360903.2090626
+  },
+  "total_cost_usd": 0.09461605,
+  "convergence_steps": 14,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":63275,\"duration_api_ms\":57241,\"num_turns\":14,\"result\":\"Done! I've fixed the issue where `PolyFit` wasn't handling missing data. \\n\\n**Summary of changes:**\\n1. **Modified `seaborn/_stats/regression.py`** — Added `data.dropna(subset=[\\\"x\\\", \\\"y\\\"])` to filter out rows with missing values before calling `np.polyfit`\\n2. **Added test case** — Created `test_missing_data` to verify the fix works with NaN/None values\\n\\nThe fix is minimal and robust: it simply removes rows where either x or y is missing before fitting the polynomial. The original issue with `LinAlgError: SVD did not converge in Linear Least Squares` is now resolved, and `PolyFit` gracefully handles datasets with missing values.\",\"stop_reason\":\"end_turn\",\"session_id\":\"5df60cce-dcc1-46ff-9e76-6e4b5240396b\",\"total_cost_usd\":0.09461605,\"usage\":{\"input_tokens\":100,\"cache_creation_input_tokens\":16881,\"cache_read_input_tokens\":490568,\"output_tokens\":4498,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":16881,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":7,\"output_tokens\":351,\"cache_read_input_tokens\":40440,\"cache_creation_input_tokens\":283,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":283},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1868,\"outputTokens\":4518,\"cacheReadInputTokens\":490568,\"cacheCreationInputTokens\":16881,\"webSearchRequests\":0,\"costUSD\":0.09461605,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"aa12b0e9-caa0-48e2-85a6-242e000fbdca\"}\n",
+  "model_name": ""
+}

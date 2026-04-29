@@ -1,0 +1,22 @@
+{
+  "instance_id": "sympy__sympy-20590",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/sympy/core/_print_helpers.py b/sympy/core/_print_helpers.py\nindex 96d7e72676..f7875b9eec 100644\n--- a/sympy/core/_print_helpers.py\n+++ b/sympy/core/_print_helpers.py\n@@ -17,6 +17,8 @@ class Printable:\n     This also adds support for LaTeX printing in jupyter notebooks.\n     \"\"\"\n \n+    __slots__ = ()\n+\n     # Note, we always use the default ordering (lex) in __str__ and __repr__,\n     # regardless of the global setting. See issue 5487.\n     def __str__(self):\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 94430,
+    "output_tokens": 1374,
+    "cache_read_tokens": 86133,
+    "cache_write_tokens": 8289
+  },
+  "timestamps": {
+    "task_start": 1777365025.1475236,
+    "task_end": 1777365103.600968,
+    "first_action": 1777365040.0391235
+  },
+  "total_cost_usd": 0.17103040000000003,
+  "convergence_steps": 5,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":76457,\"duration_api_ms\":74458,\"num_turns\":5,\"result\":\"The fix is a single line: adding `__slots__ = ()` to the `Printable` class in `sympy/core/_print_helpers.py:20`.\\n\\n**Root cause:** When `Printable` was introduced (likely in 1.7) as a base class for `Basic`, it omitted `__slots__`. Python's data model requires *every* class in an MRO to define `__slots__` — if even one class in the chain omits it, Python adds `__dict__` to all instances of every subclass, defeating the memory savings of `__slots__` throughout the entire hierarchy.\",\"stop_reason\":\"end_turn\",\"session_id\":\"97ae9309-abb8-4718-a49c-2caffcfc0eb8\",\"total_cost_usd\":0.17103040000000003,\"usage\":{\"input_tokens\":8,\"cache_creation_input_tokens\":8289,\"cache_read_input_tokens\":86133,\"output_tokens\":1374,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":8289,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":141,\"cache_read_input_tokens\":19694,\"cache_creation_input_tokens\":226,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":226},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":627,\"outputTokens\":3626,\"cacheReadInputTokens\":495295,\"cacheCreationInputTokens\":20149,\"webSearchRequests\":0,\"costUSD\":0.09347275000000001,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":8,\"outputTokens\":1374,\"cacheReadInputTokens\":86133,\"cacheCreationInputTokens\":8289,\"webSearchRequests\":0,\"costUSD\":0.07755764999999999,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"9e4179e2-f747-4ac4-94e9-2194c3940219\"}\n",
+  "model_name": ""
+}

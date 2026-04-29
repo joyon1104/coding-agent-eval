@@ -1,0 +1,22 @@
+{
+  "instance_id": "pytest-dev__pytest-7571",
+  "agent_name": "claude-code",
+  "patch": "",
+  "status": "error",
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 0
+  },
+  "timestamps": {
+    "task_start": 1777429588.2137327,
+    "task_end": 1777429591.2731304,
+    "first_action": 0.0
+  },
+  "total_cost_usd": 0.0,
+  "convergence_steps": 0,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":true,\"api_error_status\":429,\"duration_ms\":505,\"duration_api_ms\":0,\"num_turns\":1,\"result\":\"You've hit your limit · resets 1:30pm (Asia/Seoul)\",\"stop_reason\":\"stop_sequence\",\"session_id\":\"ec0a0955-26b1-4bb7-807f-7f730f45e9f0\",\"total_cost_usd\":0,\"usage\":{\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[],\"speed\":\"standard\"},\"modelUsage\":{},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"f7476e06-50b8-4ad7-8a05-fcfcb81c980d\"}\n",
+  "model_name": ""
+}

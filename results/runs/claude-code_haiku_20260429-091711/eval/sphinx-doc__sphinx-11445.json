@@ -1,0 +1,23 @@
+{
+  "instance_id": "sphinx-doc__sphinx-11445",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "tests/test_util_rst.py::test_prepend_prolog_with_roles_in_sections_with_newline": true,
+    "tests/test_util_rst.py::test_prepend_prolog_with_roles_in_sections_without_newline": true
+  },
+  "pass_to_pass_results": {
+    "tests/test_util_rst.py::test_escape": true,
+    "tests/test_util_rst.py::test_append_epilog": true,
+    "tests/test_util_rst.py::test_prepend_prolog": true,
+    "tests/test_util_rst.py::test_prepend_prolog_with_CR": true,
+    "tests/test_util_rst.py::test_prepend_prolog_without_CR": true,
+    "tests/test_util_rst.py::test_prepend_prolog_with_roles_in_sections": true,
+    "tests/test_util_rst.py::test_textwidth": true,
+    "tests/test_util_rst.py::test_heading": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}
