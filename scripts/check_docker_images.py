@@ -27,14 +27,16 @@ from src.evaluator.registry_utils import classify, RETRYABLE, backoff_seconds
 console = Console()
 
 
-def check_one(instance_id: str, timeout: int = 30, max_retries: int = 3) -> dict:
+def check_one(
+    instance_id: str, tier: str = "lite", timeout: int = 30, max_retries: int = 3
+) -> dict:
     """Check a single image's manifest. Metadata-only, no pull.
 
     Retries transient failures (rate_limit / timeout / network) up to max_retries
     with exponential backoff. Persistent failures (not_found / auth / tls / dns)
     return immediately.
     """
-    image = get_image_name(instance_id)
+    image = get_image_name(instance_id, tier)
     last = None
     for attempt in range(max_retries + 1):
         t0 = time.time()
@@ -131,7 +133,10 @@ def main(tier, concurrency, timeout, retries, output, only_failing, input_path):
     results = []
     t_start = time.time()
     with ThreadPoolExecutor(max_workers=concurrency) as ex:
-        futures = {ex.submit(check_one, iid, timeout, retries): iid for iid in instances}
+        futures = {
+            ex.submit(check_one, iid, tier, timeout, retries): iid
+            for iid in instances
+        }
         for i, fut in enumerate(as_completed(futures), 1):
             r = fut.result()
             results.append(r)

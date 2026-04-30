@@ -167,9 +167,11 @@ def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry
 
         console.print(f"\n  Verifying [bold]{agent_name}[/bold] ({len(matching_tasks)} tasks)...")
         for t in matching_tasks:
-            console.print(f"    {t.instance_id} -> {get_image_name(t.instance_id)}")
+            console.print(f"    {t.instance_id} -> {get_image_name(t.instance_id, tier or 'lite')}")
 
-        eval_results = evaluate_batch(matching_tasks, agent_results, timeout_per_task=600)
+        eval_results = evaluate_batch(
+            matching_tasks, agent_results, timeout_per_task=600, tier=tier or "lite"
+        )
 
         # Save eval results
         eval_dir = PROJECT_ROOT / "results" / "runs" / run_id / "eval"

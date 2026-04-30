@@ -112,14 +112,25 @@ def main(run_id, agent, dataset, timeout):
     for t in tasks:
         console.print(f"  - {t.instance_id}: F2P={len(t.FAIL_TO_PASS)} P2P={len(t.PASS_TO_PASS)}")
 
+    # Resolve tier from run metadata (needed for correct image registry + profile)
+    run_tier = "lite"
+    meta_path = run_dir / "metadata.json"
+    if meta_path.exists():
+        try:
+            run_tier = json.loads(meta_path.read_text()).get("tier", "lite") or "lite"
+        except (json.JSONDecodeError, KeyError):
+            pass
+
     # 3. Show SWE-bench Docker images to be used
-    console.print(f"\n[bold]Step 1: SWE-bench Docker Images[/bold]")
+    console.print(f"\n[bold]Step 1: SWE-bench Docker Images[/bold] (tier={run_tier})")
     for t in tasks:
-        console.print(f"  {t.instance_id} -> {get_image_name(t.instance_id)}")
+        console.print(f"  {t.instance_id} -> {get_image_name(t.instance_id, run_tier)}")
 
     # 4. Run Docker-based evaluation (images pulled automatically)
     console.print(f"\n[bold]Step 2: Test Verification[/bold]")
-    eval_results = evaluate_batch(tasks, agent_results, timeout_per_task=timeout)
+    eval_results = evaluate_batch(
+        tasks, agent_results, timeout_per_task=timeout, tier=run_tier
+    )
 
     # 5. Display results
     console.print(f"\n[bold]Step 3: Results[/bold]\n")

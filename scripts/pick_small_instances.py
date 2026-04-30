@@ -7,7 +7,11 @@ Selection:
     which trades a tiny bit of smallness for repo diversity. M=1 guarantees
     each picked instance comes from a distinct repo.
   - Image sizes are cached at data/.image_size_cache.json so repeated runs
-    (e.g. to tweak --per-repo-max or --n) don't re-query GHCR.
+    (e.g. to tweak --per-repo-max or --n) don't re-query registries (GHCR/Docker Hub).
+
+Registry:
+  - tier in {lite, verified, full} → GHCR (ghcr.io/epoch-research)
+  - tier=multi → Docker Hub (docker.io/swebench) with __→_1776_ instance_id transform
 
 Output: data/swebench_<tier>_small.jsonl (overridable via --output).
 The original dataset file is never modified.
@@ -30,6 +34,7 @@ import click
 from rich.console import Console
 
 from src.core.config import PROJECT_ROOT
+from src.evaluator.docker_evaluator import get_image_name
 
 console = Console()
 
@@ -37,7 +42,6 @@ _CTX = ssl.create_default_context()
 _CTX.check_hostname = False
 _CTX.verify_mode = ssl.CERT_NONE  # local cert bundle is broken on this env
 
-_REPO_PREFIX = "epoch-research/swe-bench.eval.x86_64"
 _TEXT_FIELDS = ("problem_statement", "hints_text", "patch", "test_patch")
 _CACHE_PATH = PROJECT_ROOT / "data" / ".image_size_cache.json"
 
@@ -56,29 +60,34 @@ def _save_cache(cache: dict[str, int]) -> None:
     _CACHE_PATH.write_text(json.dumps(cache, indent=2))
 
 
-def _token_for(repo: str) -> str | None:
+def _token_for(registry: str, repo: str) -> str | None:
+    """Get auth token for GHCR or Docker Hub."""
     try:
-        with urllib.request.urlopen(
-            f"https://ghcr.io/token?scope=repository:{repo}:pull",
-            timeout=30, context=_CTX,
-        ) as r:
+        if registry == "ghcr.io":
+            url = f"https://ghcr.io/token?scope=repository:{repo}:pull"
+        else:  # docker.io
+            url = f"https://auth.docker.io/token?service=registry.docker.io&scope=repository:{repo}:pull"
+        with urllib.request.urlopen(url, timeout=30, context=_CTX) as r:
             return json.loads(r.read())["token"]
     except Exception:
         return None
 
 
-def fetch_image_size(instance_id: str, retries: int = 2) -> int | None:
-    """Total compressed layer bytes from GHCR manifest. None if unreachable."""
-    repo = f"{_REPO_PREFIX}.{instance_id}"
+def fetch_image_size(image_name: str, registry: str, retries: int = 2) -> int | None:
+    """Total compressed layer bytes from manifest. None if unreachable.
+
+    image_name: full image path (e.g. "swebench/sweb.eval.x86_64.apache_1776_druid-13704")
+    registry: "ghcr.io" or "docker.io"
+    """
     for attempt in range(retries + 1):
-        token = _token_for(repo)
+        token = _token_for(registry, image_name)
         if not token:
             if attempt < retries:
                 time.sleep(2 ** attempt)
                 continue
             return None
         req = urllib.request.Request(
-            f"https://ghcr.io/v2/{repo}/manifests/latest",
+            f"https://{registry}/v2/{image_name}/manifests/latest",
             headers={
                 "Authorization": f"Bearer {token}",
                 "Accept": "application/vnd.docker.distribution.manifest.v2+json",
@@ -126,7 +135,7 @@ def main(tier, n, output, concurrency, per_repo_max):
     need_query = [r for r in rows if r["instance_id"] not in cache]
     console.print(
         f"Cached sizes: {len(rows) - len(need_query)}/{len(rows)}  "
-        f"→ querying {len(need_query)} new (concurrency={concurrency})..."
+        f"→ querying {len(need_query)} new (concurrency={concurrency}, tier={tier})..."
     )
 
     sizes: dict[str, int | None] = {r["instance_id"]: cache.get(r["instance_id"]) for r in rows}
@@ -134,7 +143,21 @@ def main(tier, n, output, concurrency, per_repo_max):
     if need_query:
         t0 = time.time()
         with ThreadPoolExecutor(max_workers=concurrency) as ex:
-            futures = {ex.submit(fetch_image_size, r["instance_id"]): r["instance_id"] for r in need_query}
+            futures = {}
+            for r in need_query:
+                # Determine registry and image name based on tier
+                if tier == "multi":
+                    registry = "docker.io"
+                    # Remove "epoch-research/" prefix if present; Docker Hub uses just the base name
+                    img_base = r["instance_id"].replace("__", "_1776_")
+                    image_name = f"swebench/sweb.eval.x86_64.{img_base}"
+                else:
+                    registry = "ghcr.io"
+                    image_name = f"epoch-research/swe-bench.eval.x86_64.{r['instance_id']}"
+
+                fut = ex.submit(fetch_image_size, image_name, registry)
+                futures[fut] = r["instance_id"]
+
             done = 0
             for fut in as_completed(futures):
                 iid = futures[fut]
@@ -167,19 +190,34 @@ def main(tier, n, output, concurrency, per_repo_max):
     # Apply per-repo cap: walk the size-sorted list, keep track of how many
     # we've taken from each repo, skip anything past the cap. Preserves
     # "smallest first" while enforcing diversity.
+    # If the initial cap yields fewer than n instances, relax it incrementally
+    # (per_repo_max → per_repo_max+1 → ...) until we reach n or exhaust all
+    # available instances.
     if per_repo_max is not None and per_repo_max > 0:
-        per_repo_count: Counter[str] = Counter()
-        capped = []
-        for img, txt, r in ranked:
-            if per_repo_count[r["repo"]] >= per_repo_max:
-                continue
-            capped.append((img, txt, r))
-            per_repo_count[r["repo"]] += 1
-        ranked = capped
-        console.print(
-            f"[dim]per-repo-max={per_repo_max} → {len(ranked)} eligible "
-            f"across {len(per_repo_count)} repos[/dim]"
-        )
+        total_available = len(ranked)
+        effective_cap = per_repo_max
+        while True:
+            per_repo_count: Counter[str] = Counter()
+            capped = []
+            for img, txt, r in ranked:
+                if per_repo_count[r["repo"]] >= effective_cap:
+                    continue
+                capped.append((img, txt, r))
+                per_repo_count[r["repo"]] += 1
+            if len(capped) >= n or len(capped) == total_available:
+                ranked = capped
+                if effective_cap > per_repo_max:
+                    console.print(
+                        f"[dim]per-repo-max relaxed {per_repo_max}→{effective_cap} "
+                        f"to reach {len(ranked)} eligible across {len(per_repo_count)} repos[/dim]"
+                    )
+                else:
+                    console.print(
+                        f"[dim]per-repo-max={effective_cap} → {len(ranked)} eligible "
+                        f"across {len(per_repo_count)} repos[/dim]"
+                    )
+                break
+            effective_cap += 1
 
     if len(ranked) < n:
         console.print(f"[yellow]Only {len(ranked)} available; requested {n}[/yellow]")

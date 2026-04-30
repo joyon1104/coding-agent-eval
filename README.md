@@ -505,6 +505,12 @@ python scripts/prepull_images.py \
     --dataset data/swebench_lite_small.jsonl \
     --dataset data/swebench_verified_small.jsonl
 
+# ⚠️ multi 티어(Java/C++ 등)는 반드시 --tier multi 지정
+# --tier 생략 시 기본값 lite → GHCR URL 생성 → auth/denied 에러 발생
+python scripts/prepull_images.py \
+    --dataset data/swebench_multi_small.jsonl \
+    --tier multi
+
 # 대용량/느린 네트워크에서는 per-try timeout 늘리기 (기본 1200s)
 python scripts/prepull_images.py \
     --dataset data/swebench_verified_small.jsonl \
@@ -517,6 +523,10 @@ python scripts/prepull_images.py \
 
 **주요 옵션**
 - `--dataset PATH`: 대상 JSONL (여러 번 지정 가능, 중복 instance_id는 자동 병합)
+- `--tier {lite|verified|full|multi}`: 레지스트리 선택 (기본 `lite`)
+  - `lite` / `verified` / `full` → GHCR (`ghcr.io/epoch-research/swe-bench.eval.*`)
+  - `multi` → Docker Hub (`docker.io/swebench/sweb.eval.*`, instance_id의 `__`를 `_1776_`로 변환)
+  - **multi 티어 데이터셋에 `--tier`를 생략하면 GHCR에서 없는 이미지를 찾아 실패합니다**
 - `--max-retries N`: transient 실패 재시도 (기본 3)
 - `--timeout N`: pull 한 번 시도 최대 초 (기본 1200)
 - `--dry-run`: 미리 대상만 출력

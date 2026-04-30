@@ -40,13 +40,16 @@ console = Console()
 @click.command()
 @click.option("--dataset", "datasets", multiple=True, required=True,
               help="JSONL file(s) to pre-pull images for. Repeatable.")
+@click.option("--tier", default="lite",
+              type=click.Choice(["local", "lite", "verified", "full", "multi"]),
+              help="Tier selects the image registry (multi → Docker Hub, others → GHCR)")
 @click.option("--max-retries", default=3, show_default=True,
               help="Retries per image for transient failures")
 @click.option("--timeout", default=1200, show_default=True,
               help="Timeout per pull attempt (seconds). Large images need more.")
 @click.option("--dry-run", is_flag=True,
               help="List what would be pulled without pulling")
-def main(datasets, max_retries, timeout, dry_run):
+def main(datasets, tier, max_retries, timeout, dry_run):
     """Pre-pull SWE-bench Docker images for specified dataset JSONL file(s)."""
     # Enable pull_image's internal INFO/WARNING logs to show on stdout
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -75,12 +78,12 @@ def main(datasets, max_retries, timeout, dry_run):
     already_local: list[str] = []
     need_pull: list[str] = []
     for iid in unique:
-        if image_exists_locally(get_image_name(iid)):
+        if image_exists_locally(get_image_name(iid, tier)):
             already_local.append(iid)
         else:
             need_pull.append(iid)
 
-    console.print(f"\n[bold]Status[/bold]")
+    console.print(f"\n[bold]Status[/bold] (tier={tier})")
     console.print(f"  unique instances: {len(unique)}")
     console.print(f"  already cached:   [green]{len(already_local)}[/green]")
     console.print(f"  need to pull:     [yellow]{len(need_pull)}[/yellow]")
@@ -88,7 +91,7 @@ def main(datasets, max_retries, timeout, dry_run):
     if dry_run:
         console.print("\n[yellow]--dry-run: no pulls will be performed[/yellow]")
         for iid in need_pull:
-            console.print(f"  would pull: {get_image_name(iid)}")
+            console.print(f"  would pull: {get_image_name(iid, tier)}")
         return
 
     if not need_pull:
@@ -104,7 +107,7 @@ def main(datasets, max_retries, timeout, dry_run):
 
     for i, iid in enumerate(need_pull, 1):
         console.print(f"\n[bold cyan][{i}/{len(need_pull)}] {iid}[/bold cyan]")
-        ok = pull_image(iid, max_retries=max_retries, timeout_per_try=timeout)
+        ok = pull_image(iid, max_retries=max_retries, timeout_per_try=timeout, tier=tier)
         (pulled if ok else failed).append(iid)
 
     # 4. Final summary
