@@ -1,0 +1,56 @@
+2026-05-06 13:03:23,973 [INFO] 
+============================================================
+2026-05-06 13:03:23,973 [INFO] Agent: claude-code | Tasks: 3
+2026-05-06 13:03:23,973 [INFO] ============================================================
+2026-05-06 13:03:23,975 [INFO]   Running: fmtlib__fmt-1683
+2026-05-06 13:03:23,976 [INFO]   Caching repo (attempt 1/3): fmtlib/fmt
+2026-05-06 13:03:37,542 [INFO]   Repo cached: /home/going114kim/temp/coding-agent-eval/.repo_cache/fmtlib__fmt
+2026-05-06 13:03:37,542 [INFO]   Copying cached repo for fmtlib__fmt-1683...
+2026-05-06 13:04:58,210 [INFO]   Completed: success | Cost: $0.138 | Time: 80.6s
+2026-05-06 13:04:58,221 [INFO]   Running: fmtlib__fmt-2317
+2026-05-06 13:04:58,222 [INFO]   Using cached repo: /home/going114kim/temp/coding-agent-eval/.repo_cache/fmtlib__fmt
+2026-05-06 13:04:58,222 [INFO]   Copying cached repo for fmtlib__fmt-2317...
+2026-05-06 13:05:48,535 [INFO]   Completed: error | Cost: $0.000 | Time: 50.3s
+2026-05-06 13:05:48,540 [INFO]   Running: apache__druid-13704
+2026-05-06 13:05:48,541 [INFO]   Caching repo (attempt 1/3): apache/druid
+2026-05-06 13:10:13,739 [INFO]   Repo cached: /home/going114kim/temp/coding-agent-eval/.repo_cache/apache__druid
+2026-05-06 13:10:13,739 [INFO]   Copying cached repo for apache__druid-13704...
+2026-05-06 13:10:18,957 [INFO]   Completed: error | Cost: $0.000 | Time: 3.1s
+2026-05-06 13:10:19,161 [INFO]   Done: 3 run, 0 skipped
+2026-05-06 13:10:19,178 [INFO] Evaluating: fmtlib__fmt-1683
+2026-05-06 13:10:19,279 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.fmtlib_1776_fmt-1683:latest
+2026-05-06 13:10:20,748 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.fmtlib_1776_fmt-1683:latest
+2026-05-06 13:10:20,748 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.fmtlib_1776_fmt-1683:latest
+2026-05-06 13:10:21,094 [INFO]   Container started: 70b0daa7a4f3
+2026-05-06 13:10:21,206 [INFO]   Patch applied successfully
+2026-05-06 13:10:21,309 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 13:10:21,381 [INFO]   C++ post-patch: running cmake --build...
+2026-05-06 13:10:51,163 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-05-06 13:10:51,251 [INFO]   Test exit code: 0
+2026-05-06 13:10:51,252 [INFO]   Test output (last 500 chars): m PrintfTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test case ran. (0 ms total)
+[  PASSED  ] 1 test.
+Note: Google Test filter = PrintfTest.MinusFlag
+[==========] Running 0 tests from 0 test cases.
+[==========] 0 tests from 0 test cases ran. (0 ms total)
+[  PASSED  ] 0 tests.
+Note: Google Test filter = PrintfTest.MinusFlag
+[==========] Running 0 tests from 0 test cases.
+[==========] 0 tests from 0 test cases ran. (0 ms total)
+[  PASSED  ] 0 tests.
+
+2026-05-06 13:10:51,252 [INFO]   Running PASS_TO_PASS tests (42)...
+2026-05-06 13:10:51,337 [INFO]   Test exit code: 0
+2026-05-06 13:10:51,338 [INFO]   Test output (last 500 chars): ing:PrintfTest.UCharString:PrintfTest.Pointer:PrintfTest.Location:PrintfTest.Enum:PrintfTest.Examples:PrintfTest.PrintfError:PrintfTest.WideString:PrintfTest.PrintfCustom:PrintfTest.OStream:PrintfTest.VPrintf:PrintfTest.CheckFormatStringRegression:PrintfTest.FixedLargeExponent:PrintfTest.VSPrintfMakeArgsExample:PrintfTest.VSPrintfMakeWArgsExample:PrintfTest.CustomFormat
+[==========] Running 0 tests from 0 test cases.
+[==========] 0 tests from 0 test cases ran. (0 ms total)
+[  PASSED  ] 0 tests.
+
+2026-05-06 13:10:51,574 [INFO]   Container removed
+2026-05-06 13:10:51,575 [INFO]   Result: NOT RESOLVED | F2P: 100% | P2P: 98%
+2026-05-06 13:10:51,575 [INFO] Evaluating: fmtlib__fmt-2317
+2026-05-06 13:10:51,575 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 13:10:51,575 [INFO] Evaluating: apache__druid-13704
+2026-05-06 13:10:51,575 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%

@@ -1,0 +1,16 @@
+{
+  "instance_id": "apache__druid-13704",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "org.apache.druid.query.aggregation.post.ArithmeticPostAggregatorTest#testPow": true
+  },
+  "pass_to_pass_results": {
+    "org.apache.druid.query.aggregation.post.ArithmeticPostAggregatorTest#testDiv": true,
+    "org.apache.druid.query.aggregation.post.ArithmeticPostAggregatorTest#testQuotient": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

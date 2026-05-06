@@ -1,0 +1,20 @@
+{
+  "run_id": "claude-code_haiku_20260506-133217",
+  "agent": "claude-code",
+  "model": "haiku",
+  "tier": "multi",
+  "started_at": "2026-05-06T13:32:18.363857",
+  "completed_at": "2026-05-06T13:50:45.697782",
+  "num_tasks": 6,
+  "agents": [
+    "claude-code"
+  ],
+  "environment": "OS: wsl | Network: external | Disk: 863.6GB | RAM: 15.5GB | Docker: Yes | Tier: full",
+  "results_summary": {
+    "claude-code": {
+      "total": 6,
+      "success": 6,
+      "error": 0
+    }
+  }
+}

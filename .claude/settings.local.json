@@ -23,7 +23,8 @@
       "WebFetch(domain:epoch.ai)",
       "Bash(python3 *)",
       "Bash(opencode --version)",
-      "Bash(opencode *)"
+      "Bash(opencode *)",
+      "Bash(docker run *)"
     ]
   }
 }

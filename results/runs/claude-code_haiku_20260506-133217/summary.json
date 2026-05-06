@@ -1,0 +1,165 @@
+{
+  "run_id": "claude-code_haiku_20260506-133217",
+  "agent": "claude-code",
+  "model": "haiku",
+  "tier": "multi",
+  "num_tasks": 6,
+  "started_at": "2026-05-06T13:32:18.363857",
+  "completed_at": "2026-05-06T13:50:45.697782",
+  "environment": "OS: wsl | Network: external | Disk: 863.6GB | RAM: 15.5GB | Docker: Yes | Tier: full",
+  "agents": {
+    "claude-code": {
+      "metrics": {
+        "task_resolution_rate": {
+          "value": 0.5,
+          "unit": "%",
+          "grade": "A"
+        },
+        "token_efficiency": {
+          "value": 2561938.0,
+          "unit": "tokens/task",
+          "grade": "F"
+        },
+        "cost_per_resolved_task": {
+          "value": 0.8188886166666668,
+          "unit": "USD",
+          "grade": "A"
+        },
+        "e2e_time": {
+          "value": 183.28298588593802,
+          "unit": "sec",
+          "grade": "B"
+        },
+        "time_to_first_action": {
+          "value": 6.245510737101237,
+          "unit": "sec",
+          "grade": "B"
+        },
+        "convergence_steps": {
+          "value": 41.666666666666664,
+          "unit": "steps",
+          "grade": "D"
+        }
+      }
+    }
+  },
+  "task_counts": {
+    "success": 5,
+    "fail": 1,
+    "error": 0,
+    "resolved": 3,
+    "evaluable": 6,
+    "resolution_rate_pct": 50.0
+  },
+  "per_task": [
+    {
+      "instance_id": "apache__druid-13704",
+      "agent": "claude-code",
+      "status": "success",
+      "step1_status": "success",
+      "patch_generated": true,
+      "cost_usd": 0.20082655,
+      "e2e_time": 99.56335544586182,
+      "tokens": 1250197,
+      "convergence_steps": 28,
+      "model": "",
+      "resolved": true,
+      "fail_to_pass_total": 1,
+      "fail_to_pass_passed": 1,
+      "pass_to_pass_total": 2,
+      "pass_to_pass_passed": 2,
+      "eval_detail": "eval/apache__druid-13704.json"
+    },
+    {
+      "instance_id": "apache__druid-14092",
+      "agent": "claude-code",
+      "status": "fail",
+      "step1_status": "success",
+      "patch_generated": false,
+      "cost_usd": 0.41766285000000003,
+      "e2e_time": 136.50085854530334,
+      "tokens": 251094,
+      "convergence_steps": 8,
+      "model": "",
+      "resolved": false,
+      "fail_to_pass_total": 0,
+      "fail_to_pass_passed": 0,
+      "pass_to_pass_total": 0,
+      "pass_to_pass_passed": 0,
+      "eval_detail": "eval/apache__druid-14092.json"
+    },
+    {
+      "instance_id": "apache__druid-14136",
+      "agent": "claude-code",
+      "status": "success",
+      "step1_status": "success",
+      "patch_generated": true,
+      "cost_usd": 0.4219427,
+      "e2e_time": 184.30621314048767,
+      "tokens": 2458613,
+      "convergence_steps": 32,
+      "model": "",
+      "resolved": true,
+      "fail_to_pass_total": 3,
+      "fail_to_pass_passed": 3,
+      "pass_to_pass_total": 2,
+      "pass_to_pass_passed": 2,
+      "eval_detail": "eval/apache__druid-14136.json"
+    },
+    {
+      "instance_id": "fmtlib__fmt-1683",
+      "agent": "claude-code",
+      "status": "success",
+      "step1_status": "success",
+      "patch_generated": true,
+      "cost_usd": 0.44549445000000015,
+      "e2e_time": 264.47830867767334,
+      "tokens": 2821507,
+      "convergence_steps": 47,
+      "model": "",
+      "resolved": false,
+      "fail_to_pass_total": 1,
+      "fail_to_pass_passed": 1,
+      "pass_to_pass_total": 42,
+      "pass_to_pass_passed": 41,
+      "eval_detail": "eval/fmtlib__fmt-1683.json"
+    },
+    {
+      "instance_id": "fmtlib__fmt-2310",
+      "agent": "claude-code",
+      "status": "success",
+      "step1_status": "success",
+      "patch_generated": true,
+      "cost_usd": 0.42786670000000004,
+      "e2e_time": 192.9549310207367,
+      "tokens": 2965911,
+      "convergence_steps": 61,
+      "model": "",
+      "resolved": false,
+      "fail_to_pass_total": 2,
+      "fail_to_pass_passed": 0,
+      "pass_to_pass_total": 102,
+      "pass_to_pass_passed": 102,
+      "eval_detail": "eval/fmtlib__fmt-2310.json"
+    },
+    {
+      "instance_id": "fmtlib__fmt-2317",
+      "agent": "claude-code",
+      "status": "success",
+      "step1_status": "success",
+      "patch_generated": true,
+      "cost_usd": 0.5428726,
+      "e2e_time": 221.89424848556519,
+      "tokens": 3977004,
+      "convergence_steps": 74,
+      "model": "",
+      "resolved": true,
+      "fail_to_pass_total": 1,
+      "fail_to_pass_passed": 1,
+      "pass_to_pass_total": 103,
+      "pass_to_pass_passed": 103,
+      "eval_detail": "eval/fmtlib__fmt-2317.json"
+    }
+  ],
+  "generated_at": "2026-05-06T13:52:42.629389"
+}

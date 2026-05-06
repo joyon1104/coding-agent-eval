@@ -1,0 +1,181 @@
+2026-05-06 13:32:18,364 [INFO] 
+============================================================
+2026-05-06 13:32:18,364 [INFO] Agent: claude-code | Tasks: 6
+2026-05-06 13:32:18,364 [INFO] ============================================================
+2026-05-06 13:32:18,366 [INFO]   Running: fmtlib__fmt-1683
+2026-05-06 13:32:18,366 [INFO]   Using cached repo: /home/going114kim/temp/coding-agent-eval/.repo_cache/fmtlib__fmt
+2026-05-06 13:32:18,366 [INFO]   Copying cached repo for fmtlib__fmt-1683...
+2026-05-06 13:36:42,964 [INFO]   Completed: success | Cost: $0.445 | Time: 264.5s
+2026-05-06 13:36:42,972 [INFO]   Running: fmtlib__fmt-2310
+2026-05-06 13:36:42,972 [INFO]   Using cached repo: /home/going114kim/temp/coding-agent-eval/.repo_cache/fmtlib__fmt
+2026-05-06 13:36:42,972 [INFO]   Copying cached repo for fmtlib__fmt-2310...
+2026-05-06 13:39:55,995 [INFO]   Completed: success | Cost: $0.428 | Time: 193.0s
+2026-05-06 13:39:56,002 [INFO]   Running: fmtlib__fmt-2317
+2026-05-06 13:39:56,002 [INFO]   Using cached repo: /home/going114kim/temp/coding-agent-eval/.repo_cache/fmtlib__fmt
+2026-05-06 13:39:56,003 [INFO]   Copying cached repo for fmtlib__fmt-2317...
+2026-05-06 13:43:37,961 [INFO]   Completed: success | Cost: $0.543 | Time: 221.9s
+2026-05-06 13:43:37,967 [INFO]   Running: apache__druid-13704
+2026-05-06 13:43:37,968 [INFO]   Using cached repo: /home/going114kim/temp/coding-agent-eval/.repo_cache/apache__druid
+2026-05-06 13:43:37,968 [INFO]   Copying cached repo for apache__druid-13704...
+2026-05-06 13:45:20,108 [INFO]   Completed: success | Cost: $0.201 | Time: 99.6s
+2026-05-06 13:45:20,346 [INFO]   Running: apache__druid-14092
+2026-05-06 13:45:20,347 [INFO]   Using cached repo: /home/going114kim/temp/coding-agent-eval/.repo_cache/apache__druid
+2026-05-06 13:45:20,347 [INFO]   Copying cached repo for apache__druid-14092...
+2026-05-06 13:47:38,963 [INFO]   Completed: success | Cost: $0.418 | Time: 136.5s
+2026-05-06 13:47:39,202 [INFO]   Running: apache__druid-14136
+2026-05-06 13:47:39,202 [INFO]   Using cached repo: /home/going114kim/temp/coding-agent-eval/.repo_cache/apache__druid
+2026-05-06 13:47:39,202 [INFO]   Copying cached repo for apache__druid-14136...
+2026-05-06 13:50:45,453 [INFO]   Completed: success | Cost: $0.422 | Time: 184.3s
+2026-05-06 13:50:45,697 [INFO]   Done: 6 run, 0 skipped
+2026-05-06 13:50:45,710 [INFO] Evaluating: fmtlib__fmt-1683
+2026-05-06 13:50:45,727 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.fmtlib_1776_fmt-1683:latest
+2026-05-06 13:50:47,307 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.fmtlib_1776_fmt-1683:latest
+2026-05-06 13:50:47,307 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.fmtlib_1776_fmt-1683:latest
+2026-05-06 13:50:47,657 [INFO]   Container started: 74693942634e
+2026-05-06 13:50:47,773 [INFO]   Patch applied successfully
+2026-05-06 13:50:47,853 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 13:50:47,941 [INFO]   C++ post-patch: running cmake --build...
+2026-05-06 13:51:17,410 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-05-06 13:51:17,509 [INFO]   Test exit code: 0
+2026-05-06 13:51:17,509 [INFO]   Test output (last 500 chars): m PrintfTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test case ran. (0 ms total)
+[  PASSED  ] 1 test.
+Note: Google Test filter = PrintfTest.MinusFlag
+[==========] Running 0 tests from 0 test cases.
+[==========] 0 tests from 0 test cases ran. (0 ms total)
+[  PASSED  ] 0 tests.
+Note: Google Test filter = PrintfTest.MinusFlag
+[==========] Running 0 tests from 0 test cases.
+[==========] 0 tests from 0 test cases ran. (0 ms total)
+[  PASSED  ] 0 tests.
+
+2026-05-06 13:51:17,510 [INFO]   Running PASS_TO_PASS tests (42)...
+2026-05-06 13:51:17,602 [INFO]   Test exit code: 0
+2026-05-06 13:51:17,603 [INFO]   Test output (last 500 chars): ing:PrintfTest.UCharString:PrintfTest.Pointer:PrintfTest.Location:PrintfTest.Enum:PrintfTest.Examples:PrintfTest.PrintfError:PrintfTest.WideString:PrintfTest.PrintfCustom:PrintfTest.OStream:PrintfTest.VPrintf:PrintfTest.CheckFormatStringRegression:PrintfTest.FixedLargeExponent:PrintfTest.VSPrintfMakeArgsExample:PrintfTest.VSPrintfMakeWArgsExample:PrintfTest.CustomFormat
+[==========] Running 0 tests from 0 test cases.
+[==========] 0 tests from 0 test cases ran. (0 ms total)
+[  PASSED  ] 0 tests.
+
+2026-05-06 13:51:17,871 [INFO]   Container removed
+2026-05-06 13:51:17,871 [INFO]   Result: NOT RESOLVED | F2P: 100% | P2P: 98%
+2026-05-06 13:51:17,871 [INFO] Evaluating: fmtlib__fmt-2310
+2026-05-06 13:51:17,888 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.fmtlib_1776_fmt-2310:latest
+2026-05-06 13:51:19,369 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.fmtlib_1776_fmt-2310:latest
+2026-05-06 13:51:19,369 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.fmtlib_1776_fmt-2310:latest
+2026-05-06 13:51:19,604 [INFO]   Container started: a7c12a2eb156
+2026-05-06 13:51:19,695 [INFO]   Patch applied successfully
+2026-05-06 13:51:19,800 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 13:51:19,869 [INFO]   C++ post-patch: running cmake --build...
+2026-05-06 13:51:49,023 [INFO]   Running FAIL_TO_PASS tests (2)...
+2026-05-06 13:51:49,126 [INFO]   Test exit code: 0
+2026-05-06 13:51:49,126 [INFO]   Test output (last 500 chars): ites.
+[==========] 0 tests from 0 test suites ran. (0 ms total)
+[  PASSED  ] 0 tests.
+Note: Google Test filter = format_test.format_nan:format_test.format_infinity
+[==========] Running 0 tests from 0 test suites.
+[==========] 0 tests from 0 test suites ran. (0 ms total)
+[  PASSED  ] 0 tests.
+Note: Google Test filter = format_test.format_nan:format_test.format_infinity
+[==========] Running 0 tests from 0 test suites.
+[==========] 0 tests from 0 test suites ran. (0 ms total)
+[  PASSED  ] 0 tests.
+
+2026-05-06 13:51:49,127 [INFO]   Running PASS_TO_PASS tests (102)...
+2026-05-06 13:51:49,218 [INFO]   Test exit code: 0
+2026-05-06 13:51:49,218 [INFO]   Test output (last 500 chars): o_wide:format_test.format_to_memory_buffer:format_test.format_to_vector:format_test.format_to_propagates_exceptions:format_test.format_to_n:format_test.format_to_n_output_iterator:format_test.char_traits_is_not_ambiguous:format_test.format_utf8_precision:format_test.back_insert_slicing:format_test.test_formatters_enabled:format_int_test.data:format_int_test.format_int
+[==========] Running 0 tests from 0 test suites.
+[==========] 0 tests from 0 test suites ran. (0 ms total)
+[  PASSED  ] 0 tests.
+
+2026-05-06 13:51:49,532 [INFO]   Container removed
+2026-05-06 13:51:49,532 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 13:51:49,532 [INFO] Evaluating: fmtlib__fmt-2317
+2026-05-06 13:51:49,550 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.fmtlib_1776_fmt-2317:latest
+2026-05-06 13:51:51,400 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.fmtlib_1776_fmt-2317:latest
+2026-05-06 13:51:51,400 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.fmtlib_1776_fmt-2317:latest
+2026-05-06 13:51:51,653 [INFO]   Container started: 7d3b8dc36136
+2026-05-06 13:51:51,739 [INFO]   Patch applied successfully
+2026-05-06 13:51:51,850 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 13:51:51,941 [INFO]   C++ post-patch: running cmake --build...
+2026-05-06 13:52:22,696 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-05-06 13:52:22,787 [INFO]   Test exit code: 0
+2026-05-06 13:52:22,788 [INFO]   Test output (last 500 chars): double
+[==========] Running 0 tests from 0 test suites.
+[==========] 0 tests from 0 test suites ran. (0 ms total)
+[  PASSED  ] 0 tests.
+Note: Google Test filter = format_test.format_double
+[==========] Running 0 tests from 0 test suites.
+[==========] 0 tests from 0 test suites ran. (0 ms total)
+[  PASSED  ] 0 tests.
+Note: Google Test filter = format_test.format_double
+[==========] Running 0 tests from 0 test suites.
+[==========] 0 tests from 0 test suites ran. (0 ms total)
+[  PASSED  ] 0 tests.
+
+2026-05-06 13:52:22,788 [INFO]   Running PASS_TO_PASS tests (103)...
+2026-05-06 13:52:22,880 [INFO]   Test exit code: 0
+2026-05-06 13:52:22,880 [INFO]   Test output (last 500 chars): o_wide:format_test.format_to_memory_buffer:format_test.format_to_vector:format_test.format_to_propagates_exceptions:format_test.format_to_n:format_test.format_to_n_output_iterator:format_test.char_traits_is_not_ambiguous:format_test.format_utf8_precision:format_test.back_insert_slicing:format_test.test_formatters_enabled:format_int_test.data:format_int_test.format_int
+[==========] Running 0 tests from 0 test suites.
+[==========] 0 tests from 0 test suites ran. (0 ms total)
+[  PASSED  ] 0 tests.
+
+2026-05-06 13:52:23,118 [INFO]   Container removed
+2026-05-06 13:52:23,118 [INFO]   Result: RESOLVED | F2P: 100% | P2P: 100%
+2026-05-06 13:52:23,118 [INFO] Evaluating: apache__druid-13704
+2026-05-06 13:52:23,135 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.apache_1776_druid-13704:latest
+2026-05-06 13:52:24,597 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.apache_1776_druid-13704:latest
+2026-05-06 13:52:24,597 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.apache_1776_druid-13704:latest
+2026-05-06 13:52:24,807 [INFO]   Container started: c5715c49023f
+2026-05-06 13:52:24,933 [INFO]   Patch applied successfully
+2026-05-06 13:52:25,047 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 13:52:25,121 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-05-06 13:52:30,189 [INFO]   Test exit code: 0
+2026-05-06 13:52:30,189 [INFO]   Test output (last 500 chars): JUnit version 4.13.2
+.......
+Time: 0.926
+
+OK (7 tests)
+
+
+2026-05-06 13:52:30,190 [INFO]   Running PASS_TO_PASS tests (2)...
+2026-05-06 13:52:33,099 [INFO]   Test exit code: 0
+2026-05-06 13:52:33,099 [INFO]   Test output (last 500 chars): JUnit version 4.13.2
+.......
+Time: 0.586
+
+OK (7 tests)
+
+
+2026-05-06 13:52:33,311 [INFO]   Container removed
+2026-05-06 13:52:33,311 [INFO]   Result: RESOLVED | F2P: 100% | P2P: 100%
+2026-05-06 13:52:33,311 [INFO] Evaluating: apache__druid-14092
+2026-05-06 13:52:33,311 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 13:52:33,311 [INFO] Evaluating: apache__druid-14136
+2026-05-06 13:52:33,327 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.apache_1776_druid-14136:latest
+2026-05-06 13:52:35,072 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.apache_1776_druid-14136:latest
+2026-05-06 13:52:35,072 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.apache_1776_druid-14136:latest
+2026-05-06 13:52:35,304 [INFO]   Container started: 393260f4198d
+2026-05-06 13:52:35,411 [INFO]   Patch applied successfully
+2026-05-06 13:52:35,557 [INFO]   Reset 3 test path(s) before test_patch
+2026-05-06 13:52:35,633 [INFO]   Running FAIL_TO_PASS tests (3)...
+2026-05-06 13:52:39,914 [INFO]   Test exit code: 0
+2026-05-06 13:52:39,915 [INFO]   Test output (last 500 chars): JUnit version 4.13.2
+.....................................................................
+Time: 0.218
+
+OK (69 tests)
+
+
+2026-05-06 13:52:39,915 [INFO]   Running PASS_TO_PASS tests (2)...
+2026-05-06 13:52:42,351 [INFO]   Test exit code: 0
+2026-05-06 13:52:42,351 [INFO]   Test output (last 500 chars): JUnit version 4.13.2
+.....................................................................
+Time: 0.161
+
+OK (69 tests)
+
+
+2026-05-06 13:52:42,617 [INFO]   Container removed
+2026-05-06 13:52:42,617 [INFO]   Result: RESOLVED | F2P: 100% | P2P: 100%
