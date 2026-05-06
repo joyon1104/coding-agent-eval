@@ -82,10 +82,10 @@ The pipeline is intentionally split because patch generation and test verificati
 
 - `src/core/` — `Config` (env-aware YAML merge + `.env`), `EvalTask` / `AgentResult` / `TokenUsage` dataclasses, environment auto-detection (`env_detect.py`: OS, disk, Docker, network → drives tier recommendation and config selection).
 - `src/adapters/` — `AgentAdapter` ABC + concrete subprocess-based CLIs. Adding a new agent = new subclass implementing `run()` and `is_available()`, plus registration in `scripts/run_eval.py`'s `AGENT_REGISTRY`.
-- `src/runner/orchestrator.py` — drives Step 1. Clones repos via `DiskAwareSandbox`, calls the adapter, saves per-task JSON **immediately** after each task (enables resume).
+- `src/runner/orchestrator.py` — drives Step 1. Clones repos via `DiskAwareSandbox`, calls the adapter, saves per-task JSON **immediately** after each task (enables resume). Repos are cloned once into `.repo_cache/` at the project root, then each task gets a fast `git clone --local` copy — avoids repeated full network clones for large repos (e.g. Django ~500 MB). Only workdirs prefixed `cae_*` are ever deleted, so sandbox cleanup is safe on shared machines.
 - `src/evaluator/` — `docker_evaluator.py` orchestrates the container lifecycle; `swebench_harness.py` wraps test execution; `patch_extractor.py` validates/normalizes patches. Language-specific behavior (test invocation, post-patch hooks) lives in `languages/` submodules.
 - `src/metrics/` — one file per metric category (accuracy, cost, latency, process). `src/reporter/scorer.py` owns the S/A/B/C/D/F thresholds.
-- `config/` — `eval_config.yaml` (tiers, execution limits, model pricing for token→cost fallback); `environments/{common,wsl,native_linux}.yaml` (deep-merged by `env_detect` result); `agents/<name>.yaml` (per-agent defaults — filename uses `_` even when CLI name uses `-`).
+- `config/` — `eval_config.yaml` (tiers, execution limits, model pricing for token→cost fallback); `environments/{common,wsl,native_linux}.yaml` (deep-merged in order: `common.yaml` first, then the env-specific file detected by `env_detect.py`, with later keys winning); `agents/<name>.yaml` (per-agent defaults — filename uses `_` even when CLI name uses `-`).
 
 ## Multi-language support (multi tier)
 
@@ -115,3 +115,4 @@ The `multi` tier (`SWE-bench/SWE-bench_Multilingual`) covers 9 languages across 
 - SWE-bench Docker images are ~3.4 GB each. `config/eval_config.yaml:tiers.<tier>.docker_images_budget_gb` is the guardrail; exceeding it is a disk failure, not a graceful error. Run `scripts/cleanup.py` between large runs.
 - `_extract_patch()` in `base.py` does **not** `.strip()` the diff output intentionally — a blank context line in unified diff is literally `" \n"`, and stripping would corrupt hunk line counts.
 - When an agent auto-commits during its session (e.g. OpenCode), `base_sha` captured before the run must be passed to `_extract_patch()` as `base_ref`; otherwise `git diff` against the moved HEAD returns empty.
+- Docker image pulls use retryable logic in `src/evaluator/registry_utils.py:RETRYABLE` (exponential backoff on transient registry errors). Permanent failures (image not found, auth) are not retried and surface immediately.
