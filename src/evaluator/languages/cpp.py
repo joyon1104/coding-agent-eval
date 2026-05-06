@@ -31,24 +31,23 @@ class CppProfile(LanguageProfile):
         if not test_names:
             return "echo 'no tests'"
 
-        # Primary: ctest -R with OR-pattern (works for CMake-based projects)
-        # ctest test names match the gtest Suite.TestName format
-        pattern = "|".join(re.escape(t) for t in test_names)
-        ctest_cmd = (
-            f"cd /testbed && "
-            f"ctest --test-dir build -R '{pattern}' --output-on-failure 2>&1"
-        )
-
-        # Fallback: direct gtest binary (ctest may not know all test names)
-        binary = _guess_binary(test_names[0])
         filter_str = ":".join(test_names)
-        gtest_cmd = (
-            f"cd /testbed && "
-            f"./build/bin/{binary} --gtest_filter='{filter_str}' 2>&1"
-        )
 
-        # Run ctest first; fall back to gtest binary on ctest failure
-        return f"({ctest_cmd}) || ({gtest_cmd})"
+        # Iterate over all compiled *-test binaries and run each with --gtest_filter.
+        # This avoids guessing which binary contains which test suite:
+        #   - ctest -R <gtest-name> fails because ctest registers by binary name
+        #     (e.g. "printf-test"), not gtest Suite.Name ("PrintfTest.MinusFlag"),
+        #     and returns exit 0 when no tests match, so a plain || fallback never fires.
+        #   - Multiple gtest suites (util_test, format_test, ...) can live in a
+        #     single binary, making binary-name heuristics unreliable.
+        # Binaries that don't contain the target tests produce no matching output.
+        return (
+            "cd /testbed && "
+            "shopt -s nullglob && "
+            f"for bin in ./build/bin/*-test ./build/bin/*_test; do "
+            f"  [ -x \"$bin\" ] && \"$bin\" --gtest_filter='{filter_str}' 2>&1; "
+            "done"
+        )
 
     def parse_test_output(
         self, stdout: str, stderr: str, expected: list[str]
@@ -87,11 +86,3 @@ class CppProfile(LanguageProfile):
                 )
         except Exception as e:
             logger.warning(f"  cmake --build error: {e}")
-
-
-def _guess_binary(test_name: str) -> str:
-    """Heuristic: 'PrintfTest.Format' → 'printf-test' binary name."""
-    suite = test_name.split(".")[0]
-    # CamelCase → kebab-case
-    kebab = re.sub(r"(?<!^)(?=[A-Z])", "-", suite).lower()
-    return kebab

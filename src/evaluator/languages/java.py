@@ -30,38 +30,56 @@ class JavaProfile(LanguageProfile):
         if not test_names:
             return "echo 'no tests'"
 
+        # `mvn test` requires surefire-junit47 which is absent from the image's
+        # local Maven cache and Maven Central is unreachable (network blocked +
+        # SSL intercept). Use JUnit's console runner directly instead: the image
+        # has junit-4.x in ~/.m2 and all production/test classes are pre-compiled.
         module = _resolve_maven_module(container_id, test_names[0])
-        tests_param = _format_dtest(test_names)
+        pl_flag = f"-pl {module}" if module and module != "." else ""
+        cp_file = f"/tmp/_cp_{module or 'root'}.txt"
+        if module and module != ".":
+            test_cp = f"/testbed/{module}/target/test-classes:/testbed/{module}/target/classes"
+        else:
+            test_cp = "/testbed/target/test-classes:/testbed/target/classes"
 
-        pl_flag = f"-pl {module} " if module and module != "." else ""
+        # Group by FQCN so each class is run as one JUnitCore invocation
+        by_class: dict[str, list[str]] = {}
+        for name in test_names:
+            cls = name.split("#")[0] if "#" in name else name.rsplit(".", 1)[0]
+            by_class.setdefault(cls, []).append(name)
+
+        run_cmds = " ; ".join(
+            f"java -cp \"{test_cp}:$(cat {cp_file})\" org.junit.runner.JUnitCore {cls} 2>&1"
+            for cls in by_class
+        )
         return (
             f"cd /testbed && "
-            f"mvn test {pl_flag}"
-            f"-Dtest='{tests_param}' "
-            f"-DfailIfNoTests=false 2>&1"
+            f"mvn dependency:build-classpath {pl_flag} -o -q "
+            f"-Dmdep.outputFile={cp_file} 2>/dev/null && "
+            f"{run_cmds}"
         )
 
     def parse_test_output(
         self, stdout: str, stderr: str, expected: list[str]
     ) -> list[TestOutcome]:
         output = stdout + stderr
-        failed_set = _extract_failed_tests(output)
-        build_success = "BUILD SUCCESS" in output
+
+        # JUnit console runner failure format: "1) methodName(fully.qualified.ClassName)"
+        failed_set: set[str] = set()
+        for m in re.finditer(r"^\d+\)\s+(\w+)\(([^)]+)\)", output, re.MULTILINE):
+            method, cls = m.group(1), m.group(2)
+            failed_set.add(f"{cls}#{method}")
+
+        tests_ran = bool(re.search(r"Tests run:|OK \(", output))
 
         outcomes: list[TestOutcome] = []
         for test_name in expected:
+            cls = test_name.split("#")[0] if "#" in test_name else ""
             method = test_name.split("#")[-1] if "#" in test_name else test_name.split(".")[-1]
-            class_name = (
-                test_name.split("#")[0].split(".")[-1]
-                if "#" in test_name
-                else test_name.split(".")[-2]
-                if "." in test_name
-                else test_name
-            )
-            short_key = f"{class_name}.{method}"
-            if any(short_key in f or method == f.split(".")[-1] for f in failed_set):
+            full_key = f"{cls}#{method}"
+            if full_key in failed_set:
                 outcomes.append(TestOutcome(name=test_name, passed=False))
-            elif build_success:
+            elif tests_ran:
                 outcomes.append(TestOutcome(name=test_name, passed=True))
             else:
                 outcomes.append(TestOutcome(name=test_name, passed=False))
@@ -71,23 +89,6 @@ class JavaProfile(LanguageProfile):
     def expected_dirty_at_base(self) -> bool:
         # druid's setup_repo.sh mutates pom.xml at base commit
         return True
-
-
-def _format_dtest(test_names: list[str]) -> str:
-    """Format Maven -Dtest parameter from FQCN#method list.
-
-    ['com.foo.Bar#testOne', 'com.foo.Bar#testTwo'] → 'Bar#testOne+Bar#testTwo'
-    Multiple classes are joined with commas.
-    """
-    parts: list[str] = []
-    for name in test_names:
-        if "#" in name:
-            fqcn, method = name.rsplit("#", 1)
-            class_name = fqcn.split(".")[-1]
-            parts.append(f"{class_name}#{method}")
-        else:
-            parts.append(name.split(".")[-1])
-    return "+".join(parts)
 
 
 def _resolve_maven_module(container_id: str, test_name: str) -> str:
@@ -108,27 +109,3 @@ def _resolve_maven_module(container_id: str, test_name: str) -> str:
         return parts[0] if len(parts) > 1 else "."
     except Exception:
         return "."
-
-
-def _extract_failed_tests(output: str) -> set[str]:
-    """Extract failed test identifiers from Maven Surefire console output.
-
-    Handles both 'Failed tests:' and 'Tests in error:' sections.
-    Returns a set of 'ClassName.methodName' strings.
-    """
-    failed: set[str] = set()
-    in_section = False
-    for line in output.split("\n"):
-        if re.match(r"Failed tests:|Tests in error:", line):
-            in_section = True
-            continue
-        if in_section:
-            stripped = line.strip()
-            if not stripped or re.match(r"Tests run:", stripped):
-                in_section = False
-                continue
-            # 'ClassName.methodName' or 'ClassName.methodName: message'
-            identifier = stripped.split(":")[0].strip()
-            if identifier:
-                failed.add(identifier)
-    return failed
