@@ -19,11 +19,9 @@ The original dataset file is never modified.
 
 import json
 import os
-import ssl
+import subprocess
 import sys
 import time
-import urllib.parse
-import urllib.request
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -37,10 +35,6 @@ from src.core.config import PROJECT_ROOT
 from src.evaluator.docker_evaluator import get_image_name
 
 console = Console()
-
-_CTX = ssl.create_default_context()
-_CTX.check_hostname = False
-_CTX.verify_mode = ssl.CERT_NONE  # local cert bundle is broken on this env
 
 _TEXT_FIELDS = ("problem_statement", "hints_text", "patch", "test_patch")
 _CACHE_PATH = PROJECT_ROOT / "data" / ".image_size_cache.json"
@@ -60,42 +54,24 @@ def _save_cache(cache: dict[str, int]) -> None:
     _CACHE_PATH.write_text(json.dumps(cache, indent=2))
 
 
-def _token_for(registry: str, repo: str) -> str | None:
-    """Get auth token for GHCR or Docker Hub."""
-    try:
-        if registry == "ghcr.io":
-            url = f"https://ghcr.io/token?scope=repository:{repo}:pull"
-        else:  # docker.io
-            url = f"https://auth.docker.io/token?service=registry.docker.io&scope=repository:{repo}:pull"
-        with urllib.request.urlopen(url, timeout=30, context=_CTX) as r:
-            return json.loads(r.read())["token"]
-    except Exception:
-        return None
+def fetch_image_size(full_image_ref: str, retries: int = 2) -> int | None:
+    """Total compressed layer bytes via `docker manifest inspect`.
 
-
-def fetch_image_size(image_name: str, registry: str, retries: int = 2) -> int | None:
-    """Total compressed layer bytes from manifest. None if unreachable.
-
-    image_name: full image path (e.g. "swebench/sweb.eval.x86_64.apache_1776_druid-13704")
-    registry: "ghcr.io" or "docker.io"
+    full_image_ref: fully-qualified image reference including registry host
+      e.g. "docker.io/swebench/sweb.eval.x86_64.apache_1776_druid-13704"
+           "ghcr.io/epoch-research/swe-bench.eval.x86_64.django__django-1234"
+    Uses local docker credentials (~/.docker/config.json), so `docker login`
+    is respected and Docker Hub rate limits are avoided.
     """
     for attempt in range(retries + 1):
-        token = _token_for(registry, image_name)
-        if not token:
-            if attempt < retries:
-                time.sleep(2 ** attempt)
-                continue
-            return None
-        req = urllib.request.Request(
-            f"https://{registry}/v2/{image_name}/manifests/latest",
-            headers={
-                "Authorization": f"Bearer {token}",
-                "Accept": "application/vnd.docker.distribution.manifest.v2+json",
-            },
-        )
         try:
-            with urllib.request.urlopen(req, timeout=30, context=_CTX) as r:
-                m = json.loads(r.read())
+            result = subprocess.run(
+                ["docker", "manifest", "inspect", full_image_ref],
+                capture_output=True, text=True, timeout=60,
+            )
+            if result.returncode != 0:
+                return None
+            m = json.loads(result.stdout)
             return sum(l.get("size", 0) for l in m.get("layers", []))
         except Exception:
             if attempt < retries:
@@ -117,13 +93,15 @@ def text_size(row: dict) -> int:
               help="Number of smallest instances to pick")
 @click.option("--output", default=None,
               help="Output JSONL path (default: data/swebench_<tier>_small.jsonl)")
+@click.option("--input", "input_path", default=None,
+              help="Source JSONL override (default: data/swebench_<tier>.jsonl)")
 @click.option("--concurrency", default=8, show_default=True,
               help="Parallel manifest queries")
 @click.option("--per-repo-max", default=None, type=int,
               help="Max instances per repo (e.g. 1 for full diversity). No cap if omitted.")
-def main(tier, n, output, concurrency, per_repo_max):
+def main(tier, n, output, input_path, concurrency, per_repo_max):
     """Pick N smallest instances ranked by (image_size, text_size)."""
-    src = PROJECT_ROOT / "data" / f"swebench_{tier}.jsonl"
+    src = Path(input_path) if input_path else PROJECT_ROOT / "data" / f"swebench_{tier}.jsonl"
     if not src.exists():
         console.print(f"[red]Source dataset not found: {src}[/red]")
         sys.exit(1)
@@ -145,17 +123,13 @@ def main(tier, n, output, concurrency, per_repo_max):
         with ThreadPoolExecutor(max_workers=concurrency) as ex:
             futures = {}
             for r in need_query:
-                # Determine registry and image name based on tier
                 if tier == "multi":
-                    registry = "docker.io"
-                    # Remove "epoch-research/" prefix if present; Docker Hub uses just the base name
                     img_base = r["instance_id"].replace("__", "_1776_")
-                    image_name = f"swebench/sweb.eval.x86_64.{img_base}"
+                    full_ref = f"docker.io/swebench/sweb.eval.x86_64.{img_base}"
                 else:
-                    registry = "ghcr.io"
-                    image_name = f"epoch-research/swe-bench.eval.x86_64.{r['instance_id']}"
+                    full_ref = f"ghcr.io/epoch-research/swe-bench.eval.x86_64.{r['instance_id']}"
 
-                fut = ex.submit(fetch_image_size, image_name, registry)
+                fut = ex.submit(fetch_image_size, full_ref)
                 futures[fut] = r["instance_id"]
 
             done = 0
