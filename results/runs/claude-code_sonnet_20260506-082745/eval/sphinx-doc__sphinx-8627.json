@@ -1,0 +1,32 @@
+{
+  "instance_id": "sphinx-doc__sphinx-8627",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "tests/test_util_typing.py::test_restify": true,
+    "tests/test_util_typing.py::test_stringify": true
+  },
+  "pass_to_pass_results": {
+    "tests/test_util_typing.py::test_restify_type_hints_containers": true,
+    "tests/test_util_typing.py::test_restify_type_hints_Callable": true,
+    "tests/test_util_typing.py::test_restify_type_hints_Union": true,
+    "tests/test_util_typing.py::test_restify_type_hints_typevars": true,
+    "tests/test_util_typing.py::test_restify_type_hints_custom_class": true,
+    "tests/test_util_typing.py::test_restify_type_hints_alias": true,
+    "tests/test_util_typing.py::test_restify_type_ForwardRef": true,
+    "tests/test_util_typing.py::test_restify_broken_type_hints": true,
+    "tests/test_util_typing.py::test_stringify_type_hints_containers": true,
+    "tests/test_util_typing.py::test_stringify_Annotated": true,
+    "tests/test_util_typing.py::test_stringify_type_hints_string": true,
+    "tests/test_util_typing.py::test_stringify_type_hints_Callable": true,
+    "tests/test_util_typing.py::test_stringify_type_hints_Union": true,
+    "tests/test_util_typing.py::test_stringify_type_hints_typevars": true,
+    "tests/test_util_typing.py::test_stringify_type_hints_custom_class": true,
+    "tests/test_util_typing.py::test_stringify_type_hints_alias": true,
+    "tests/test_util_typing.py::test_stringify_broken_type_hints": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

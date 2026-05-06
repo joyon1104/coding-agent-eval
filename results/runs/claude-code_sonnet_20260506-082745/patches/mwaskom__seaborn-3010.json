@@ -1,0 +1,22 @@
+{
+  "instance_id": "mwaskom__seaborn-3010",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/seaborn/_stats/regression.py b/seaborn/_stats/regression.py\nindex 7b7ddc8d..1496d38f 100644\n--- a/seaborn/_stats/regression.py\n+++ b/seaborn/_stats/regression.py\n@@ -23,6 +23,9 @@ class PolyFit(Stat):\n \n         x = data[\"x\"]\n         y = data[\"y\"]\n+        valid = x.notna() & y.notna()\n+        x = x[valid]\n+        y = y[valid]\n         if x.nunique() <= self.order:\n             # TODO warn?\n             xx = yy = []\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 56905,
+    "output_tokens": 446,
+    "cache_read_tokens": 49112,
+    "cache_write_tokens": 7789
+  },
+  "timestamps": {
+    "task_start": 1778027795.5049012,
+    "task_end": 1778027809.7154226,
+    "first_action": 1778027799.982901
+  },
+  "total_cost_usd": 0.05250235,
+  "convergence_steps": 3,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":12394,\"duration_api_ms\":13434,\"num_turns\":3,\"result\":\"The fix drops rows where either `x` or `y` is `NaN` before passing the data to `np.polyfit`. The `nunique()` guard already handles the degenerate case (too few points to fit), so no other changes are needed.\",\"stop_reason\":\"end_turn\",\"session_id\":\"4ac500ba-de10-4ae0-acc4-47314ba0f0b4\",\"total_cost_usd\":0.05250235,\"usage\":{\"input_tokens\":4,\"cache_creation_input_tokens\":7789,\"cache_read_input_tokens\":49112,\"output_tokens\":446,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":7789,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":60,\"cache_read_input_tokens\":19065,\"cache_creation_input_tokens\":355,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":355},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1768,\"outputTokens\":18,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.001858,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":4,\"outputTokens\":446,\"cacheReadInputTokens\":49112,\"cacheCreationInputTokens\":7789,\"webSearchRequests\":0,\"costUSD\":0.050644350000000005,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"4f16d759-10f3-4adf-895b-65f538e51850\"}\n",
+  "model_name": ""
+}

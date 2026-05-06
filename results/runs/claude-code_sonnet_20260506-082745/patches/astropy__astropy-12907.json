@@ -1,0 +1,22 @@
+{
+  "instance_id": "astropy__astropy-12907",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/astropy/modeling/separable.py b/astropy/modeling/separable.py\nindex a308e27297..45bea36085 100644\n--- a/astropy/modeling/separable.py\n+++ b/astropy/modeling/separable.py\n@@ -242,7 +242,7 @@ def _cstack(left, right):\n         cright = _coord_matrix(right, 'right', noutp)\n     else:\n         cright = np.zeros((noutp, right.shape[1]))\n-        cright[-right.shape[0]:, -right.shape[1]:] = 1\n+        cright[-right.shape[0]:, -right.shape[1]:] = right\n \n     return np.hstack([cleft, cright])\n \n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 177882,
+    "output_tokens": 3093,
+    "cache_read_tokens": 164217,
+    "cache_write_tokens": 13656
+  },
+  "timestamps": {
+    "task_start": 1778030342.6024377,
+    "task_end": 1778030467.9629626,
+    "first_action": 1778030349.8131878
+  },
+  "total_cost_usd": 0.1476921,
+  "convergence_steps": 8,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":123567,\"duration_api_ms\":57686,\"num_turns\":8,\"result\":\"The fix works. The nested case now produces the same correct result as the flat version.\\n\\n**Root cause:** In `_cstack` (line 245 of `separable.py`), when the right operand is already a computed ndarray (from a recursive call on a nested `CompoundModel`), the code was:\\n```python\\ncright[-right.shape[0]:, -right.shape[1]:] = 1\\n```\\nThis overwrote the actual computed separability values with all-ones, making nested compound models appear completely non-separable. The fix is simply:\\n```python\\ncright[-right.shape[0]:, -right.shape[1]:] = right\\n```\\n\\nThe left side correctly copies the matrix (`cleft[: left.shape[0], : left.shape[1]] = left`), but the right side had this typo that lost all the separability information from the recursively-computed sub-model.\",\"stop_reason\":\"end_turn\",\"session_id\":\"af57d539-f879-4045-bf70-94c5318c113f\",\"total_cost_usd\":0.1476921,\"usage\":{\"input_tokens\":9,\"cache_creation_input_tokens\":13656,\"cache_read_input_tokens\":164217,\"output_tokens\":3093,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":13656,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":214,\"cache_read_input_tokens\":24699,\"cache_creation_input_tokens\":588,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":588},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":700,\"outputTokens\":19,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000795,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":9,\"outputTokens\":3093,\"cacheReadInputTokens\":164217,\"cacheCreationInputTokens\":13656,\"webSearchRequests\":0,\"costUSD\":0.1468971,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"0e3d7259-4016-444e-9738-db3ff097af13\"}\n",
+  "model_name": ""
+}

@@ -1,0 +1,28 @@
+{
+  "instance_id": "sphinx-doc__sphinx-8506",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "tests/test_domain_std.py::test_cmd_option_starting_with_bracket": true
+  },
+  "pass_to_pass_results": {
+    "tests/test_domain_std.py::test_process_doc_handle_figure_caption": true,
+    "tests/test_domain_std.py::test_process_doc_handle_table_title": true,
+    "tests/test_domain_std.py::test_get_full_qualified_name": true,
+    "tests/test_domain_std.py::test_cmd_option_with_optional_value": false,
+    "tests/test_domain_std.py::test_glossary": true,
+    "tests/test_domain_std.py::test_glossary_warning": true,
+    "tests/test_domain_std.py::test_glossary_comment": true,
+    "tests/test_domain_std.py::test_glossary_comment2": true,
+    "tests/test_domain_std.py::test_glossary_sorted": true,
+    "tests/test_domain_std.py::test_glossary_alphanumeric": true,
+    "tests/test_domain_std.py::test_glossary_conflicted_labels": true,
+    "tests/test_domain_std.py::test_cmdoption": true,
+    "tests/test_domain_std.py::test_multiple_cmdoptions": true,
+    "tests/test_domain_std.py::test_disabled_docref": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 0.9285714285714286,
+  "error": ""
+}

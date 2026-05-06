@@ -1,0 +1,22 @@
+{
+  "instance_id": "pytest-dev__pytest-11143",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/src/_pytest/assertion/rewrite.py b/src/_pytest/assertion/rewrite.py\nindex 157903faf..9bf79f1e1 100644\n--- a/src/_pytest/assertion/rewrite.py\n+++ b/src/_pytest/assertion/rewrite.py\n@@ -676,6 +676,7 @@ class AssertionRewriter(ast.NodeVisitor):\n                 expect_docstring\n                 and isinstance(item, ast.Expr)\n                 and isinstance(item.value, ast.Constant)\n+                and isinstance(item.value.value, str)\n             ):\n                 doc = item.value.value\n                 if self.is_rewrite_disabled(doc):\ndiff --git a/testing/test_assertrewrite.py b/testing/test_assertrewrite.py\nindex d01803204..8db3312df 100644\n--- a/testing/test_assertrewrite.py\n+++ b/testing/test_assertrewrite.py\n@@ -141,6 +141,13 @@ class TestAssertionRewrite:\n         assert isinstance(m.body[1], ast.Assert)\n         assert m.body[1].msg is None\n \n+    def test_dont_rewrite_module_starting_with_number(self) -> None:\n+        # A numeric constant at the top of a module was mistaken for a\n+        # docstring, causing TypeError: argument of type 'int' is not iterable.\n+        s = \"42\\nassert 1 == 1\"\n+        m = rewrite(s)\n+        assert len(m.body) > 1\n+\n     def test_dont_rewrite_plugin(self, pytester: Pytester) -> None:\n         contents = {\n             \"conftest.py\": \"pytest_plugins = 'plugin'; import plugin\",\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 243624,
+    "output_tokens": 2173,
+    "cache_read_tokens": 230976,
+    "cache_write_tokens": 12636
+  },
+  "timestamps": {
+    "task_start": 1778024429.5695653,
+    "task_end": 1778024479.1245425,
+    "first_action": 1778024433.7186563
+  },
+  "total_cost_usd": 0.15191079999999998,
+  "convergence_steps": 11,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":47939,\"duration_api_ms\":45640,\"num_turns\":11,\"result\":\"The test passes. Here's a summary of the fix:\\n\\n**Root cause:** In `AssertionRewriter.run()` (`rewrite.py:678`), when iterating the module body to find the docstring position, the code checks for any `ast.Expr` containing an `ast.Constant` — but this also matches numeric literals like `42`. When `is_rewrite_disabled(doc)` then evaluates `\\\"PYTEST_DONT_REWRITE\\\" in doc`, Python raises `TypeError` because `doc` is an `int`, not a string.\\n\\n**Fix:** Added `and isinstance(item.value.value, str)` to the condition on line 680, so only string constants are treated as potential docstrings. Non-string constants (ints, floats, bytes, etc.) now fall through to the `else: break` branch and are correctly ignored.\",\"stop_reason\":\"end_turn\",\"session_id\":\"c1cdd78a-d145-4fb6-8fc5-84d2247c291d\",\"total_cost_usd\":0.15191079999999998,\"usage\":{\"input_tokens\":12,\"cache_creation_input_tokens\":12636,\"cache_read_input_tokens\":230976,\"output_tokens\":2173,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":12636,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":200,\"cache_read_input_tokens\":23833,\"cache_creation_input_tokens\":434,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":434},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":2517,\"outputTokens\":17,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.002602,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":12,\"outputTokens\":2173,\"cacheReadInputTokens\":230976,\"cacheCreationInputTokens\":12636,\"webSearchRequests\":0,\"costUSD\":0.1493088,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"4b25b15d-f5b2-4e53-b30a-80795b6dbfcf\"}\n",
+  "model_name": ""
+}

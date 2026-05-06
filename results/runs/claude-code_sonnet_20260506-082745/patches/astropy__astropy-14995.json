@@ -1,0 +1,22 @@
+{
+  "instance_id": "astropy__astropy-14995",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/astropy/nddata/mixins/ndarithmetic.py b/astropy/nddata/mixins/ndarithmetic.py\nindex 4153dfccb2..69d77148e5 100644\n--- a/astropy/nddata/mixins/ndarithmetic.py\n+++ b/astropy/nddata/mixins/ndarithmetic.py\n@@ -522,6 +522,8 @@ class NDArithmeticMixin:\n             return deepcopy(operand.mask)\n         elif operand is None:\n             return deepcopy(self.mask)\n+        elif operand.mask is None:\n+            return deepcopy(self.mask)\n         else:\n             # Now lets calculate the resulting mask (operation enforces copy)\n             return handle_mask(self.mask, operand.mask, **kwds)\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 140686,
+    "output_tokens": 1930,
+    "cache_read_tokens": 130584,
+    "cache_write_tokens": 10092
+  },
+  "timestamps": {
+    "task_start": 1778030113.671025,
+    "task_end": 1778030234.7695932,
+    "first_action": 1778030123.9733107
+  },
+  "total_cost_usd": 0.17024999999999998,
+  "convergence_steps": 7,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":118877,\"duration_api_ms\":72116,\"num_turns\":7,\"result\":\"All cases work correctly now. The fix is a one-liner in `_arithmetic_mask` (`ndarithmetic.py:525`): add an `elif operand.mask is None: return deepcopy(self.mask)` branch before the final `else` that calls `handle_mask`. \\n\\nPreviously, when `self.mask` was set and `operand.mask` was `None`, the code fell through to `handle_mask(self.mask, None, ...)` which caused the `TypeError` with `np.bitwise_or`. Now it just copies `self.mask` — matching the behavior described in the docstring (\\\"If only one mask was present this mask is returned\\\") and restoring v5.2 behavior.\",\"stop_reason\":\"end_turn\",\"session_id\":\"8b5d92e7-b1e5-46d1-b5dd-1013eb8f4e32\",\"total_cost_usd\":0.17024999999999998,\"usage\":{\"input_tokens\":10,\"cache_creation_input_tokens\":10092,\"cache_read_input_tokens\":130584,\"output_tokens\":1930,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":10092,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":166,\"cache_read_input_tokens\":21155,\"cache_creation_input_tokens\":568,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":568},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1207,\"outputTokens\":2302,\"cacheReadInputTokens\":310978,\"cacheCreationInputTokens\":16348,\"webSearchRequests\":0,\"costUSD\":0.0642498,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":10,\"outputTokens\":1930,\"cacheReadInputTokens\":130584,\"cacheCreationInputTokens\":10092,\"webSearchRequests\":0,\"costUSD\":0.10600019999999999,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"3a75fe80-4844-4dfb-b57b-b0264706bba4\"}\n",
+  "model_name": ""
+}

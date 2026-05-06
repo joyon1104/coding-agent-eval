@@ -1,0 +1,16 @@
+{
+  "instance_id": "mwaskom__seaborn-3010",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "tests/_stats/test_regression.py::TestPolyFit::test_missing_data": true
+  },
+  "pass_to_pass_results": {
+    "tests/_stats/test_regression.py::TestPolyFit::test_no_grouper": true,
+    "tests/_stats/test_regression.py::TestPolyFit::test_one_grouper": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

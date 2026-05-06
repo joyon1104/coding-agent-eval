@@ -1,0 +1,22 @@
+{
+  "instance_id": "pytest-dev__pytest-5692",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/src/_pytest/junitxml.py b/src/_pytest/junitxml.py\nindex 15c630b1d..6dc1d0a56 100644\n--- a/src/_pytest/junitxml.py\n+++ b/src/_pytest/junitxml.py\n@@ -11,6 +11,7 @@ src/main/resources/org/jenkinsci/plugins/xunit/types/model/xsd/junit-10.xsd\n import functools\n import os\n import re\n+import socket\n import sys\n import time\n \n@@ -666,6 +667,8 @@ class LogXML:\n             skipped=self.stats[\"skipped\"],\n             tests=numtests,\n             time=\"%.3f\" % suite_time_delta,\n+            timestamp=time.strftime(\"%Y-%m-%dT%H:%M:%S\", time.localtime(self.suite_start_time)),\n+            hostname=socket.gethostname(),\n         )\n         logfile.write(Junit.testsuites([suite_node]).unicode(indent=0))\n         logfile.close()\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 134511,
+    "output_tokens": 1505,
+    "cache_read_tokens": 125438,
+    "cache_write_tokens": 9063
+  },
+  "timestamps": {
+    "task_start": 1778024479.2515316,
+    "task_end": 1778024524.8818946,
+    "first_action": 1778024485.6619601
+  },
+  "total_cost_usd": 0.11685890000000002,
+  "convergence_steps": 7,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":43972,\"duration_api_ms\":44873,\"num_turns\":7,\"result\":\"The changes look correct. Here's what was added:\\n\\n**`import socket`** — added to the imports at the top of the file.\\n\\n**`timestamp`** — the suite start time formatted as ISO 8601 (`YYYY-MM-DDTHH:MM:SS`), recorded when `pytest_sessionstart` fires and stored in `self.suite_start_time`.\\n\\n**`hostname`** — the machine's hostname via `socket.gethostname()`.\\n\\nThe generated `testsuite` element will now look like:\\n```xml\\n<testsuite name=\\\"check\\\" errors=\\\"0\\\" failures=\\\"2\\\" skipped=\\\"0\\\" tests=\\\"4\\\" time=\\\"0.049\\\"\\n           timestamp=\\\"2019-04-22T10:32:27\\\" hostname=\\\"my-machine.local\\\">\\n```\",\"stop_reason\":\"end_turn\",\"session_id\":\"47e8a5e5-54ee-4720-8c40-2fd3ed6ef31d\",\"total_cost_usd\":0.11685890000000002,\"usage\":{\"input_tokens\":10,\"cache_creation_input_tokens\":9063,\"cache_read_input_tokens\":125438,\"output_tokens\":1505,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":9063,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":185,\"cache_read_input_tokens\":20174,\"cache_creation_input_tokens\":520,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":520},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":770,\"outputTokens\":696,\"cacheReadInputTokens\":51100,\"cacheCreationInputTokens\":10621,\"webSearchRequests\":0,\"costUSD\":0.022636250000000004,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":10,\"outputTokens\":1505,\"cacheReadInputTokens\":125438,\"cacheCreationInputTokens\":9063,\"webSearchRequests\":0,\"costUSD\":0.09422264999999999,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"fc08fb21-cc53-4f3b-b0fd-7b4c64cdd33b\"}\n",
+  "model_name": ""
+}

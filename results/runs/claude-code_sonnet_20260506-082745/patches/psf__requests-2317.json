@@ -1,0 +1,22 @@
+{
+  "instance_id": "psf__requests-2317",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/requests/sessions.py b/requests/sessions.py\nindex d701ff2e..7015eba6 100644\n--- a/requests/sessions.py\n+++ b/requests/sessions.py\n@@ -425,6 +425,8 @@ class Session(SessionRedirectMixin):\n             If Tuple, ('cert', 'key') pair.\n         \"\"\"\n \n+        if isinstance(method, bytes):\n+            method = method.decode('utf-8')\n         method = builtin_str(method)\n \n         # Create the Request.\ndiff --git a/test_requests.py b/test_requests.py\nindex 467c5bc6..fc237d55 100755\n--- a/test_requests.py\n+++ b/test_requests.py\n@@ -523,6 +523,10 @@ class RequestsTestCase(unittest.TestCase):\n             method=u('POST'), url=httpbin('post'), files=files)\n         assert r.status_code == 200\n \n+    def test_bytes_method_name(self):\n+        r = requests.request(method=b'GET', url=httpbin('get'))\n+        assert r.status_code == 200\n+\n     def test_custom_content_type(self):\n         r = requests.post(\n             httpbin('post'),\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 157269,
+    "output_tokens": 2874,
+    "cache_read_tokens": 147362,
+    "cache_write_tokens": 9898
+  },
+  "timestamps": {
+    "task_start": 1778024132.7630537,
+    "task_end": 1778024179.674308,
+    "first_action": 1778024137.944387
+  },
+  "total_cost_usd": 0.12511809999999998,
+  "convergence_steps": 9,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":45317,\"duration_api_ms\":46632,\"num_turns\":9,\"result\":\"The fix is in `requests/sessions.py:428`. Before calling `builtin_str(method)`, we now check `isinstance(method, bytes)` and decode it as UTF-8 first.\\n\\n**Root cause:** In Python 3, `str(b'GET')` produces the literal string `\\\"b'GET'\\\"` (the repr of the bytes object), not `\\\"GET\\\"`. In Python 2, `bytes is str` so this was a no-op and worked fine.\\n\\n**Fix:** Decode bytes to a native string before the `builtin_str()` call:\\n```python\\nif isinstance(method, bytes):\\n    method = method.decode('utf-8')\\nmethod = builtin_str(method)\\n```\\n\\nThis correctly handles `b'GET'` → `'GET'` in Python 3, while being harmless in Python 2 (where `bytes is str` and `.decode()` already worked). The bug was in `requests`, not in `neutronclient` — requests should be defensive about accepting bytes method names since HTTP methods are ASCII by definition.\",\"stop_reason\":\"end_turn\",\"session_id\":\"7284749c-6c82-40de-8299-514d12db3612\",\"total_cost_usd\":0.12511809999999998,\"usage\":{\"input_tokens\":9,\"cache_creation_input_tokens\":9898,\"cache_read_input_tokens\":147362,\"output_tokens\":2874,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":9898,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":247,\"cache_read_input_tokens\":21032,\"cache_creation_input_tokens\":497,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":497},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":580,\"outputTokens\":15,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000655,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":9,\"outputTokens\":2874,\"cacheReadInputTokens\":147362,\"cacheCreationInputTokens\":9898,\"webSearchRequests\":0,\"costUSD\":0.1244631,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"8dd78049-6715-4070-880a-8439d79f2eeb\"}\n",
+  "model_name": ""
+}

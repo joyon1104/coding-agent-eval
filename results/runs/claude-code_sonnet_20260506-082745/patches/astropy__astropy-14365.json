@@ -1,0 +1,22 @@
+{
+  "instance_id": "astropy__astropy-14365",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/astropy/io/ascii/qdp.py b/astropy/io/ascii/qdp.py\nindex 83a4f004aa..768beb0de9 100644\n--- a/astropy/io/ascii/qdp.py\n+++ b/astropy/io/ascii/qdp.py\n@@ -68,7 +68,7 @@ def _line_type(line, delimiter=None):\n     _new_re = rf\"NO({sep}NO)+\"\n     _data_re = rf\"({_decimal_re}|NO|[-+]?nan)({sep}({_decimal_re}|NO|[-+]?nan))*)\"\n     _type_re = rf\"^\\s*((?P<command>{_command_re})|(?P<new>{_new_re})|(?P<data>{_data_re})?\\s*(\\!(?P<comment>.*))?\\s*$\"\n-    _line_type_re = re.compile(_type_re)\n+    _line_type_re = re.compile(_type_re, re.IGNORECASE)\n     line = line.strip()\n     if not line:\n         return \"comment\"\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 276114,
+    "output_tokens": 2884,
+    "cache_read_tokens": 263616,
+    "cache_write_tokens": 12484
+  },
+  "timestamps": {
+    "task_start": 1778030235.3353217,
+    "task_end": 1778030342.0392575,
+    "first_action": 1778030239.8245525
+  },
+  "total_cost_usd": 0.1701278,
+  "convergence_steps": 13,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":104995,\"duration_api_ms\":58360,\"num_turns\":13,\"result\":\"All 8 existing tests pass.\\n\\nThe fix is a one-line change in `astropy/io/ascii/qdp.py:71`: added `re.IGNORECASE` to the compiled regex that classifies QDP line types. This makes the `READ SERR`/`READ TERR` command pattern match regardless of case (`read serr`, `Read Serr`, etc.), while the command-parsing code at line 300 already called `.lower()` so it handles mixed-case input correctly after matching.\",\"stop_reason\":\"end_turn\",\"session_id\":\"2c7447a3-829f-41f3-81f2-ff870853b85f\",\"total_cost_usd\":0.1701278,\"usage\":{\"input_tokens\":14,\"cache_creation_input_tokens\":12484,\"cache_read_input_tokens\":263616,\"output_tokens\":2884,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":12484,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":121,\"cache_read_input_tokens\":23781,\"cache_creation_input_tokens\":334,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":334},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":836,\"outputTokens\":18,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.0009260000000000001,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":14,\"outputTokens\":2884,\"cacheReadInputTokens\":263616,\"cacheCreationInputTokens\":12484,\"webSearchRequests\":0,\"costUSD\":0.1692018,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"4ac02e82-a2c4-445f-a925-347b378d0980\"}\n",
+  "model_name": ""
+}

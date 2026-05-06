@@ -1,0 +1,22 @@
+{
+  "instance_id": "pallets__flask-4045",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/src/flask/blueprints.py b/src/flask/blueprints.py\nindex 5fb84d86..4a307cfd 100644\n--- a/src/flask/blueprints.py\n+++ b/src/flask/blueprints.py\n@@ -181,6 +181,9 @@ class Blueprint(Scaffold):\n         root_path: t.Optional[str] = None,\n         cli_group: t.Optional[str] = _sentinel,  # type: ignore\n     ):\n+        if \".\" in name:\n+            raise ValueError(\"'Blueprint.name' may not contain a dot '.' character.\")\n+\n         super().__init__(\n             import_name=import_name,\n             static_folder=static_folder,\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 73738,
+    "output_tokens": 812,
+    "cache_read_tokens": 65993,
+    "cache_write_tokens": 7738
+  },
+  "timestamps": {
+    "task_start": 1778024832.5535808,
+    "task_end": 1778024864.6865478,
+    "first_action": 1778024840.3665807
+  },
+  "total_cost_usd": 0.0907363,
+  "convergence_steps": 4,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":30331,\"duration_api_ms\":31252,\"num_turns\":4,\"result\":\"Added the check at the top of `__init__` in `Blueprint` (before the `super().__init__` call) so it fails fast with a clear message. This mirrors the pattern used for endpoint names in `add_url_rule` at line 364, but raises `ValueError` rather than using `assert` (which can be silenced with `-O`).\",\"stop_reason\":\"end_turn\",\"session_id\":\"50516b87-73a0-4ee3-89b6-5e12b9cf7853\",\"total_cost_usd\":0.0907363,\"usage\":{\"input_tokens\":7,\"cache_creation_input_tokens\":7738,\"cache_read_input_tokens\":65993,\"output_tokens\":812,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":7738,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":83,\"cache_read_input_tokens\":18984,\"cache_creation_input_tokens\":385,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":385},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":406,\"outputTokens\":1490,\"cacheReadInputTokens\":53564,\"cacheCreationInputTokens\":13206,\"webSearchRequests\":0,\"costUSD\":0.0297199,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":7,\"outputTokens\":812,\"cacheReadInputTokens\":65993,\"cacheCreationInputTokens\":7738,\"webSearchRequests\":0,\"costUSD\":0.06101640000000001,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"b108e318-4a78-4fc6-84bd-17a9487a13ac\"}\n",
+  "model_name": ""
+}

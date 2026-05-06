@@ -1,0 +1,22 @@
+{
+  "instance_id": "mwaskom__seaborn-3407",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/seaborn/axisgrid.py b/seaborn/axisgrid.py\nindex 75349099..ce36ef3d 100644\n--- a/seaborn/axisgrid.py\n+++ b/seaborn/axisgrid.py\n@@ -1472,7 +1472,9 @@ class PairGrid(Grid):\n                 for ax in diag_axes[1:]:\n                     share_axis(diag_axes[0], ax, \"y\")\n \n-            self.diag_vars = np.array(diag_vars, np.object_)\n+            self.diag_vars = np.empty(len(diag_vars), dtype=object)\n+            for i, v in enumerate(diag_vars):\n+                self.diag_vars[i] = v\n             self.diag_axes = np.array(diag_axes, np.object_)\n \n         if \"hue\" not in signature(func).parameters:\ndiff --git a/tests/test_axisgrid.py b/tests/test_axisgrid.py\nindex ce8b0eaa..7c91f2cc 100644\n--- a/tests/test_axisgrid.py\n+++ b/tests/test_axisgrid.py\n@@ -1079,6 +1079,20 @@ class TestPairGrid:\n         for ax in g.diag_axes:\n             assert len(ax.patches) == (bins * levels)\n \n+    def test_map_diag_multiindex_columns(self):\n+\n+        data = {\n+            (\"A\", \"1\"): np.random.rand(20),\n+            (\"A\", \"2\"): np.random.rand(20),\n+            (\"B\", \"1\"): np.random.rand(20),\n+        }\n+        df = pd.DataFrame(data)\n+        g = ag.PairGrid(df)\n+        g.map_diag(plt.hist)\n+        assert len(g.diag_vars) == 3\n+        for var in g.diag_vars:\n+            assert isinstance(var, tuple)\n+\n     def test_palette(self):\n \n         rcmod.set()\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 550133,
+    "output_tokens": 9697,
+    "cache_read_tokens": 524793,
+    "cache_write_tokens": 25319
+  },
+  "timestamps": {
+    "task_start": 1778027938.9136655,
+    "task_end": 1778028169.9156194,
+    "first_action": 1778027949.0774655
+  },
+  "total_cost_usd": 0.47898250000000003,
+  "convergence_steps": 20,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":229428,\"duration_api_ms\":203276,\"num_turns\":20,\"result\":\"The test passes. Here's a summary of the fix:\\n\\n**Root cause:** In `PairGrid.map_diag` (line 1475 of `axisgrid.py`), diagonal variable names were stored as `np.array(diag_vars, np.object_)`. When the DataFrame has MultiIndex columns, `diag_vars` is a list of same-length tuples like `[('A', '1'), ('A', '2'), ...]`. NumPy interprets these as rows of a 2D array (shape `(n, 2)`), so iterating it yields `array(['A', '1'])` instead of `('A', '1')`. `self.data[array(['A', '1'])]` then attempts multi-column selection on the MultiIndex DataFrame, causing the `KeyError`.\\n\\n**Fix:** Build the 1D object array element-by-element so each tuple is stored as a single opaque object:\\n\\n```python\\n# Before\\nself.diag_vars = np.array(diag_vars, np.object_)\\n\\n# After\\nself.diag_vars = np.empty(len(diag_vars), dtype=object)\\nfor i, v in enumerate(diag_vars):\\n    self.diag_vars[i] = v\\n```\",\"stop_reason\":\"end_turn\",\"session_id\":\"fcfacc83-2a6f-445b-9554-6a69ea369043\",\"total_cost_usd\":0.47898250000000003,\"usage\":{\"input_tokens\":21,\"cache_creation_input_tokens\":25319,\"cache_read_input_tokens\":524793,\"output_tokens\":9697,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":25319,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":299,\"cache_read_input_tokens\":36531,\"cache_creation_input_tokens\":419,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":419},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1364,\"outputTokens\":1995,\"cacheReadInputTokens\":192926,\"cacheCreationInputTokens\":40359,\"webSearchRequests\":0,\"costUSD\":0.08108035000000001,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":21,\"outputTokens\":9697,\"cacheReadInputTokens\":524793,\"cacheCreationInputTokens\":25319,\"webSearchRequests\":0,\"costUSD\":0.39790215000000007,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"3c7b351e-3a2c-41d5-9dae-4d4d395bbaca\"}\n",
+  "model_name": ""
+}

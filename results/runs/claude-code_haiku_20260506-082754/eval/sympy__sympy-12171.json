@@ -1,0 +1,22 @@
+{
+  "instance_id": "sympy__sympy-12171",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "test_Derivative": false
+  },
+  "pass_to_pass_results": {
+    "test_Integer": false,
+    "test_Rational": false,
+    "test_Function": false,
+    "test_Pow": false,
+    "test_Mul": false,
+    "test_constants": false,
+    "test_containers": false,
+    "test_Integral": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

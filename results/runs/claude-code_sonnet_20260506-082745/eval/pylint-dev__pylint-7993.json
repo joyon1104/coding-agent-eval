@@ -1,0 +1,24 @@
+{
+  "instance_id": "pylint-dev__pylint-7993",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "tests/reporters/unittest_reporting.py::test_template_option_with_header": true
+  },
+  "pass_to_pass_results": {
+    "tests/reporters/unittest_reporting.py::test_template_option": true,
+    "tests/reporters/unittest_reporting.py::test_template_option_default": true,
+    "tests/reporters/unittest_reporting.py::test_template_option_end_line": true,
+    "tests/reporters/unittest_reporting.py::test_template_option_non_existing": true,
+    "tests/reporters/unittest_reporting.py::test_deprecation_set_output": true,
+    "tests/reporters/unittest_reporting.py::test_parseable_output_deprecated": true,
+    "tests/reporters/unittest_reporting.py::test_parseable_output_regression": true,
+    "tests/reporters/unittest_reporting.py::test_multi_format_output": true,
+    "tests/reporters/unittest_reporting.py::test_multi_reporter_independant_messages": true,
+    "tests/reporters/unittest_reporting.py::test_display_results_is_renamed": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

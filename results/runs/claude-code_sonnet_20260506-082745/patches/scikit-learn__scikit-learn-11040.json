@@ -1,0 +1,22 @@
+{
+  "instance_id": "scikit-learn__scikit-learn-11040",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/sklearn/neighbors/base.py b/sklearn/neighbors/base.py\nindex 3e5e729c27..29d9c4b611 100644\n--- a/sklearn/neighbors/base.py\n+++ b/sklearn/neighbors/base.py\n@@ -6,6 +6,7 @@\n #          Multi-output support by Arnaud Joly <a.joly@ulg.ac.be>\n #\n # License: BSD 3 clause (C) INRIA, University of Amsterdam\n+import numbers\n import warnings\n from abc import ABCMeta, abstractmethod\n \n@@ -107,6 +108,12 @@ class NeighborsBase(six.with_metaclass(ABCMeta, BaseEstimator)):\n                  algorithm='auto', leaf_size=30, metric='minkowski',\n                  p=2, metric_params=None, n_jobs=1):\n \n+        if n_neighbors is not None:\n+            if not isinstance(n_neighbors, numbers.Integral):\n+                raise TypeError(\n+                    \"n_neighbors does not take %s value, \"\n+                    \"enter integer value\" %\n+                    type(n_neighbors))\n         self.n_neighbors = n_neighbors\n         self.radius = radius\n         self.algorithm = algorithm\n@@ -327,6 +334,11 @@ class KNeighborsMixin(object):\n \n         if n_neighbors is None:\n             n_neighbors = self.n_neighbors\n+        elif not isinstance(n_neighbors, numbers.Integral):\n+            raise TypeError(\n+                \"n_neighbors does not take %s value, \"\n+                \"enter integer value\" %\n+                type(n_neighbors))\n \n         if X is not None:\n             query_is_train = False\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 278606,
+    "output_tokens": 3546,
+    "cache_read_tokens": 263606,
+    "cache_write_tokens": 14985
+  },
+  "timestamps": {
+    "task_start": 1778032002.0166461,
+    "task_end": 1778032097.9676194,
+    "first_action": 1778032008.7547176
+  },
+  "total_cost_usd": 0.29010565,
+  "convergence_steps": 14,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":94100,\"duration_api_ms\":94333,\"num_turns\":14,\"result\":\"The validation logic works correctly. The changes are in `sklearn/neighbors/base.py`:\\n\\n1. **`base.py:9`** — Added `import numbers`\\n2. **`base.py:111-116`** (`NeighborsBase.__init__`) — Raises `TypeError` early if `n_neighbors` is not `None` and not an integer\\n3. **`base.py:337-341`** (`KNeighborsMixin.kneighbors`) — Same check for the `n_neighbors` argument passed directly to `kneighbors`\\n\\nBoth cases now produce a clear error like:\\n```\\nTypeError: n_neighbors does not take <class 'float'> value, enter integer value\\n```\\n\\nUsing `numbers.Integral` covers both Python `int` and all numpy integer types (`np.int32`, `np.int64`, etc.), so those continue to work fine.\",\"stop_reason\":\"end_turn\",\"session_id\":\"b3e02d84-0f77-4683-a4e0-1cf5d0db8994\",\"total_cost_usd\":0.29010565,\"usage\":{\"input_tokens\":15,\"cache_creation_input_tokens\":14985,\"cache_read_input_tokens\":263606,\"output_tokens\":3546,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":14985,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":211,\"cache_read_input_tokens\":26050,\"cache_creation_input_tokens\":566,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":566},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":4529,\"outputTokens\":3520,\"cacheReadInputTokens\":277011,\"cacheCreationInputTokens\":41412,\"webSearchRequests\":0,\"costUSD\":0.1015951,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":15,\"outputTokens\":3546,\"cacheReadInputTokens\":263606,\"cacheCreationInputTokens\":14985,\"webSearchRequests\":0,\"costUSD\":0.18851055,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"1298e68b-4ddb-43a6-b72b-b3313f0004ff\"}\n",
+  "model_name": ""
+}

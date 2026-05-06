@@ -1,0 +1,22 @@
+{
+  "instance_id": "psf__requests-1963",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/requests/sessions.py b/requests/sessions.py\nindex 425db22c..4bb6c728 100644\n--- a/requests/sessions.py\n+++ b/requests/sessions.py\n@@ -86,9 +86,10 @@ class SessionRedirectMixin(object):\n         \"\"\"Receives a Response. Returns a generator of Responses.\"\"\"\n \n         i = 0\n+        prepared_request = req.copy()\n \n         while resp.is_redirect:\n-            prepared_request = req.copy()\n+            prepared_request = prepared_request.copy()\n \n             resp.content  # Consume socket so it can be released\n \n@@ -99,7 +100,7 @@ class SessionRedirectMixin(object):\n             resp.close()\n \n             url = resp.headers['location']\n-            method = req.method\n+            method = prepared_request.method\n \n             # Handle redirection without scheme (see: RFC 1808 Section 4)\n             if url.startswith('//'):\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 140531,
+    "output_tokens": 2145,
+    "cache_read_tokens": 129578,
+    "cache_write_tokens": 10945
+  },
+  "timestamps": {
+    "task_start": 1778023997.650262,
+    "task_end": 1778024045.1743937,
+    "first_action": 1778024004.5738335
+  },
+  "total_cost_usd": 0.11271815,
+  "convergence_steps": 7,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":45961,\"duration_api_ms\":48465,\"num_turns\":7,\"result\":\"The fix is in place. Here's what changed and why:\\n\\n**Root cause:** `resolve_redirects` began each loop iteration with `prepared_request = req.copy()` (the *original* request) and read `method = req.method`, discarding any method transformations (e.g. POST→GET from a 303) that happened in prior iterations.\\n\\n**Fix (two lines):**\\n\\n1. `prepared_request = req.copy()` moved **before** the loop — initializes once from the original request.\\n2. Inside the loop, `prepared_request = prepared_request.copy()` — copies the *current* prepared request, preserving method changes from previous hops.\\n3. `method = req.method` → `method = prepared_request.method` — reads the method that survived the previous redirect, not the original.\\n\\nNow the scenario in the issue works correctly:\\n- `POST /do_something` → 303 → `GET /new_thing_1513` (method correctly converted to GET)\\n- `GET /new_thing_1513` → 307 → `GET //failover.example.com/new_thing_1513` (GET preserved, not reset to POST)\",\"stop_reason\":\"end_turn\",\"session_id\":\"af8411a5-5aea-4e92-932f-8833a07d5adf\",\"total_cost_usd\":0.11271815,\"usage\":{\"input_tokens\":8,\"cache_creation_input_tokens\":10945,\"cache_read_input_tokens\":129578,\"output_tokens\":2145,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":10945,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":274,\"cache_read_input_tokens\":21525,\"cache_creation_input_tokens\":1051,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":1051},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":527,\"outputTokens\":15,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000602,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":8,\"outputTokens\":2145,\"cacheReadInputTokens\":129578,\"cacheCreationInputTokens\":10945,\"webSearchRequests\":0,\"costUSD\":0.11211615000000001,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"d342fced-95ec-437a-a23f-5debc3fb2831\"}\n",
+  "model_name": ""
+}

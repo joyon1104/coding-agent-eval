@@ -1,0 +1,22 @@
+{
+  "instance_id": "pylint-dev__pylint-6506",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/pylint/config/config_initialization.py b/pylint/config/config_initialization.py\nindex 24e453a73..c6e0a6f6f 100644\n--- a/pylint/config/config_initialization.py\n+++ b/pylint/config/config_initialization.py\n@@ -82,7 +82,7 @@ def _config_initialization(\n     if unrecognized_options:\n         msg = \", \".join(unrecognized_options)\n         linter.add_message(\"unrecognized-option\", line=0, args=msg)\n-        raise _UnrecognizedOptionError(options=unrecognized_options)\n+        sys.exit(32)\n \n     # Set the current module to configuration as we don't know where\n     # the --load-plugins key is coming from\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 98665,
+    "output_tokens": 1018,
+    "cache_read_tokens": 89502,
+    "cache_write_tokens": 9157
+  },
+  "timestamps": {
+    "task_start": 1778025032.536373,
+    "task_end": 1778025660.7498832,
+    "first_action": 1778025137.1607063
+  },
+  "total_cost_usd": 0.07748935,
+  "convergence_steps": 6,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":626432,\"duration_api_ms\":627746,\"num_turns\":6,\"result\":\"It's still used on line 57 for the config file parsing case, so the import stays. The fix is complete.\\n\\nThe change replaces `raise _UnrecognizedOptionError(options=unrecognized_options)` with `sys.exit(32)` on line 85. The error message (`Command line:1:0: E0015: Unrecognized option found: Q`) is already emitted via `linter.add_message` on the line before — the raise was only causing the uncaught traceback. Now pylint exits cleanly with a non-zero exit code, matching the behavior of other tools like mypy.\",\"stop_reason\":\"end_turn\",\"session_id\":\"ed76e455-190c-4fb2-a8b3-a74d4214c32a\",\"total_cost_usd\":0.07748935,\"usage\":{\"input_tokens\":6,\"cache_creation_input_tokens\":9157,\"cache_read_input_tokens\":89502,\"output_tokens\":1018,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":9157,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":147,\"cache_read_input_tokens\":20550,\"cache_creation_input_tokens\":238,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":238},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":917,\"outputTokens\":19,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.0010119999999999999,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":6,\"outputTokens\":1018,\"cacheReadInputTokens\":89502,\"cacheCreationInputTokens\":9157,\"webSearchRequests\":0,\"costUSD\":0.07647734999999999,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"d8b9e1d6-62d3-4c58-b21c-d13c84879bb9\"}\n",
+  "model_name": ""
+}

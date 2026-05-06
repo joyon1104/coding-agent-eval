@@ -1,0 +1,22 @@
+{
+  "instance_id": "psf__requests-3362",
+  "agent_name": "claude-code",
+  "patch": "",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 92768,
+    "output_tokens": 1722,
+    "cache_read_tokens": 84334,
+    "cache_write_tokens": 8428
+  },
+  "timestamps": {
+    "task_start": 1778024179.735026,
+    "task_end": 1778024212.6860652,
+    "first_action": 1778024184.3497403
+  },
+  "total_cost_usd": 0.08332419999999999,
+  "convergence_steps": 7,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":31388,\"duration_api_ms\":32303,\"num_turns\":7,\"result\":\"You have not misunderstood — this is a real inconsistency in the library. Here's exactly what's happening:\\n\\n**The root cause is in `stream_decode_response_unicode` (`utils.py:362-364`):**\\n\\n```python\\ndef stream_decode_response_unicode(iterator, r):\\n    if r.encoding is None:\\n        for item in iterator:\\n            yield item   # <-- yields raw bytes, no decoding\\n        return\\n    ...\\n```\\n\\nWhen `r.encoding is None`, the function bails out and passes bytes straight through.\\n\\n**Compare that to `r.text` (`models.py:778-783`):**\\n\\n```python\\nif self.encoding is None:\\n    encoding = self.apparent_encoding  # <-- falls back to chardet detection\\n\\ncontent = str(self.content, encoding, errors='replace')  # always decodes\\n```\\n\\n`r.text` always decodes to unicode because it falls back to `apparent_encoding` (chardet) when the server doesn't specify a charset.\\n\\n**Why does this happen for `application/json`?**\\n\\nA response with `Content-Type: application/json` (no `; charset=utf-8`) leaves `r.encoding = None`. That triggers the early-return bytes passthrough in `iter_content`, but `r.text` silently compensates by running chardet.\\n\\n**The fix** would be to mirror `r.text`'s fallback behavior in `stream_decode_response_unicode`:\\n\\n```python\\ndef stream_decode_response_unicode(iterator, r):\\n    encoding = r.encoding\\n    if encoding is None:\\n        encoding = r.apparent_encoding  # fall back like r.text does\\n    if encoding is None:\\n        for item in iterator:\\n            yield item\\n        return\\n\\n    decoder = codecs.getincrementaldecoder(encoding)(errors='replace')\\n    ...\\n```\\n\\nThe caveat: `apparent_encoding` calls `chardet.detect(self.content)`, which **reads the entire response body** to detect encoding — defeating the purpose of streaming. A more practical workaround for your use case is to set the encoding explicitly before iterating:\\n\\n```python\\nr.encoding = 'utf-8'  # or whatever the server is actually sending\\nfor chunk in r.iter_content(16*1024, decode_unicode=True):\\n    ...  # now yields str, not bytes\\n```\",\"stop_reason\":\"end_turn\",\"session_id\":\"7dc303ed-cf43-4fc9-89eb-8a4dbc5af479\",\"total_cost_usd\":0.08332419999999999,\"usage\":{\"input_tokens\":6,\"cache_creation_input_tokens\":8428,\"cache_read_input_tokens\":84334,\"output_tokens\":1722,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":8428,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":909,\"cache_read_input_tokens\":19380,\"cache_creation_input_tokens\":679,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":679},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":481,\"outputTokens\":18,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000571,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":6,\"outputTokens\":1722,\"cacheReadInputTokens\":84334,\"cacheCreationInputTokens\":8428,\"webSearchRequests\":0,\"costUSD\":0.0827532,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"963ad6e8-e0e2-4ddb-b3c0-74cb27b375d0\"}\n",
+  "model_name": ""
+}

@@ -1,0 +1,22 @@
+{
+  "instance_id": "sphinx-doc__sphinx-8721",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/sphinx/ext/viewcode.py b/sphinx/ext/viewcode.py\nindex a7d52a91c..060604e25 100644\n--- a/sphinx/ext/viewcode.py\n+++ b/sphinx/ext/viewcode.py\n@@ -182,6 +182,8 @@ def collect_pages(app: Sphinx) -> Generator[Tuple[str, Dict[str, Any], str], Non\n     env = app.builder.env\n     if not hasattr(env, '_viewcode_modules'):\n         return\n+    if app.builder.name.startswith(\"epub\") and not env.config.viewcode_enable_epub:\n+        return\n     highlighter = app.builder.highlighter  # type: ignore\n     urito = app.builder.get_relative_uri\n \n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 765000,
+    "output_tokens": 5247,
+    "cache_read_tokens": 742420,
+    "cache_write_tokens": 22445
+  },
+  "timestamps": {
+    "task_start": 1778026776.6498415,
+    "task_end": 1778026843.0884974,
+    "first_action": 1778026779.9101574
+  },
+  "total_cost_usd": 0.12924625,
+  "convergence_steps": 19,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":64422,\"duration_api_ms\":61946,\"num_turns\":19,\"result\":\"The test setup is failing due to a version requirement, not because of my fix. Let me create a simple verification by examining the code logic:\\n\\n**Summary of the fix:**\\n\\nThe bug was that when running `make html epub`, the `viewcode` extension would create module pages for EPUB output even when `viewcode_enable_epub=False` was set.\\n\\n**Root cause:**\\n- The `doctree_read` function (line 59) correctly checked if building EPUB and skipped processing when `viewcode_enable_epub=False`\\n- However, the `collect_pages` function had no such check and would generate module pages for all builders, including EPUB\\n\\n**The fix:**\\nAdded the same EPUB check to `collect_pages` (lines 185-186):\\n```python\\nif app.builder.name.startswith(\\\"epub\\\") and not env.config.viewcode_enable_epub:\\n    return\\n```\\n\\nThis ensures that when building EPUB with `viewcode_enable_epub=False`, no module pages are generated.\\n\\n**Behavior after fix:**\\n- `make html`: generates module pages ✓\\n- `make epub` with `viewcode_enable_epub=False`: does NOT generate module pages ✓ (fixed)\\n- `make epub` with `viewcode_enable_epub=True`: generates module pages ✓\\n- `make html epub` with `viewcode_enable_epub=False`: generates for HTML only, not EPUB ✓ (fixed)\\n\\nThe fix is minimal, non-breaking, and mirrors the existing check in `doctree_read`.\",\"stop_reason\":\"end_turn\",\"session_id\":\"f149bc7a-a2ab-4433-8dbe-364c6318e81e\",\"total_cost_usd\":0.12924625,\"usage\":{\"input_tokens\":135,\"cache_creation_input_tokens\":22445,\"cache_read_input_tokens\":742420,\"output_tokens\":5247,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":22445,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":7,\"output_tokens\":441,\"cache_read_input_tokens\":45943,\"cache_creation_input_tokens\":814,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":814},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":633,\"outputTokens\":5263,\"cacheReadInputTokens\":742420,\"cacheCreationInputTokens\":22445,\"webSearchRequests\":0,\"costUSD\":0.12924625,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"498fe038-82b7-4b16-a5b3-aaab2cc28d72\"}\n",
+  "model_name": ""
+}

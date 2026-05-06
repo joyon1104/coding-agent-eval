@@ -1,0 +1,39 @@
+{
+  "instance_id": "sympy__sympy-12419",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "test_Identity": false
+  },
+  "pass_to_pass_results": {
+    "test_shape": false,
+    "test_matexpr": false,
+    "test_subs": false,
+    "test_ZeroMatrix": false,
+    "test_ZeroMatrix_doit": false,
+    "test_Identity_doit": false,
+    "test_addition": false,
+    "test_multiplication": false,
+    "test_MatPow": false,
+    "test_MatrixSymbol": false,
+    "test_dense_conversion": false,
+    "test_free_symbols": false,
+    "test_zero_matmul": false,
+    "test_matadd_simplify": false,
+    "test_matmul_simplify": false,
+    "test_invariants": false,
+    "test_indexing": false,
+    "test_single_indexing": false,
+    "test_MatrixElement_commutative": false,
+    "test_MatrixSymbol_determinant": false,
+    "test_MatrixElement_diff": false,
+    "test_MatrixElement_doit": false,
+    "test_identity_powers": false,
+    "test_Zero_power": false,
+    "test_matrixelement_diff": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

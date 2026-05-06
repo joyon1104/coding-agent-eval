@@ -1,0 +1,22 @@
+{
+  "instance_id": "sphinx-doc__sphinx-8595",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py\nindex d85d79617..c9f90acca 100644\n--- a/sphinx/ext/autodoc/__init__.py\n+++ b/sphinx/ext/autodoc/__init__.py\n@@ -1074,7 +1074,7 @@ class ModuleDocumenter(Documenter):\n     def get_object_members(self, want_all: bool) -> Tuple[bool, ObjectMembers]:\n         members = self.get_module_members()\n         if want_all:\n-            if not self.__all__:\n+            if self.__all__ is None:\n                 # for implicit module members, check __module__ to avoid\n                 # documenting imported objects\n                 return True, list(members.values())\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 1627427,
+    "output_tokens": 11444,
+    "cache_read_tokens": 1594319,
+    "cache_write_tokens": 32840
+  },
+  "timestamps": {
+    "task_start": 1778026413.3926215,
+    "task_end": 1778026540.0038946,
+    "first_action": 1778026416.5901477
+  },
+  "total_cost_usd": 0.2586039,
+  "convergence_steps": 38,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":125064,\"duration_api_ms\":121506,\"num_turns\":38,\"result\":\"## Summary\\n\\nI've successfully fixed the bug where Sphinx's autodoc extension was ignoring empty `__all__` attributes. Here's what was done:\\n\\n### The Problem\\nWhen a module had `__all__ = []` (empty list), the autodoc directive was supposed to show no members, but instead it showed all members. This was because the code was treating an empty `__all__` the same as an undefined `__all__`.\\n\\n### The Root Cause\\nIn `sphinx/ext/autodoc/__init__.py` at line 1077, the code checked:\\n```python\\nif not self.__all__:\\n```\\n\\nIn Python, both `None` and `[]` (empty list) are falsy, so this condition was `True` for both cases, causing empty `__all__` to be treated the same as undefined `__all__`.\\n\\n### The Fix\\nChanged the condition to explicitly check for `None`:\\n```python\\nif self.__all__ is None:\\n```\\n\\nThis now correctly distinguishes between:\\n- `None` (attribute not defined) → show all members\\n- `[]` (empty list) → show no members (all filtered out)\\n- `['foo', 'bar']` (items listed) → show only listed members\\n\\n### Changes Made\\n- **File**: `sphinx/ext/autodoc/__init__.py`\\n- **Line**: 1077\\n- **Change**: `if not self.__all__:` → `if self.__all__ is None:`\\n\\nThe fix is minimal (1 line change) and has been verified to correctly handle all three cases while preserving existing behavior for modules with non-empty `__all__` lists.\",\"stop_reason\":\"end_turn\",\"session_id\":\"750aeefe-8c1f-4291-869d-d3df0b423dd9\",\"total_cost_usd\":0.2586039,\"usage\":{\"input_tokens\":268,\"cache_creation_input_tokens\":32840,\"cache_read_input_tokens\":1594319,\"output_tokens\":11444,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":32840,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":7,\"output_tokens\":397,\"cache_read_input_tokens\":55449,\"cache_creation_input_tokens\":1703,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":1703},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":812,\"outputTokens\":11462,\"cacheReadInputTokens\":1594319,\"cacheCreationInputTokens\":32840,\"webSearchRequests\":0,\"costUSD\":0.2586039,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"b10424ba-cf16-4a79-8cd2-534b66447825\"}\n",
+  "model_name": ""
+}

@@ -1,0 +1,341 @@
+2026-05-06 08:27:45,711 [INFO] 
+============================================================
+2026-05-06 08:27:45,711 [INFO] Agent: claude-code | Tasks: 50
+2026-05-06 08:27:45,711 [INFO] ============================================================
+2026-05-06 08:27:45,713 [INFO]   Running: psf__requests-863
+2026-05-06 08:27:45,715 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/psf__requests
+2026-05-06 08:27:45,715 [INFO]   Copying cached repo for psf__requests-863...
+2026-05-06 08:33:17,594 [INFO]   Completed: success | Cost: $0.937 | Time: 331.8s
+2026-05-06 08:33:17,595 [INFO]   Running: psf__requests-1963
+2026-05-06 08:33:17,596 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/psf__requests
+2026-05-06 08:33:17,596 [INFO]   Copying cached repo for psf__requests-1963...
+2026-05-06 08:34:05,183 [INFO]   Completed: success | Cost: $0.113 | Time: 47.5s
+2026-05-06 08:34:05,193 [INFO]   Running: psf__requests-2674
+2026-05-06 08:34:05,193 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/psf__requests
+2026-05-06 08:34:05,193 [INFO]   Copying cached repo for psf__requests-2674...
+2026-05-06 08:35:32,709 [INFO]   Completed: success | Cost: $0.206 | Time: 87.5s
+2026-05-06 08:35:32,718 [INFO]   Running: psf__requests-2317
+2026-05-06 08:35:32,718 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/psf__requests
+2026-05-06 08:35:32,718 [INFO]   Copying cached repo for psf__requests-2317...
+2026-05-06 08:36:19,684 [INFO]   Completed: success | Cost: $0.125 | Time: 46.9s
+2026-05-06 08:36:19,689 [INFO]   Running: psf__requests-3362
+2026-05-06 08:36:19,689 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/psf__requests
+2026-05-06 08:36:19,689 [INFO]   Copying cached repo for psf__requests-3362...
+2026-05-06 08:36:52,695 [INFO]   Completed: success | Cost: $0.083 | Time: 33.0s
+2026-05-06 08:36:52,700 [INFO]   Running: pytest-dev__pytest-11148
+2026-05-06 08:36:52,700 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pytest-dev__pytest
+2026-05-06 08:36:52,700 [INFO]   Copying cached repo for pytest-dev__pytest-11148...
+2026-05-06 08:40:29,443 [INFO]   Completed: success | Cost: $0.632 | Time: 216.6s
+2026-05-06 08:40:29,461 [INFO]   Running: pytest-dev__pytest-11143
+2026-05-06 08:40:29,461 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pytest-dev__pytest
+2026-05-06 08:40:29,462 [INFO]   Copying cached repo for pytest-dev__pytest-11143...
+2026-05-06 08:41:19,132 [INFO]   Completed: success | Cost: $0.152 | Time: 49.6s
+2026-05-06 08:41:19,148 [INFO]   Running: pytest-dev__pytest-5692
+2026-05-06 08:41:19,149 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pytest-dev__pytest
+2026-05-06 08:41:19,149 [INFO]   Copying cached repo for pytest-dev__pytest-5692...
+2026-05-06 08:42:04,898 [INFO]   Completed: success | Cost: $0.117 | Time: 45.6s
+2026-05-06 08:42:04,909 [INFO]   Running: pytest-dev__pytest-6116
+2026-05-06 08:42:04,909 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pytest-dev__pytest
+2026-05-06 08:42:04,909 [INFO]   Copying cached repo for pytest-dev__pytest-6116...
+2026-05-06 08:45:30,790 [INFO]   Completed: success | Cost: $0.499 | Time: 205.8s
+2026-05-06 08:45:30,806 [INFO]   Running: pytest-dev__pytest-5413
+2026-05-06 08:45:30,806 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pytest-dev__pytest
+2026-05-06 08:45:30,807 [INFO]   Copying cached repo for pytest-dev__pytest-5413...
+2026-05-06 08:47:12,495 [INFO]   Completed: success | Cost: $0.244 | Time: 101.6s
+2026-05-06 08:47:12,508 [INFO]   Running: pallets__flask-4045
+2026-05-06 08:47:12,508 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pallets__flask
+2026-05-06 08:47:12,508 [INFO]   Copying cached repo for pallets__flask-4045...
+2026-05-06 08:47:44,696 [INFO]   Completed: success | Cost: $0.091 | Time: 32.1s
+2026-05-06 08:47:44,703 [INFO]   Running: pylint-dev__pylint-5859
+2026-05-06 08:47:44,703 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pylint-dev__pylint
+2026-05-06 08:47:44,703 [INFO]   Copying cached repo for pylint-dev__pylint-5859...
+2026-05-06 08:50:32,186 [INFO]   Completed: success | Cost: $0.379 | Time: 167.2s
+2026-05-06 08:50:32,227 [INFO]   Running: pylint-dev__pylint-6506
+2026-05-06 08:50:32,227 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pylint-dev__pylint
+2026-05-06 08:50:32,227 [INFO]   Copying cached repo for pylint-dev__pylint-6506...
+2026-05-06 09:01:00,792 [INFO]   Completed: success | Cost: $0.077 | Time: 628.2s
+2026-05-06 09:01:00,850 [INFO]   Running: pylint-dev__pylint-7228
+2026-05-06 09:01:00,850 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pylint-dev__pylint
+2026-05-06 09:01:00,850 [INFO]   Copying cached repo for pylint-dev__pylint-7228...
+2026-05-06 09:04:32,146 [INFO]   Completed: success | Cost: $0.501 | Time: 210.9s
+2026-05-06 09:04:32,224 [INFO]   Running: pylint-dev__pylint-7114
+2026-05-06 09:04:32,225 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pylint-dev__pylint
+2026-05-06 09:04:32,225 [INFO]   Copying cached repo for pylint-dev__pylint-7114...
+2026-05-06 09:10:55,830 [INFO]   Completed: success | Cost: $0.759 | Time: 383.2s
+2026-05-06 09:10:55,906 [INFO]   Running: pylint-dev__pylint-7993
+2026-05-06 09:10:55,906 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pylint-dev__pylint
+2026-05-06 09:10:55,906 [INFO]   Copying cached repo for pylint-dev__pylint-7993...
+2026-05-06 09:14:08,685 [INFO]   Completed: success | Cost: $0.376 | Time: 192.4s
+2026-05-06 09:14:08,765 [INFO]   Running: pallets__flask-4992
+2026-05-06 09:14:08,765 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pallets__flask
+2026-05-06 09:14:08,765 [INFO]   Copying cached repo for pallets__flask-4992...
+2026-05-06 09:15:11,719 [INFO]   Completed: success | Cost: $0.183 | Time: 62.9s
+2026-05-06 09:15:11,731 [INFO]   Running: pallets__flask-5063
+2026-05-06 09:15:11,731 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pallets__flask
+2026-05-06 09:15:11,731 [INFO]   Copying cached repo for pallets__flask-5063...
+2026-05-06 09:18:26,597 [INFO]   Completed: success | Cost: $0.470 | Time: 194.8s
+2026-05-06 09:18:26,610 [INFO]   Running: sphinx-doc__sphinx-8713
+2026-05-06 09:18:26,610 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/sphinx-doc__sphinx
+2026-05-06 09:18:26,610 [INFO]   Copying cached repo for sphinx-doc__sphinx-8713...
+2026-05-06 09:19:26,023 [INFO]   Completed: success | Cost: $0.202 | Time: 59.0s
+2026-05-06 09:19:26,065 [INFO]   Running: sphinx-doc__sphinx-8506
+2026-05-06 09:19:26,065 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/sphinx-doc__sphinx
+2026-05-06 09:19:26,065 [INFO]   Copying cached repo for sphinx-doc__sphinx-8506...
+2026-05-06 09:22:37,747 [INFO]   Completed: success | Cost: $0.490 | Time: 191.3s
+2026-05-06 09:22:37,789 [INFO]   Running: sphinx-doc__sphinx-8595
+2026-05-06 09:22:37,789 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/sphinx-doc__sphinx
+2026-05-06 09:22:37,790 [INFO]   Copying cached repo for sphinx-doc__sphinx-8595...
+2026-05-06 09:24:11,629 [INFO]   Completed: success | Cost: $0.246 | Time: 93.5s
+2026-05-06 09:24:11,672 [INFO]   Running: sphinx-doc__sphinx-8627
+2026-05-06 09:24:11,672 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/sphinx-doc__sphinx
+2026-05-06 09:24:11,672 [INFO]   Copying cached repo for sphinx-doc__sphinx-8627...
+2026-05-06 09:29:11,627 [INFO]   Completed: success | Cost: $0.816 | Time: 299.6s
+2026-05-06 09:29:11,691 [INFO]   Running: sphinx-doc__sphinx-8721
+2026-05-06 09:29:11,691 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/sphinx-doc__sphinx
+2026-05-06 09:29:11,692 [INFO]   Copying cached repo for sphinx-doc__sphinx-8721...
+2026-05-06 09:29:48,380 [INFO]   Completed: success | Cost: $0.094 | Time: 36.2s
+2026-05-06 09:29:48,421 [INFO]   Running: mwaskom__seaborn-2848
+2026-05-06 09:29:48,422 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/mwaskom__seaborn
+2026-05-06 09:29:48,422 [INFO]   Copying cached repo for mwaskom__seaborn-2848...
+2026-05-06 09:36:35,417 [INFO]   Completed: success | Cost: $1.199 | Time: 406.9s
+2026-05-06 09:36:35,429 [INFO]   Running: mwaskom__seaborn-3010
+2026-05-06 09:36:35,429 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/mwaskom__seaborn
+2026-05-06 09:36:35,429 [INFO]   Copying cached repo for mwaskom__seaborn-3010...
+2026-05-06 09:36:49,735 [INFO]   Completed: success | Cost: $0.053 | Time: 14.2s
+2026-05-06 09:36:49,746 [INFO]   Running: mwaskom__seaborn-3190
+2026-05-06 09:36:49,747 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/mwaskom__seaborn
+2026-05-06 09:36:49,747 [INFO]   Copying cached repo for mwaskom__seaborn-3190...
+2026-05-06 09:38:58,830 [INFO]   Completed: success | Cost: $0.266 | Time: 129.0s
+2026-05-06 09:38:58,839 [INFO]   Running: mwaskom__seaborn-3407
+2026-05-06 09:38:58,839 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/mwaskom__seaborn
+2026-05-06 09:38:58,839 [INFO]   Copying cached repo for mwaskom__seaborn-3407...
+2026-05-06 09:42:49,939 [INFO]   Completed: success | Cost: $0.479 | Time: 231.0s
+2026-05-06 09:42:49,948 [INFO]   Running: sympy__sympy-11400
+2026-05-06 09:42:49,948 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/sympy__sympy
+2026-05-06 09:42:49,948 [INFO]   Copying cached repo for sympy__sympy-11400...
+2026-05-06 09:44:21,661 [INFO]   Completed: success | Cost: $0.236 | Time: 91.3s
+2026-05-06 09:44:21,691 [INFO]   Running: sympy__sympy-11897
+2026-05-06 09:44:21,692 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/sympy__sympy
+2026-05-06 09:44:21,692 [INFO]   Copying cached repo for sympy__sympy-11897...
+2026-05-06 09:52:37,218 [INFO]   Completed: success | Cost: $1.240 | Time: 495.2s
+2026-05-06 09:52:37,260 [INFO]   Running: sympy__sympy-12171
+2026-05-06 09:52:37,261 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/sympy__sympy
+2026-05-06 09:52:37,261 [INFO]   Copying cached repo for sympy__sympy-12171...
+2026-05-06 09:52:59,164 [INFO]   Completed: success | Cost: $0.081 | Time: 21.5s
+2026-05-06 09:52:59,195 [INFO]   Running: sympy__sympy-12236
+2026-05-06 09:52:59,196 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/sympy__sympy
+2026-05-06 09:52:59,196 [INFO]   Copying cached repo for sympy__sympy-12236...
+2026-05-06 10:11:35,262 [INFO]   Completed: success | Cost: $2.650 | Time: 1115.7s
+2026-05-06 10:11:35,302 [INFO]   Running: sympy__sympy-12419
+2026-05-06 10:11:35,303 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/sympy__sympy
+2026-05-06 10:11:35,303 [INFO]   Copying cached repo for sympy__sympy-12419...
+2026-05-06 10:15:13,190 [INFO]   Completed: success | Cost: $0.525 | Time: 217.5s
+2026-05-06 10:15:13,224 [INFO]   Running: astropy__astropy-14995
+2026-05-06 10:15:13,224 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/astropy__astropy
+2026-05-06 10:15:13,224 [INFO]   Copying cached repo for astropy__astropy-14995...
+2026-05-06 10:17:14,880 [INFO]   Completed: success | Cost: $0.170 | Time: 121.1s
+2026-05-06 10:17:14,930 [INFO]   Running: astropy__astropy-14365
+2026-05-06 10:17:14,930 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/astropy__astropy
+2026-05-06 10:17:14,930 [INFO]   Copying cached repo for astropy__astropy-14365...
+2026-05-06 10:19:02,146 [INFO]   Completed: success | Cost: $0.170 | Time: 106.7s
+2026-05-06 10:19:02,197 [INFO]   Running: astropy__astropy-12907
+2026-05-06 10:19:02,197 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/astropy__astropy
+2026-05-06 10:19:02,197 [INFO]   Copying cached repo for astropy__astropy-12907...
+2026-05-06 10:21:08,077 [INFO]   Completed: success | Cost: $0.148 | Time: 125.4s
+2026-05-06 10:21:08,138 [INFO]   Running: astropy__astropy-14182
+2026-05-06 10:21:08,138 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/astropy__astropy
+2026-05-06 10:21:08,138 [INFO]   Copying cached repo for astropy__astropy-14182...
+2026-05-06 10:26:02,863 [INFO]   Completed: success | Cost: $0.563 | Time: 294.2s
+2026-05-06 10:26:02,923 [INFO]   Running: astropy__astropy-6938
+2026-05-06 10:26:02,923 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/astropy__astropy
+2026-05-06 10:26:02,923 [INFO]   Copying cached repo for astropy__astropy-6938...
+2026-05-06 10:28:53,120 [INFO]   Completed: success | Cost: $0.411 | Time: 169.7s
+2026-05-06 10:28:53,162 [INFO]   Running: django__django-10914
+2026-05-06 10:28:53,163 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/django__django
+2026-05-06 10:28:53,163 [INFO]   Copying cached repo for django__django-10914...
+2026-05-06 10:30:11,970 [INFO]   Completed: success | Cost: $0.182 | Time: 77.6s
+2026-05-06 10:30:12,156 [INFO]   Running: django__django-11019
+2026-05-06 10:30:12,157 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/django__django
+2026-05-06 10:30:12,157 [INFO]   Copying cached repo for django__django-11019...
+2026-05-06 10:38:42,029 [INFO]   Completed: success | Cost: $1.328 | Time: 508.8s
+2026-05-06 10:38:42,217 [INFO]   Running: django__django-11049
+2026-05-06 10:38:42,218 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/django__django
+2026-05-06 10:38:42,218 [INFO]   Copying cached repo for django__django-11049...
+2026-05-06 10:41:54,983 [INFO]   Completed: success | Cost: $0.536 | Time: 191.6s
+2026-05-06 10:41:55,211 [INFO]   Running: django__django-11039
+2026-05-06 10:41:55,212 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/django__django
+2026-05-06 10:41:55,212 [INFO]   Copying cached repo for django__django-11039...
+2026-05-06 10:44:20,073 [INFO]   Completed: success | Cost: $0.380 | Time: 143.7s
+2026-05-06 10:44:20,261 [INFO]   Running: django__django-11099
+2026-05-06 10:44:20,261 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/django__django
+2026-05-06 10:44:20,261 [INFO]   Copying cached repo for django__django-11099...
+2026-05-06 10:44:39,770 [INFO]   Completed: success | Cost: $0.089 | Time: 18.4s
+2026-05-06 10:44:39,944 [INFO]   Running: scikit-learn__scikit-learn-10508
+2026-05-06 10:44:39,944 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/scikit-learn__scikit-learn
+2026-05-06 10:44:39,944 [INFO]   Copying cached repo for scikit-learn__scikit-learn-10508...
+2026-05-06 10:45:43,479 [INFO]   Completed: success | Cost: $0.152 | Time: 63.2s
+2026-05-06 10:45:43,503 [INFO]   Running: scikit-learn__scikit-learn-10297
+2026-05-06 10:45:43,504 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/scikit-learn__scikit-learn
+2026-05-06 10:45:43,504 [INFO]   Copying cached repo for scikit-learn__scikit-learn-10297...
+2026-05-06 10:46:41,718 [INFO]   Completed: success | Cost: $0.175 | Time: 57.9s
+2026-05-06 10:46:41,742 [INFO]   Running: scikit-learn__scikit-learn-11040
+2026-05-06 10:46:41,743 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/scikit-learn__scikit-learn
+2026-05-06 10:46:41,743 [INFO]   Copying cached repo for scikit-learn__scikit-learn-11040...
+2026-05-06 10:48:17,979 [INFO]   Completed: success | Cost: $0.290 | Time: 96.0s
+2026-05-06 10:48:18,002 [INFO]   Running: scikit-learn__scikit-learn-11281
+2026-05-06 10:48:18,003 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/scikit-learn__scikit-learn
+2026-05-06 10:48:18,003 [INFO]   Copying cached repo for scikit-learn__scikit-learn-11281...
+2026-05-06 10:49:21,803 [INFO]   Completed: success | Cost: $0.136 | Time: 63.5s
+2026-05-06 10:49:21,828 [INFO]   Running: scikit-learn__scikit-learn-10949
+2026-05-06 10:49:21,829 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/scikit-learn__scikit-learn
+2026-05-06 10:49:21,829 [INFO]   Copying cached repo for scikit-learn__scikit-learn-10949...
+2026-05-06 10:51:37,164 [INFO]   Completed: success | Cost: $0.312 | Time: 135.0s
+2026-05-06 10:51:37,192 [INFO]   Running: pydata__xarray-4094
+2026-05-06 10:51:37,193 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pydata__xarray
+2026-05-06 10:51:37,193 [INFO]   Copying cached repo for pydata__xarray-4094...
+2026-05-06 10:56:59,914 [INFO]   Completed: success | Cost: $0.688 | Time: 322.6s
+2026-05-06 10:56:59,925 [INFO]   Running: pydata__xarray-4248
+2026-05-06 10:56:59,925 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pydata__xarray
+2026-05-06 10:56:59,925 [INFO]   Copying cached repo for pydata__xarray-4248...
+2026-05-06 10:59:31,990 [INFO]   Completed: success | Cost: $0.320 | Time: 152.0s
+2026-05-06 10:59:32,000 [INFO]   Running: pydata__xarray-4493
+2026-05-06 10:59:32,000 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pydata__xarray
+2026-05-06 10:59:32,000 [INFO]   Copying cached repo for pydata__xarray-4493...
+2026-05-06 11:06:31,003 [INFO]   Completed: success | Cost: $0.705 | Time: 418.9s
+2026-05-06 11:06:31,016 [INFO]   Done: 50 run, 0 skipped
+2026-05-06 11:06:31,040 [INFO] Evaluating: psf__requests-863
+2026-05-06 11:06:31,040 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 11:06:31,041 [INFO] Evaluating: psf__requests-1963
+2026-05-06 11:06:31,084 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.psf__requests-1963:latest
+2026-05-06 11:06:31,085 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.psf__requests-1963:latest
+2026-05-06 11:06:31,313 [INFO]   Container started: f6a240dd6c3d
+2026-05-06 11:06:31,412 [INFO]   Patch applied successfully
+2026-05-06 11:06:31,486 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 11:06:31,568 [INFO]   Running FAIL_TO_PASS tests (7)...
+2026-05-06 11:06:40,966 [INFO]   Test exit code: 0
+2026-05-06 11:06:40,966 [INFO]   Test output (last 500 chars):  collections import Mapping
+
+test_requests.py::RequestsTestCase::test_DIGESTAUTH_QUOTES_QOP_VALUE
+  /testbed/requests/models.py:164: DeprecationWarning: Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated since Python 3.3, and in 3.10 it will stop working
+    if isinstance(hook, collections.Callable):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 7 passed, 10 warnings in 9.11s ========================
+
+2026-05-06 11:06:40,966 [INFO]   Running PASS_TO_PASS tests (112)...
+2026-05-06 11:07:26,887 [INFO]   Test exit code: 1
+2026-05-06 11:07:26,887 [INFO]   Test output (last 500 chars): ated since Python 3.3, and in 3.10 it will stop working
+    if isinstance(hook, collections.Callable):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED test_requests.py::RequestsTestCase::test_pyopenssl_redirect - requests...
+FAILED test_requests.py::TestTimeout::test_stream_timeout - requests.exceptio...
+================== 2 failed, 110 passed, 3 warnings in 45.63s ==================
+
+2026-05-06 11:07:27,168 [INFO]   Container removed
+2026-05-06 11:07:27,168 [INFO]   Result: NOT RESOLVED | F2P: 100% | P2P: 98%
+2026-05-06 11:07:27,168 [INFO] Evaluating: psf__requests-2674
+2026-05-06 11:07:27,210 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.psf__requests-2674:latest
+2026-05-06 11:07:27,211 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.psf__requests-2674:latest
+2026-05-06 11:07:27,414 [INFO]   Container started: 22c1a41c3b52
+2026-05-06 11:07:27,526 [INFO]   Patch applied successfully
+2026-05-06 11:07:27,614 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 11:07:27,695 [INFO]   Running FAIL_TO_PASS tests (12)...
+2026-05-06 11:07:44,260 [INFO]   Test exit code: 1
+2026-05-06 11:07:44,260 [INFO]   Test output (last 500 chars):  or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated since Python 3.3, and in 3.10 it will stop working
+    if isinstance(hook, collections.Callable):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED test_requests.py::RequestsTestCase::test_mixed_case_scheme_acceptable
+================== 1 failed, 11 passed, 22 warnings in 16.27s ==================
+
+2026-05-06 11:07:44,260 [INFO]   Running PASS_TO_PASS tests (142)...
+2026-05-06 11:08:39,498 [INFO]   Test exit code: 1
+2026-05-06 11:08:39,498 [INFO]   Test output (last 500 chars): n requests 3.0, get_encodings_from_content will be removed. For more information, please see the discussion on issue #2266. (This warning should only appear once.)
+    warnings.warn((
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED test_requests.py::RequestsTestCase::test_pyopenssl_redirect - requests...
+================== 1 failed, 141 passed, 9 warnings in 54.93s ==================
+
+2026-05-06 11:08:39,724 [INFO]   Container removed
+2026-05-06 11:08:39,725 [INFO]   Result: NOT RESOLVED | F2P: 92% | P2P: 99%
+2026-05-06 11:08:39,725 [INFO] Evaluating: psf__requests-2317
+2026-05-06 11:08:39,765 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.psf__requests-2317:latest
+2026-05-06 11:08:39,765 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.psf__requests-2317:latest
+2026-05-06 11:08:39,970 [INFO]   Container started: f232d90dedea
+2026-05-06 11:08:40,052 [INFO]   Patch applied successfully
+2026-05-06 11:08:40,137 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 11:08:40,215 [INFO]   Running FAIL_TO_PASS tests (8)...
+2026-05-06 11:08:49,768 [INFO]   Test exit code: 1
+2026-05-06 11:08:49,768 [INFO]   Test output (last 500 chars): importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated since Python 3.3, and in 3.10 it will stop working
+    if isinstance(hook, collections.Callable):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED test_requests.py::RequestsTestCase::test_requests_history_is_saved - r...
+=================== 1 failed, 7 passed, 10 warnings in 9.27s ===================
+
+2026-05-06 11:08:49,768 [INFO]   Running PASS_TO_PASS tests (133)...
+2026-05-06 11:23:50,577 [WARNING]   Test execution timed out after 900s; parsing 1966 chars of partial output (completed tests keep real results; rest are False)
+2026-05-06 11:23:50,644 [INFO]   Test output (last 500 chars): SSED [ 12%]
+test_requests.py::RequestsTestCase::test_basic_building PASSED           [ 12%]
+test_requests.py::RequestsTestCase::test_can_send_nonstring_objects_with_files PASSED [ 13%]
+test_requests.py::RequestsTestCase::test_cannot_send_unprepared_requests PASSED [ 14%]
+test_requests.py::RequestsTestCase::test_connection_error PASSED         [ 15%]
+test_requests.py::RequestsTestCase::test_cookie_as_dict_items PASSED     [ 15%]
+test_requests.py::RequestsTestCase::test_cookie_as_dict_keeps_items 
+2026-05-06 11:23:53,818 [INFO]   Container removed
+2026-05-06 11:23:53,833 [INFO]   Result: NOT RESOLVED | F2P: 88% | P2P: 16%
+2026-05-06 11:23:53,834 [INFO] Evaluating: psf__requests-3362
+2026-05-06 11:23:53,836 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 11:23:53,836 [INFO] Evaluating: pytest-dev__pytest-11148
+2026-05-06 11:23:56,274 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.pytest-dev__pytest-11148:latest
+2026-05-06 11:23:56,284 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.pytest-dev__pytest-11148:latest
+2026-05-06 11:24:07,425 [INFO]   Container started: 71e3216a0ff9
+2026-05-06 11:24:37,770 [INFO]   Patch applied successfully
+2026-05-06 11:24:51,271 [INFO]   Reset 2 test path(s) before test_patch
+2026-05-06 11:25:41,512 [INFO]   Container removed
+2026-05-06 11:25:41,519 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 11:25:41,520 [INFO] Evaluating: pytest-dev__pytest-11143
+2026-05-06 11:25:44,681 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.pytest-dev__pytest-11143:latest
+2026-05-06 11:25:44,687 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.pytest-dev__pytest-11143:latest
+2026-05-06 11:25:51,299 [INFO]   Container started: 92e925596b4d
+2026-05-06 11:25:53,275 [INFO]   Patch applied successfully
+2026-05-06 11:25:55,379 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 11:26:16,413 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-05-06 11:28:30,761 [INFO]   Test exit code: 0
+2026-05-06 11:28:30,775 [INFO]   Test output (last 500 chars): ============================= test session starts ==============================
+collecting ... collected 1 item
+
+testing/test_assertrewrite.py::TestIssue11140::test_constant_not_picked_as_module_docstring PASSED [100%]
+
+============================== 1 passed in 6.10s ===============================
+
+2026-05-06 11:28:30,775 [INFO]   Running PASS_TO_PASS tests (114)...
+2026-05-06 11:30:50,968 [INFO]   Test exit code: 4
+2026-05-06 11:30:50,975 [INFO]   Test output (last 500 chars): write.py::test_get_assertion_exprs[escaped
+(no name '/testbed/testing/test_assertrewrite.py::test_get_assertion_exprs[escaped' in any of [<Module testing/test_assertrewrite.py>])
+
+ERROR: not found: /testbed/testing/test_assertrewrite.py::test_get_assertion_exprs[no
+(no name '/testbed/testing/test_assertrewrite.py::test_get_assertion_exprs[no' in any of [<Module testing/test_assertrewrite.py>])
+
+collected 104 items
+
+============================ no tests ran in 29.94s ============================
+
+2026-05-06 11:30:58,344 [INFO]   Container removed
+2026-05-06 11:30:58,348 [INFO]   Result: NOT RESOLVED | F2P: 100% | P2P: 0%
+2026-05-06 11:30:58,348 [INFO] Evaluating: pytest-dev__pytest-5692
+2026-05-06 11:30:58,755 [INFO]   Image already exists: ghcr.io/epoch-research/swe-bench.eval.x86_64.pytest-dev__pytest-5692:latest
+2026-05-06 11:30:58,760 [INFO]   Starting container from ghcr.io/epoch-research/swe-bench.eval.x86_64.pytest-dev__pytest-5692:latest
+2026-05-06 11:31:01,344 [INFO]   Container started: 3943a4ab2d50
+2026-05-06 11:31:03,640 [INFO]   Patch applied successfully
+2026-05-06 11:31:05,383 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 11:31:07,406 [INFO]   Running FAIL_TO_PASS tests (2)...
+2026-05-06 11:41:23,800 [WARNING]   Test execution timed out after 600s; parsing 0 chars of partial output (completed tests keep real results; rest are False)
+2026-05-06 11:41:55,459 [INFO]   Test output (last 500 chars): 
+2026-05-06 11:42:33,337 [INFO]   Running PASS_TO_PASS tests (68)...

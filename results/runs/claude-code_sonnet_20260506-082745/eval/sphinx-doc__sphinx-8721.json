@@ -1,0 +1,17 @@
+{
+  "instance_id": "sphinx-doc__sphinx-8721",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "tests/test_ext_viewcode.py::test_viewcode_epub_default": true
+  },
+  "pass_to_pass_results": {
+    "tests/test_ext_viewcode.py::test_viewcode_epub_enabled": true,
+    "tests/test_ext_viewcode.py::test_linkcode": true,
+    "tests/test_ext_viewcode.py::test_local_source_files": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

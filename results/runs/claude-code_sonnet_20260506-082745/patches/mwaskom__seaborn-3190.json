@@ -1,0 +1,22 @@
+{
+  "instance_id": "mwaskom__seaborn-3190",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/seaborn/_core/scales.py b/seaborn/_core/scales.py\nindex 6c9ecbc9..49962de0 100644\n--- a/seaborn/_core/scales.py\n+++ b/seaborn/_core/scales.py\n@@ -876,7 +876,10 @@ class PseudoAxis:\n \n     def convert_units(self, x):\n         \"\"\"Return a numeric representation of the input data.\"\"\"\n-        if np.issubdtype(np.asarray(x).dtype, np.number):\n+        arr = np.asarray(x)\n+        if arr.dtype.kind == \"b\":\n+            return arr.astype(int)\n+        if np.issubdtype(arr.dtype, np.number):\n             return x\n         elif self.converter is None:\n             return x\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 183397,
+    "output_tokens": 4083,
+    "cache_read_tokens": 169265,
+    "cache_write_tokens": 14121
+  },
+  "timestamps": {
+    "task_start": 1778027809.8238642,
+    "task_end": 1778027938.8094695,
+    "first_action": 1778027822.0360641
+  },
+  "total_cost_usd": 0.2661635,
+  "convergence_steps": 10,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":127352,\"duration_api_ms\":122122,\"num_turns\":10,\"result\":\"All 83 tests pass. The fix is in `PseudoAxis.convert_units` (`scales.py:877`): booleans were falling through the `np.issubdtype(..., np.number)` check (since `bool` is not a numpy numeric subtype) and returning unchanged, causing `True - False` to raise a `TypeError`. The fix adds a `dtype.kind == \\\"b\\\"` check to cast boolean arrays to `int` before returning.\",\"stop_reason\":\"end_turn\",\"session_id\":\"9fddf6db-0d5c-4808-9d01-c8c79d9f2768\",\"total_cost_usd\":0.2661635,\"usage\":{\"input_tokens\":11,\"cache_creation_input_tokens\":14121,\"cache_read_input_tokens\":169265,\"output_tokens\":4083,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":14121,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":109,\"cache_read_input_tokens\":25375,\"cache_creation_input_tokens\":377,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":377},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":949,\"outputTokens\":3240,\"cacheReadInputTokens\":359645,\"cacheCreationInputTokens\":38431,\"webSearchRequests\":0,\"costUSD\":0.10115225,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":11,\"outputTokens\":4083,\"cacheReadInputTokens\":169265,\"cacheCreationInputTokens\":14121,\"webSearchRequests\":0,\"costUSD\":0.16501125,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"7ce46282-5cea-4a3e-b1c7-3f12ef22b6bf\"}\n",
+  "model_name": ""
+}

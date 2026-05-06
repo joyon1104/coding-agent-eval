@@ -1,0 +1,22 @@
+{
+  "instance_id": "scikit-learn__scikit-learn-11281",
+  "agent_name": "claude-code",
+  "patch": "",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 29857,
+    "output_tokens": 710,
+    "cache_read_tokens": 24312,
+    "cache_write_tokens": 5536
+  },
+  "timestamps": {
+    "task_start": 1778030655.9248412,
+    "task_end": 1778030666.6722186,
+    "first_action": 1778030665.9638412
+  },
+  "total_cost_usd": 0.0134512,
+  "convergence_steps": 1,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":8982,\"duration_api_ms\":10039,\"num_turns\":1,\"result\":\"I'd recommend moving toward a more compatible interface, but with nuance: standardize the easy surface-level consistency (`fit_predict`, `labels_` as hard assignments) while keeping `n_components` if it better reflects the probabilistic nature. The main trade-off is breaking changes vs API uniformity—users already using MMs would need migration, but new users would face less cognitive load.\\n\\nThe core tension is real though: mixture models are *soft* clusterers (probabilistic assignments), and that's fundamentally different from hard-assignment clusterers. So the question is whether the API difference should surface that (current approach) or be hidden behind a uniform interface. Either is defensible—it depends on whether you want the API to guide users toward understanding the semantic difference or toward treating them as interchangeable tools.\\n\\nIs this for an issue/discussion you're working on, or are you exploring the design question more broadly?\",\"stop_reason\":\"end_turn\",\"session_id\":\"602852de-04b6-43ea-bfea-db9533aee8e3\",\"total_cost_usd\":0.0134512,\"usage\":{\"input_tokens\":9,\"cache_creation_input_tokens\":5536,\"cache_read_input_tokens\":24312,\"output_tokens\":710,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":5536,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":9,\"output_tokens\":710,\"cache_read_input_tokens\":24312,\"cache_creation_input_tokens\":5536,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":5536},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":470,\"outputTokens\":726,\"cacheReadInputTokens\":24312,\"cacheCreationInputTokens\":5536,\"webSearchRequests\":0,\"costUSD\":0.0134512,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"8f428475-0acf-4616-ae65-e35829a76912\"}\n",
+  "model_name": ""
+}
