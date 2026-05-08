@@ -1,0 +1,22 @@
+{
+  "instance_id": "redis__redis-9733",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/src/db.c b/src/db.c\nindex 8a90d3215..4abb4d466 100644\n--- a/src/db.c\n+++ b/src/db.c\n@@ -1681,9 +1681,9 @@ int genericGetKeys(int storeKeyOfs, int keyCountOfs, int firstKeyOfs, int keySte\n     int i, num, *keys;\n \n     num = atoi(argv[keyCountOfs]->ptr);\n-    /* Sanity check. Don't return any key if the command is going to\n-     * reply with syntax error. (no input keys). */\n-    if (num < 1 || num > (argc - firstKeyOfs)/keyStep) {\n+    /* Sanity check. Return error if the command is going to reply with syntax error\n+     * (negative number of keys or insufficient arguments provided). */\n+    if (num < 0 || (num > 0 && num > (argc - firstKeyOfs)/keyStep)) {\n         result->numkeys = 0;\n         return 0;\n     }\n@@ -1696,7 +1696,7 @@ int genericGetKeys(int storeKeyOfs, int keyCountOfs, int firstKeyOfs, int keySte\n     for (i = 0; i < num; i++) keys[i] = firstKeyOfs+(i*keyStep);\n \n     if (storeKeyOfs) keys[num] = storeKeyOfs;\n-    return result->numkeys;\n+    return 1;\n }\n \n int sintercardGetKeys(struct redisCommand *cmd, robj **argv, int argc, getKeysResult *result) {\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 3539495,
+    "output_tokens": 18129,
+    "cache_read_tokens": 3494051,
+    "cache_write_tokens": 44973
+  },
+  "timestamps": {
+    "task_start": 1778215365.6906443,
+    "task_end": 1778215606.9091113,
+    "first_action": 1778215368.809704
+  },
+  "total_cost_usd": 0.49731835,
+  "convergence_steps": 67,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":239515,\"duration_api_ms\":208977,\"num_turns\":67,\"result\":\"## Bug Fix Complete\\n\\nI've successfully fixed the bug in `COMMAND GETKEYS eval ... 0`. The issue was in the `genericGetKeys` function in `src/db.c`.\\n\\n### The Problem\\n- `COMMAND GETKEYS eval \\\"return 1\\\" 0` was returning `ERR Invalid arguments specified for command` instead of an empty array\\n- Zero keys is a valid case for EVAL scripts, but the code was treating it as an error\\n\\n### Root Cause\\nThe `genericGetKeys` function had two issues:\\n1. The condition `if (num < 1 || ...)` incorrectly rejected `num == 0` (zero keys)\\n2. The function returned `result->numkeys` (which could be 0), but the caller interpreted 0 as an error indicator\\n\\n### The Fix\\nTwo changes to `genericGetKeys` at `src/db.c:1679`:\\n1. **Updated error condition**: Changed from `num < 1 || ...` to `num < 0 || (num > 0 && ...)` to:\\n   - Only reject negative numbers (actual syntax errors)\\n   - Only check argument count when `num > 0`\\n   - Allow `num == 0` (zero keys) as a valid case\\n   \\n2. **Changed return value**: Return `1` (success) instead of `result->numkeys`, since the caller uses the return value as a boolean (0 = error, non-zero = success)\\n\\n### Testing\\nAll test cases pass:\\n- ✅ `EVAL` with 0 keys → returns empty array\\n- ✅ `EVAL` with 1 key → returns the key\\n- ✅ `EVAL` with 2 keys → returns both keys\\n- ✅ `EVAL` with -1 keys → returns error (as expected)\\n- ✅ `EVAL` requesting 2 keys but only 1 provided → returns error (as expected)\\n- ✅ Other commands using `genericGetKeys` (SINTERCARD, ZUNION, etc.) still work correctly\",\"stop_reason\":\"end_turn\",\"session_id\":\"f4fd2575-7db4-46ce-b24d-99549ef25234\",\"total_cost_usd\":0.49731835,\"usage\":{\"input_tokens\":471,\"cache_creation_input_tokens\":44973,\"cache_read_input_tokens\":3494051,\"output_tokens\":18129,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":44973,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":7,\"output_tokens\":505,\"cache_read_input_tokens\":68866,\"cache_creation_input_tokens\":542,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":542},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":967,\"outputTokens\":18146,\"cacheReadInputTokens\":3494051,\"cacheCreationInputTokens\":44973,\"webSearchRequests\":0,\"costUSD\":0.49731835,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"bbd8e961-ec29-4acd-ae1a-265c8addf195\"}\n",
+  "model_name": ""
+}

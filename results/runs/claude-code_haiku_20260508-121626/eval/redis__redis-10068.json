@@ -1,0 +1,21 @@
+{
+  "instance_id": "redis__redis-10068",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "XTRIM with MINID option, big delta from master record": true
+  },
+  "pass_to_pass_results": {
+    "XTRIM with MINID option": true,
+    "XTRIM with MAXLEN option basic test": true,
+    "XTRIM with ~ is limited": true,
+    "XTRIM without ~ is not limited": true,
+    "XTRIM without ~ and with LIMIT": true,
+    "XTRIM with LIMIT delete entries no more than limit": true,
+    "XTRIM with ~ MAXLEN can propagate correctly": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

@@ -1,0 +1,22 @@
+{
+  "instance_id": "caddyserver__caddy-5761",
+  "agent_name": "claude-code",
+  "patch": "",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 30146,
+    "output_tokens": 573,
+    "cache_read_tokens": 24435,
+    "cache_write_tokens": 5702
+  },
+  "timestamps": {
+    "task_start": 1778213286.0257044,
+    "task_end": 1778213293.5341043,
+    "first_action": 1778213293.1307044
+  },
+  "total_cost_usd": 0.012950999999999999,
+  "convergence_steps": 1,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":5793,\"duration_api_ms\":7105,\"num_turns\":1,\"result\":\"In Caddy's Caddyfile, `<<` and `>>` are recognized as heredoc syntax, which requires the marker between them to contain only alphanumeric characters, dashes, and underscores. Since there's only whitespace between them, Caddy rejects it.\\n\\nIf you want to use `<<` and `>>` as **literal delimiters** in the `between` function, quote them:\\n\\n```caddyfile\\nlocalhost {\\n  templates {\\n    between \\\"<<\\\" \\\">>\\\"\\n  }\\n}\\n```\\n\\nThe `between` function takes string arguments for the open and close delimiters, so quoted strings work. This tells Caddy to treat `<<` and `>>` as literal text, not as heredoc markers.\",\"stop_reason\":\"end_turn\",\"session_id\":\"80748272-e3a0-4348-a01b-9f5c5f74f119\",\"total_cost_usd\":0.012950999999999999,\"usage\":{\"input_tokens\":9,\"cache_creation_input_tokens\":5702,\"cache_read_input_tokens\":24435,\"output_tokens\":573,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":5702,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":9,\"output_tokens\":573,\"cache_read_input_tokens\":24435,\"cache_creation_input_tokens\":5702,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":5702},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":430,\"outputTokens\":590,\"cacheReadInputTokens\":24435,\"cacheCreationInputTokens\":5702,\"webSearchRequests\":0,\"costUSD\":0.012950999999999999,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"01458973-581b-4dbf-b980-56342420d131\"}\n",
+  "model_name": ""
+}

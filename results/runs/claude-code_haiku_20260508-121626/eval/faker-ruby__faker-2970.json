@@ -1,0 +1,22 @@
+{
+  "instance_id": "faker-ruby__faker-2970",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "test_email_with_abbreviations": true
+  },
+  "pass_to_pass_results": {
+    "test_email_against_name_generator": true,
+    "test_email_name_with_non_permitted_characters": true,
+    "test_email_with_apostrophes": true,
+    "test_email_with_domain_name_option_given": true,
+    "test_email_with_full_domain_option_given": true,
+    "test_email_with_name_seperators_domain": true,
+    "test_email_with_no_arguments": true,
+    "test_email_with_separators": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

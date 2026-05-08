@@ -1,0 +1,22 @@
+{
+  "instance_id": "jordansissel__fpm-1850",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/lib/fpm/package/empty.rb b/lib/fpm/package/empty.rb\nindex 29c2529..3810b89 100644\n--- a/lib/fpm/package/empty.rb\n+++ b/lib/fpm/package/empty.rb\n@@ -4,6 +4,16 @@ require \"backports/latest\"\n # Empty Package type. For strict/meta/virtual package creation\n \n class FPM::Package::Empty < FPM::Package\n+  private\n+\n+  def initialize\n+    super\n+    # Empty packages have no files, so they're not architecture-specific\n+    @architecture = \"all\"\n+  end\n+\n+  public\n+\n   def output(output_path)\n     logger.warn(\"Your package has gone into the void.\")\n   end\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 839947,
+    "output_tokens": 4806,
+    "cache_read_tokens": 821116,
+    "cache_write_tokens": 18675
+  },
+  "timestamps": {
+    "task_start": 1778213819.998373,
+    "task_end": 1778213891.2961392,
+    "first_action": 1778213822.833373
+  },
+  "total_cost_usd": 0.13016735000000001,
+  "convergence_steps": 25,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":69784,\"duration_api_ms\":70875,\"num_turns\":25,\"result\":\"I've implemented the change to make empty packages default to architecture \\\"all\\\". Here's what I found and did:\\n\\n## Analysis\\n\\n**How \\\"native\\\" works:** The default architecture \\\"native\\\" is a special value that gets converted to the actual system architecture (x86_64, aarch64, etc.) when packaging. For RPM, `uname -m` is used; for Debian, `dpkg --print-architecture` is used.\\n\\n**Why this makes sense for empty packages:** Since empty packages contain no files, they aren't architecture-specific. Other architecture-agnostic package types (gem, cpan, deb) already default to \\\"all\\\", which translates to \\\"noarch\\\" in RPM and \\\"all\\\" in Debian.\\n\\n**Evidence the test expects this:** The existing test in `spec/fpm/package/empty_spec.rb` already sets `architecture = \\\"all\\\"`, suggesting this was the intended behavior.\\n\\n## Implementation\\n\\nI've modified `lib/fpm/package/empty.rb` to override the default architecture:\\n\\n```ruby\\ndef initialize\\n  super\\n  @architecture = \\\"all\\\"\\nend\\n```\\n\\nThis ensures:\\n- Empty RPM packages will be named with `.noarch` instead of `.x86_64`\\n- Empty Debian packages will be named with `_all` instead of `_amd64`\\n- The behavior aligns with other \\\"content-less\\\" package types in fpm\\n\\nThe change is backwards-incompatible in terms of package filenames, but it's semantically more correct since empty packages truly are architecture-independent.\",\"stop_reason\":\"end_turn\",\"session_id\":\"2901f4d8-4be0-4452-9d2c-47b2fa25952d\",\"total_cost_usd\":0.13016735000000001,\"usage\":{\"input_tokens\":156,\"cache_creation_input_tokens\":18675,\"cache_read_input_tokens\":821116,\"output_tokens\":4806,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":18675,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":7,\"output_tokens\":512,\"cache_read_input_tokens\":42772,\"cache_creation_input_tokens\":338,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":338},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":602,\"outputTokens\":4822,\"cacheReadInputTokens\":821116,\"cacheCreationInputTokens\":18675,\"webSearchRequests\":0,\"costUSD\":0.13016735000000001,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"22a6b851-901f-41aa-bffd-88f2ecf8bda6\"}\n",
+  "model_name": ""
+}

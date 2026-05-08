@@ -1,0 +1,15 @@
+{
+  "instance_id": "axios__axios-5085",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "issues 5028 should handle set-cookie headers as an array": false
+  },
+  "pass_to_pass_results": {
+    "issues 4999 should not fail with query parsing": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

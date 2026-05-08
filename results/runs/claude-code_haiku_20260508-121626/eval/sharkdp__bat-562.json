@@ -1,0 +1,15 @@
+{
+  "instance_id": "sharkdp__bat-562",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "does_not_print_unwanted_file_named_cache": false
+  },
+  "pass_to_pass_results": {
+    "can_print_file_named_cache": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

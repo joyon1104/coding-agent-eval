@@ -1,0 +1,25 @@
+{
+  "instance_id": "prometheus__prometheus-9248",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "TestEvaluations": false,
+    "TestEvaluations/testdata/operators.test": false
+  },
+  "pass_to_pass_results": {
+    "TestEvaluations/testdata/aggregators.test": false,
+    "TestEvaluations/testdata/at_modifier.test": false,
+    "TestEvaluations/testdata/collision.test": false,
+    "TestEvaluations/testdata/functions.test": false,
+    "TestEvaluations/testdata/histograms.test": false,
+    "TestEvaluations/testdata/literals.test": false,
+    "TestEvaluations/testdata/selectors.test": false,
+    "TestEvaluations/testdata/staleness.test": false,
+    "TestEvaluations/testdata/subquery.test": false,
+    "TestEvaluations/testdata/trig_functions.test": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

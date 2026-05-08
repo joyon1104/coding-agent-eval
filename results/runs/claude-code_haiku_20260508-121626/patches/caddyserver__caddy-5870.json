@@ -1,0 +1,22 @@
+{
+  "instance_id": "caddyserver__caddy-5870",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/admin.go b/admin.go\nindex 335b8e89..68cba798 100644\n--- a/admin.go\n+++ b/admin.go\n@@ -1205,6 +1205,12 @@ traverseLoop:\n \t\t\t\t\t}\n \t\t\t\t\tv[part] = val\n \t\t\t\tcase http.MethodDelete:\n+\t\t\t\t\tif _, ok := v[part]; !ok {\n+\t\t\t\t\t\treturn APIError{\n+\t\t\t\t\t\t\tHTTPStatus: http.StatusNotFound,\n+\t\t\t\t\t\t\tErr:        fmt.Errorf(\"[%s] key does not exist: %s\", path, part),\n+\t\t\t\t\t\t}\n+\t\t\t\t\t}\n \t\t\t\t\tdelete(v, part)\n \t\t\t\tdefault:\n \t\t\t\t\treturn fmt.Errorf(\"unrecognized method %s\", method)\ndiff --git a/admin_test.go b/admin_test.go\nindex 04aa8867..111ded5a 100644\n--- a/admin_test.go\n+++ b/admin_test.go\n@@ -104,6 +104,12 @@ func TestUnsyncedConfigAccess(t *testing.T) {\n \t\t\tpayload: `[\"e\", \"f\", \"g\"]`,\n \t\t\texpect:  `{\"foo\": \"jet\", \"bar\": {\"aa\": \"bb\"}, \"list\": [\"a\", \"b\", \"c\", \"d\", \"e\", \"f\", \"g\"]}`,\n \t\t},\n+\t\t{\n+\t\t\tmethod:    \"DELETE\",\n+\t\t\tpath:      \"/nonexistent\",\n+\t\t\tshouldErr: true,\n+\t\t\texpect:    `{\"foo\": \"jet\", \"bar\": {\"aa\": \"bb\"}, \"list\": [\"a\", \"b\", \"c\", \"d\", \"e\", \"f\", \"g\"]}`,\n+\t\t},\n \t} {\n \t\terr := unsyncedConfigAccess(tc.method, rawConfigKey+tc.path, []byte(tc.payload), nil)\n \n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 115289,
+    "output_tokens": 507,
+    "cache_read_tokens": 114531,
+    "cache_write_tokens": 754
+  },
+  "timestamps": {
+    "task_start": 1778213019.2638981,
+    "task_end": 1778213285.921318,
+    "first_action": 1778213092.218898
+  },
+  "total_cost_usd": 0.67830905,
+  "convergence_steps": 2,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":13261,\"duration_api_ms\":145910,\"num_turns\":2,\"result\":\"The background search confirmed Go isn't installed. The implementation is complete regardless — the fix is straightforward and correct.\\n\\nTo summarize the two changes made:\\n\\n**`admin.go`** — added a key-existence check before `delete()`:\\n```go\\ncase http.MethodDelete:\\n    if _, ok := v[part]; !ok {\\n        return APIError{\\n            HTTPStatus: http.StatusNotFound,\\n            Err:        fmt.Errorf(\\\"[%s] key does not exist: %s\\\", path, part),\\n        }\\n    }\\n    delete(v, part)\\n```\\n\\n**`admin_test.go`** — added a regression test for the bug:\\n```go\\n{\\n    method:    \\\"DELETE\\\",\\n    path:      \\\"/nonexistent\\\",\\n    shouldErr: true,\\n    expect:    `{\\\"foo\\\": \\\"jet\\\", \\\"bar\\\": {\\\"aa\\\": \\\"bb\\\"}, \\\"list\\\": [...]}`,\\n},\\n```\\n\\nAfter this fix, `DELETE /config/apps/http/servers/foo` when `foo` doesn't exist will return `404 Not Found` with a JSON error body like `{\\\"error\\\": \\\"[/config/apps/http/servers/foo] key does not exist: foo\\\"}` instead of silently returning 200.\",\"stop_reason\":\"end_turn\",\"session_id\":\"0f28662e-1e70-4825-b754-66d9da7c17cb\",\"total_cost_usd\":0.67830905,\"usage\":{\"input_tokens\":4,\"cache_creation_input_tokens\":754,\"cache_read_input_tokens\":114531,\"output_tokens\":507,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":754,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":360,\"cache_read_input_tokens\":57541,\"cache_creation_input_tokens\":203,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":203},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":985,\"outputTokens\":4471,\"cacheReadInputTokens\":525012,\"cacheCreationInputTokens\":30973,\"webSearchRequests\":0,\"costUSD\":0.11455745,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":23,\"outputTokens\":4836,\"cacheReadInputTokens\":1074542,\"cacheCreationInputTokens\":45008,\"webSearchRequests\":0,\"costUSD\":0.5637516,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"origin\":{\"kind\":\"task-notification\"},\"uuid\":\"0100f6f2-8087-4081-825b-977a853aded3\"}\n",
+  "model_name": ""
+}
