@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 import subprocess
 import time
 
 from src.adapters.base import AgentAdapter
 from src.core.models import AgentResult, TaskStatus, TokenUsage, Timestamps
+
+logger = logging.getLogger("coding-agent-eval")
 
 
 class ClaudeCodeAdapter(AgentAdapter):
@@ -82,7 +85,8 @@ class ClaudeCodeAdapter(AgentAdapter):
     ) -> AgentResult:
         cmd = [
             "claude", "-p", problem_statement,
-            "--output-format", "json",
+            "--output-format", "stream-json",
+            "--verbose",
             "--max-budget-usd", str(self.max_budget),
             "--allowedTools", "Bash,Read,Write,Edit",
             "--dangerously-skip-permissions",
@@ -100,83 +104,134 @@ class ClaudeCodeAdapter(AgentAdapter):
             env.update(self._vllm_env)
 
         t_start = time.time()
-        first_action = 0.0
+        first_action_time: float = 0.0
         base_sha = self._capture_base_sha(repo_path)
 
+        proc = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            env=env,
+            cwd=repo_path,
+        )
+
+        stdout_lines: list[str] = []
+        tool_call_count = 0
+
         try:
-            proc = subprocess.run(
-                cmd,
-                capture_output=True,
-                timeout=self.timeout,
-                text=True,
-                env=env,
-                cwd=repo_path,
-            )
-            t_end = time.time()
+            while True:
+                elapsed = time.time() - t_start
+                if elapsed > self.timeout:
+                    proc.kill()
+                    proc.wait()
+                    t_end = time.time()
+                    return AgentResult(
+                        instance_id=instance_id,
+                        agent_name=self.name,
+                        status=TaskStatus.ERROR,
+                        error_message=f"Timeout after {self.timeout}s (tool calls so far: {tool_call_count})",
+                        timestamps=Timestamps(task_start=t_start, task_end=t_end),
+                        raw_output="".join(stdout_lines)[:5000],
+                    )
 
-            if proc.returncode != 0:
-                return AgentResult(
-                    instance_id=instance_id,
-                    agent_name=self.name,
-                    status=TaskStatus.ERROR,
-                    error_message=proc.stderr[:2000],
-                    timestamps=Timestamps(task_start=t_start, task_end=t_end),
-                    raw_output=proc.stdout[:5000],
-                )
+                line = proc.stdout.readline()
+                if not line and proc.poll() is not None:
+                    break
+                if not line:
+                    continue
 
-            # Parse JSON output
-            output = self._parse_output(proc.stdout)
-            patch = self._extract_patch(repo_path, base_ref=base_sha)
+                stdout_lines.append(line)
 
-            # Extract usage info
-            usage = output.get("usage", {})
-            raw_input = usage.get("input_tokens", 0)
-            cache_read = usage.get("cache_read_input_tokens", 0)
-            cache_write = usage.get("cache_creation_input_tokens", 0)
-            token_usage = TokenUsage(
-                input_tokens=raw_input + cache_read + cache_write,
-                output_tokens=usage.get("output_tokens", 0),
-                cache_read_tokens=cache_read,
-                cache_write_tokens=cache_write,
-            )
+                stripped = line.strip()
+                if not stripped.startswith("{"):
+                    continue
+                try:
+                    event = json.loads(stripped)
+                except json.JSONDecodeError:
+                    continue
 
-            cost = output.get("total_cost_usd", 0.0)
-            num_turns = output.get("num_turns", 0)
+                etype = event.get("type", "")
 
-            # Estimate first action time from duration_ms if available
-            duration_ms = output.get("duration_ms", 0)
-            duration_api_ms = output.get("duration_api_ms", 0)
-            if duration_api_ms and num_turns > 0:
-                first_action = t_start + (duration_api_ms / 1000.0 / num_turns)
-            else:
-                first_action = t_start + (t_end - t_start) * 0.1
+                # assistant turn — look for tool_use items in content
+                if etype == "assistant":
+                    content = event.get("message", {}).get("content", [])
+                    for item in content:
+                        if not isinstance(item, dict) or item.get("type") != "tool_use":
+                            continue
+                        tool_call_count += 1
+                        tool_name = item.get("name", "unknown")
+                        if first_action_time == 0.0:
+                            first_action_time = time.time()
+                        logger.info(
+                            f"    [{elapsed:.0f}s] tool call #{tool_call_count}: {tool_name}"
+                        )
 
-            return AgentResult(
-                instance_id=instance_id,
-                agent_name=self.name,
-                patch=patch,
-                status=TaskStatus.SUCCESS,
-                token_usage=token_usage,
-                timestamps=Timestamps(
-                    task_start=t_start,
-                    task_end=t_end,
-                    first_action=first_action,
-                ),
-                total_cost_usd=cost,
-                convergence_steps=num_turns,
-                raw_output=proc.stdout[:10000],
-                model_name=output.get("model", ""),
-            )
-
-        except subprocess.TimeoutExpired:
+        except Exception as e:
+            proc.kill()
+            proc.wait()
             t_end = time.time()
             return AgentResult(
                 instance_id=instance_id,
                 agent_name=self.name,
                 status=TaskStatus.ERROR,
-                error_message=f"Timeout after {self.timeout}s",
+                error_message=str(e),
                 timestamps=Timestamps(task_start=t_start, task_end=t_end),
             )
+
+        t_end = time.time()
+        stdout = "".join(stdout_lines)
+        stderr = proc.stderr.read() if proc.stderr else ""
+
+        if proc.returncode != 0:
+            return AgentResult(
+                instance_id=instance_id,
+                agent_name=self.name,
+                status=TaskStatus.ERROR,
+                error_message=stderr[:2000],
+                timestamps=Timestamps(task_start=t_start, task_end=t_end),
+                raw_output=stdout[:5000],
+            )
+
+        # _parse_output scans in reverse for the last JSON object, which is the
+        # stream-json "result" event containing total_cost_usd / usage / num_turns.
+        output = self._parse_output(stdout)
+        patch = self._extract_patch(repo_path, base_ref=base_sha)
+
+        # Extract usage info
+        usage = output.get("usage", {})
+        raw_input = usage.get("input_tokens", 0)
+        cache_read = usage.get("cache_read_input_tokens", 0)
+        cache_write = usage.get("cache_creation_input_tokens", 0)
+        token_usage = TokenUsage(
+            input_tokens=raw_input + cache_read + cache_write,
+            output_tokens=usage.get("output_tokens", 0),
+            cache_read_tokens=cache_read,
+            cache_write_tokens=cache_write,
+        )
+
+        cost = output.get("total_cost_usd", 0.0)
+        num_turns = output.get("num_turns", 0)
+        first_action = first_action_time or (t_start + (t_end - t_start) * 0.1)
+
+        logger.info(f"    Total tool calls: {tool_call_count}, elapsed: {t_end - t_start:.0f}s")
+
+        return AgentResult(
+            instance_id=instance_id,
+            agent_name=self.name,
+            patch=patch,
+            status=TaskStatus.SUCCESS,
+            token_usage=token_usage,
+            timestamps=Timestamps(
+                task_start=t_start,
+                task_end=t_end,
+                first_action=first_action,
+            ),
+            total_cost_usd=cost,
+            convergence_steps=num_turns,
+            raw_output=stdout[:10000],
+            model_name=output.get("model", ""),
+        )
 
     def _parse_output(self, stdout: str) -> dict:
         """Parse Claude Code JSON output. May contain multiple JSON objects."""
