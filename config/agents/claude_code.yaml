@@ -9,3 +9,10 @@ command: claude
 output_format: json
 supports_cost_tracking: true
 supports_token_tracking: true
+
+# vLLM backend (선택) — --claude-code-vllm 플래그로 활성화
+# 값을 여기에 직접 설정하거나 .env의 CLAUDE_CODE_VLLM_* 변수를 사용할 수 있습니다.
+# 여기에 설정된 값이 환경 변수보다 우선합니다.
+# vllm_base_url: ""    # CLAUDE_CODE_VLLM_BASE_URL 오버라이드
+# vllm_auth_token: ""  # CLAUDE_CODE_VLLM_AUTH_TOKEN 오버라이드
+# vllm_model: ""       # CLAUDE_CODE_VLLM_MODEL 오버라이드

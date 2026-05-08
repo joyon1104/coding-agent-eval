@@ -14,6 +14,59 @@ from src.core.models import AgentResult, TaskStatus, TokenUsage, Timestamps
 class ClaudeCodeAdapter(AgentAdapter):
     name = "claude-code"
 
+    def __init__(self, config: dict | None = None):
+        super().__init__(config)
+        self.vllm_mode: bool = bool(self.config.get("vllm_mode", False))
+        # Validate and build vLLM env overrides eagerly so failures surface
+        # before any tasks run, not partway through a long eval.
+        self._vllm_env: dict[str, str] = self._build_vllm_env() if self.vllm_mode else {}
+
+    @property
+    def backend(self) -> str:
+        return "vllm" if self.vllm_mode else "default"
+
+    @property
+    def vllm_model(self) -> str:
+        return self._vllm_env.get("ANTHROPIC_MODEL", "")
+
+    def _build_vllm_env(self) -> dict[str, str]:
+        """Return the env overrides needed for vLLM mode.
+
+        Reads CLAUDE_CODE_VLLM_* from the environment (dotenv is already loaded
+        by Config before the adapter is constructed). Raises ValueError early
+        if any required variable is absent so the user gets a clear error.
+        """
+        base_url = (self.config.get("vllm_base_url") or
+                    os.environ.get("CLAUDE_CODE_VLLM_BASE_URL", "")).strip()
+        auth_token = (self.config.get("vllm_auth_token") or
+                      os.environ.get("CLAUDE_CODE_VLLM_AUTH_TOKEN", "")).strip()
+        model = (self.config.get("vllm_model") or
+                 os.environ.get("CLAUDE_CODE_VLLM_MODEL", "")).strip()
+
+        missing = [
+            name for name, val in [
+                ("CLAUDE_CODE_VLLM_BASE_URL", base_url),
+                ("CLAUDE_CODE_VLLM_AUTH_TOKEN", auth_token),
+                ("CLAUDE_CODE_VLLM_MODEL", model),
+            ] if not val
+        ]
+        if missing:
+            raise ValueError(
+                "--claude-code-vllm is enabled but required config is missing: "
+                + ", ".join(missing)
+                + ". Set these in .env or the environment before running."
+            )
+
+        return {
+            "ANTHROPIC_BASE_URL": base_url,
+            "ANTHROPIC_AUTH_TOKEN": auth_token,
+            "ANTHROPIC_API_KEY": "",
+            "ANTHROPIC_MODEL": model,
+            "ANTHROPIC_DEFAULT_OPUS_MODEL": model,
+            "ANTHROPIC_DEFAULT_SONNET_MODEL": model,
+            "ANTHROPIC_DEFAULT_HAIKU_MODEL": model,
+        }
+
     def is_available(self) -> bool:
         try:
             result = subprocess.run(
@@ -42,6 +95,9 @@ class ClaudeCodeAdapter(AgentAdapter):
         env = os.environ.copy()
         if self.config.get("proxy"):
             env["HTTPS_PROXY"] = self.config["proxy"]
+        # Apply vLLM overrides on top of the copied env (never mutates os.environ).
+        if self.vllm_mode:
+            env.update(self._vllm_env)
 
         t_start = time.time()
         first_action = 0.0

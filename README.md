@@ -285,10 +285,32 @@ pip install -r requirements.txt
 # 3. (선택) 프로젝트를 editable 모드로 설치 — 어느 경로에서든 `src.*` 임포트 가능
 pip install -e .
 
-# 4. API 키 설정
+# 4. 환경 변수 설정
 cp .env.example .env
-# .env 파일에 ANTHROPIC_API_KEY 입력
+# .env를 열어 실제 값으로 채웁니다 (아래 ".env 세팅" 섹션 참고)
 ```
+
+### .env 세팅
+
+`.env.example`을 복사한 `.env`에 실제 값을 입력합니다. 
+
+```bash
+# 기본 평가 (Anthropic 공식 API 사용 시 필수)
+ANTHROPIC_API_KEY=sk-ant-api03-...
+
+# OpenCode 에이전트 사용 시
+OPENAI_API_KEY=sk-...
+
+# 사내망 등 프록시 환경 (선택)
+# HTTPS_PROXY=http://proxy.company.com:8080
+
+# Claude Code를 vLLM 백엔드로 실행할 때 (--claude-code-vllm 플래그 사용 시 필수)
+# CLAUDE_CODE_VLLM_BASE_URL=http://localhost:8000/v1
+# CLAUDE_CODE_VLLM_AUTH_TOKEN=your-api-key
+# CLAUDE_CODE_VLLM_MODEL=your-model-id
+```
+
+vLLM 변수는 `--claude-code-vllm` 플래그를 쓰지 않는 한 읽히지 않으므로, 기본 Anthropic 모델로만 평가하는 경우 비워 두어도 됩니다.
 
 ### 데이터셋 준비
 
@@ -335,7 +357,46 @@ python scripts/run_eval.py \
 
 `--verify` 없이 실행하면 에이전트 실행(패치 생성)만 수행되고, Docker 검증과 리포트는 별도 명령어로 나중에 실행할 수 있습니다.
 
-### 3. 단계별 분리 실행
+### 3. vLLM 백엔드로 Claude Code 평가
+
+vLLM 등 Anthropic-compatible API 엔드포인트를 통해 자체 호스팅 모델로 Claude Code를 실행할 수 있습니다. `--claude-code-vllm` 플래그를 사용하면 됩니다.
+
+**1단계: .env에 엔드포인트 정보 입력**
+
+`.env` 파일이 없다면 먼저 생성합니다:
+
+```bash
+cp .env.example .env
+```
+
+그런 다음 `.env`에서 vLLM 관련 줄의 주석(`#`)을 제거하고 실제 값을 채웁니다:
+
+```bash
+CLAUDE_CODE_VLLM_BASE_URL=http://localhost:8000/v1
+CLAUDE_CODE_VLLM_AUTH_TOKEN=your-api-key
+CLAUDE_CODE_VLLM_MODEL=your-model-id
+```
+
+**2단계: 평가 실행**
+
+```bash
+# vLLM 백엔드로 전체 평가 실행
+python scripts/run_eval.py \
+    --tier lite --agents claude-code --model your-model-id \
+    --sample-size 3 --verify \
+    --claude-code-vllm
+
+# 플래그 없이 실행하면 기존 Anthropic 모델 사용 — 동작 변화 없음
+python scripts/run_eval.py \
+    --tier lite --agents claude-code --model sonnet \
+    --sample-size 3 --verify
+```
+
+- `--claude-code-vllm`을 붙이면 Claude Code 서브프로세스 환경에만 `ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_MODEL` 등이 주입됩니다. 호스트 프로세스의 환경 변수(`os.environ`)는 변경되지 않습니다.
+- 세 변수 중 하나라도 누락되면 태스크 실행 전에 오류가 출력되고 즉시 종료됩니다.
+- 실행 결과의 `metadata.json`에 `claude_code_backend: "vllm"` 및 `claude_code_vllm_model` 필드가 기록됩니다.
+
+### 4. 단계별 분리 실행
 
 각 단계를 개별적으로 실행할 수도 있습니다:
 
@@ -372,6 +433,7 @@ python scripts/generate_report.py --run-id eval-merged \
 | `--verify` | Docker 검증 + 리포트까지 한번에 실행 | false |
 | `--offline` | 오프라인 모드 (로컬 데이터만) | false |
 | `--dry-run` | 실행 계획만 출력 | false |
+| `--claude-code-vllm` | Claude Code를 vLLM 백엔드로 실행 (CLAUDE_CODE_VLLM_* 필요) | false |
 
 `--run-id`를 생략하면 `{agent}_{model}_{YYYYMMDD-HHMMSS}` 형태로 자동 생성되며, 결과는 `results/runs/<run-id>/`에 저장됩니다. `--run-id`를 명시적으로 지정했는데 같은 id의 디렉터리가 이미 있으면 **저장된 진행 상황을 이어서 실행**합니다 (완료된 태스크는 건너뛰고, 실패/미완료 태스크만 다시 시도). 해당 id의 디렉터리가 없다면 새로 시작합니다.
 

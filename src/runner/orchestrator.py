@@ -24,10 +24,17 @@ logger = logging.getLogger("coding-agent-eval")
 class Orchestrator:
     """Runs evaluation tasks with resume support."""
 
-    def __init__(self, config: Config, run_id: str, model: str | None = None):
+    def __init__(
+        self,
+        config: Config,
+        run_id: str,
+        model: str | None = None,
+        extra_metadata: dict | None = None,
+    ):
         self.config = config
         self.run_id = run_id
         self.model = model
+        self.extra_metadata: dict = extra_metadata or {}
         self.results_dir = PROJECT_ROOT / "results" / "runs" / run_id
         self.sandbox = DiskAwareSandbox(config)
 
@@ -94,6 +101,7 @@ class Orchestrator:
             "num_tasks": len(tasks),
             "agents": [a.name for a in agents],
             "environment": self.config.env_info.summary(),
+            **self.extra_metadata,
         })
 
         all_results: dict[str, list[AgentResult]] = {}
@@ -122,6 +130,7 @@ class Orchestrator:
                 }
                 for agent, results in all_results.items()
             },
+            **self.extra_metadata,
         })
 
         return all_results

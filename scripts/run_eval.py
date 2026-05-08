@@ -49,7 +49,12 @@ AGENT_REGISTRY = {
               help="Dataset JSONL path for Docker verification (default: auto-detect)")
 @click.option("--dry-run", is_flag=True, default=False,
               help="Show what would run without executing")
-def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry_run):
+@click.option("--claude-code-vllm", is_flag=True, default=False,
+              help="Run Claude Code against a vLLM-backed Anthropic-compatible endpoint "
+                   "(requires CLAUDE_CODE_VLLM_BASE_URL, CLAUDE_CODE_VLLM_AUTH_TOKEN, "
+                   "CLAUDE_CODE_VLLM_MODEL in .env or environment)")
+def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry_run,
+         claude_code_vllm):
     """Coding Agent Eval — AI Coding Agent Performance Evaluation"""
 
     console.print("[bold blue]Coding Agent Eval[/bold blue] — AI Coding Agent Evaluation")
@@ -101,7 +106,13 @@ def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry
         }
         if model:
             agent_config["model"] = model
-        adapter = adapter_cls(config=agent_config)
+        if claude_code_vllm and name == "claude-code":
+            agent_config["vllm_mode"] = True
+        try:
+            adapter = adapter_cls(config=agent_config)
+        except ValueError as exc:
+            console.print(f"  [red]Agent config error ({name}): {exc}[/red]")
+            sys.exit(1)
         if adapter.is_available():
             agent_instances.append(adapter)
             console.print(f"  [green]Agent ready: {name}[/green]")
@@ -126,7 +137,16 @@ def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry
 
     # ── Step 1: Run agents ──
     console.print(f"\n[bold]Step 1: Agent Evaluation[/bold]")
-    orchestrator = Orchestrator(config, run_id, model=model)
+
+    # Build extra metadata for backend tracking (used by dashboard / reports).
+    extra_metadata: dict = {}
+    primary_adapter = agent_instances[0] if agent_instances else None
+    if primary_adapter and hasattr(primary_adapter, "backend"):
+        extra_metadata["claude_code_backend"] = primary_adapter.backend
+        if primary_adapter.backend == "vllm" and hasattr(primary_adapter, "vllm_model"):
+            extra_metadata["claude_code_vllm_model"] = primary_adapter.vllm_model
+
+    orchestrator = Orchestrator(config, run_id, model=model, extra_metadata=extra_metadata)
     results = orchestrator.run(sampled, agent_instances)
 
     console.print(f"\n[bold green]Agent evaluation complete![/bold green]")

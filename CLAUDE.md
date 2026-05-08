@@ -52,9 +52,9 @@ python dashboard/server.py --port 8080
 # Cleanup accumulated Docker images / temp files
 python scripts/cleanup.py
 
-# Tests (tests/ is currently scaffolded but empty)
+# Tests
 pytest
-pytest tests/test_file.py::test_name   # single test
+pytest tests/test_ruby_profile.py::TestCheckRspecDesc   # single test class
 ```
 
 ### Subset and image utilities
@@ -97,10 +97,10 @@ The pipeline is intentionally split because patch generation and test verificati
 - `src/dataset/` — `loader.py` (HuggingFace online + local JSONL offline, dispatches on `--offline` flag), `sampler.py` (stratified sampling used by `scripts/swebench_sampler.py`).
 - `src/adapters/` — `AgentAdapter` ABC + concrete subprocess-based CLIs. Adding a new agent = new subclass implementing `run()` and `is_available()`, plus registration in `scripts/run_eval.py`'s `AGENT_REGISTRY`.
 - `src/runner/orchestrator.py` — drives Step 1. Clones repos via `DiskAwareSandbox`, calls the adapter, saves per-task JSON **immediately** after each task (enables resume). Repos are cloned once into `.repo_cache/` at the project root, then each task gets a fast `git clone --local` copy — avoids repeated full network clones for large repos (e.g. Django ~500 MB). Only workdirs prefixed `cae_*` are ever deleted, so sandbox cleanup is safe on shared machines.
-- `src/evaluator/` — `docker_evaluator.py` orchestrates the container lifecycle; `swebench_harness.py` wraps test execution; `patch_extractor.py` validates/normalizes patches. Language-specific behavior (test invocation, post-patch hooks) lives in `languages/` submodules.
+- `src/evaluator/` — `docker_evaluator.py` orchestrates the container lifecycle; `swebench_harness.py` wraps test execution; `patch_extractor.py` validates/normalizes patches. Language-specific behavior lives in `languages/`: `profile.py` defines the `LanguageProfile` ABC; `dispatch.py` maps repos to profiles; `python.py`, `ruby.py`, `go.py`, `java.py`, `javascript.py`, `rust.py`, `c.py`, `cpp.py`, `php.py` are the concrete implementations.
 - `src/metrics/` — one file per metric category (accuracy, cost, latency, process). `src/reporter/scorer.py` owns the S/A/B/C/D/F thresholds.
 - `config/` — `eval_config.yaml` (tiers, execution limits, model pricing for token→cost fallback); `environments/{common,wsl,native_linux}.yaml` (deep-merged in order: `common.yaml` first, then the env-specific file detected by `env_detect.py`, with later keys winning); `agents/<name>.yaml` (per-agent defaults — filename uses `_` even when CLI name uses `-`).
-- `docs/` — design documents (`multilingual_design.md`, `phase1.md`). Read these for intent behind architectural decisions before making structural changes.
+- `plan/` — design documents (`multilingual_design.md`, `phase1.md`). Read these for intent behind architectural decisions before making structural changes.
 
 ## Multi-language support (multi tier)
 
@@ -122,6 +122,7 @@ The `multi` tier (`SWE-bench/SWE-bench_Multilingual`) covers 9 languages (C, C++
 - **Offline mode** (`--offline`): skips HuggingFace, reads `data/<tier>.jsonl`, assumes Docker images were pre-loaded via `docker load`. `scripts/export_dataset.py` prepares the transfer bundle.
 - **Results directory**: `results/runs/<run-id>/{patches,eval,reports}/` plus `metadata.json`. The dashboard reads this tree directly — no DB.
 - **`local` tier**: reads `data/swebench_local.jsonl` directly (no HuggingFace). Use `scripts/create_test_data.py` to generate synthetic data for smoke tests.
+- **`data/` naming conventions**: `swebench_<tier>.jsonl` is the full tier dataset; `_small` suffix = output of `pick_small_instances.py`; `_subset` suffix = output of `swebench_sampler.py`; `_test` / `_test2` are ad-hoc hand-curated test slices; `_origin` preserves the original download before any local edits.
 
 ## Things that are easy to get wrong
 
