@@ -8,6 +8,17 @@ CLI-driven evaluation harness for AI coding agents (Claude Code, OpenCode, ...).
 
 The 6 scored metrics are: `task_resolution_rate`, `token_efficiency`, `cost_per_resolved_task`, `e2e_time`, `time_to_first_action`, `convergence_steps`.
 
+Grading thresholds (from `src/reporter/scorer.py`) — lower bound for each grade:
+
+| Metric | S | A | B | C | D | better |
+|---|---|---|---|---|---|---|
+| task_resolution_rate | ≥60% | ≥45% | ≥30% | ≥20% | ≥10% | higher |
+| token_efficiency | ≤50k | ≤100k | ≤200k | ≤400k | ≤800k | lower |
+| cost_per_resolved_task | ≤$0.50 | ≤$1.00 | ≤$2.00 | ≤$5.00 | ≤$10.00 | lower |
+| e2e_time | ≤60s | ≤120s | ≤300s | ≤600s | ≤1200s | lower |
+| time_to_first_action | ≤3s | ≤5s | ≤10s | ≤20s | ≤30s | lower |
+| convergence_steps | ≤5 | ≤10 | ≤20 | ≤30 | ≤50 | lower |
+
 ## Environment setup
 
 - Python 3.10+; project targets a `.venv` at the repo root.
@@ -89,10 +100,11 @@ The pipeline is intentionally split because patch generation and test verificati
 - `src/evaluator/` — `docker_evaluator.py` orchestrates the container lifecycle; `swebench_harness.py` wraps test execution; `patch_extractor.py` validates/normalizes patches. Language-specific behavior (test invocation, post-patch hooks) lives in `languages/` submodules.
 - `src/metrics/` — one file per metric category (accuracy, cost, latency, process). `src/reporter/scorer.py` owns the S/A/B/C/D/F thresholds.
 - `config/` — `eval_config.yaml` (tiers, execution limits, model pricing for token→cost fallback); `environments/{common,wsl,native_linux}.yaml` (deep-merged in order: `common.yaml` first, then the env-specific file detected by `env_detect.py`, with later keys winning); `agents/<name>.yaml` (per-agent defaults — filename uses `_` even when CLI name uses `-`).
+- `docs/` — design documents (`multilingual_design.md`, `phase1.md`). Read these for intent behind architectural decisions before making structural changes.
 
 ## Multi-language support (multi tier)
 
-The `multi` tier (`SWE-bench/SWE-bench_Multilingual`) covers 9 languages across 41 repos. Language-specific logic (test commands, post-patch recompile hooks) is encapsulated in `LanguageProfile` subclasses in `src/evaluator/languages/`. The dispatch table in `src/evaluator/languages/dispatch.py:REPO_LANGUAGE` maps each repo to its profile.
+The `multi` tier (`SWE-bench/SWE-bench_Multilingual`) covers 9 languages (C, C++, Go, Java, JavaScript, PHP, Python, Ruby, Rust) across 41 repos. Language-specific logic (test commands, post-patch recompile hooks) is encapsulated in `LanguageProfile` subclasses in `src/evaluator/languages/`. The dispatch table in `src/evaluator/languages/dispatch.py:REPO_LANGUAGE` maps each repo to its profile.
 
 **Adding a new language**:
 1. Create `src/evaluator/languages/<lang>.py` implementing `LanguageProfile`
@@ -115,7 +127,7 @@ The `multi` tier (`SWE-bench/SWE-bench_Multilingual`) covers 9 languages across 
 
 - Modifying `pyproject.toml`'s `build-backend` breaks `pip install -e .`. The correct value is `setuptools.build_meta`.
 - `src.*` imports mean scripts must run with the project root importable. `scripts/run_eval.py` does this by inserting the parent dir into `sys.path`; new scripts should do the same or rely on the editable install.
-- When adding a new agent adapter, the CLI must write JSON to stdout in a shape the adapter parses for `TokenUsage` / cost / `num_turns`. If the CLI doesn't report `total_cost_usd`, the harness falls back to `config/eval_config.yaml:pricing` token rates — add an entry there for any new model ID.
+- When adding a new agent adapter, the CLI must write JSON to stdout in a shape the adapter parses for `TokenUsage` / cost / `num_turns`. If the CLI doesn't report `total_cost_usd`, the harness falls back to `config/eval_config.yaml:pricing` token rates — add an entry there for any new model ID. `ClaudeCodeAdapter._parse_output()` scans stdout lines in reverse and returns the last parseable JSON object — Claude Code may emit multiple JSON lines during a session.
 - SWE-bench Docker images are ~3.4 GB each. `config/eval_config.yaml:tiers.<tier>.docker_images_budget_gb` is the guardrail; exceeding it is a disk failure, not a graceful error. Run `scripts/cleanup.py` between large runs.
 - `_extract_patch()` in `base.py` does **not** `.strip()` the diff output intentionally — a blank context line in unified diff is literally `" \n"`, and stripping would corrupt hunk line counts.
 - When an agent auto-commits during its session (e.g. OpenCode), `base_sha` captured before the run must be passed to `_extract_patch()` as `base_ref`; otherwise `git diff` against the moved HEAD returns empty.

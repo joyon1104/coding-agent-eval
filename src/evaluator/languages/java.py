@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import shlex
 import subprocess
 from typing import TYPE_CHECKING
 
@@ -49,13 +50,16 @@ class JavaProfile(LanguageProfile):
             by_class.setdefault(cls, []).append(name)
 
         run_cmds = " ; ".join(
-            f"java -cp \"{test_cp}:$(cat {cp_file})\" org.junit.runner.JUnitCore {cls} 2>&1"
+            f"java -cp \"{test_cp}:$(cat {cp_file})\" org.junit.runner.JUnitCore {shlex.quote(cls)} 2>&1"
             for cls in by_class
         )
+        # Try mvn offline classpath first; fall back to all jars in ~/.m2 when the
+        # dependency plugin itself isn't in the local cache (NoPluginFoundForPrefixException).
         return (
             f"cd /testbed && "
-            f"mvn dependency:build-classpath {pl_flag} -o -q "
-            f"-Dmdep.outputFile={cp_file} 2>/dev/null && "
+            f"(mvn dependency:build-classpath {pl_flag} -o -q "
+            f"-Dmdep.outputFile={cp_file} 2>/dev/null || "
+            f"find /root/.m2 -name '*.jar' 2>/dev/null | tr '\\n' ':' > {cp_file}) && "
             f"{run_cmds}"
         )
 

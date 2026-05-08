@@ -18,10 +18,10 @@ from src.evaluator.languages.profile import LanguageProfile
 from src.evaluator.languages.python import PythonProfile
 from src.evaluator.languages.java import JavaProfile
 from src.evaluator.languages.cpp import CppProfile
-from src.evaluator.languages.c import CProfile
+from src.evaluator.languages.c import CProfile, JqProfile, MicropythonProfile, RedisProfile, ValkeyProfile
 from src.evaluator.languages.go import GoProfile
 from src.evaluator.languages.rust import RustProfile
-from src.evaluator.languages.ruby import RubyProfile
+from src.evaluator.languages.ruby import RubyProfile, RubocopProfile
 from src.evaluator.languages.php import PhpProfile
 from src.evaluator.languages.javascript import JavaScriptProfile
 
@@ -44,10 +44,10 @@ REPO_LANGUAGE: dict[str, type[LanguageProfile]] = {
     "nlohmann/json": CppProfile,
 
     # ── C ─────────────────────────────────────────────────────────────────
-    "jqlang/jq": CProfile,
-    "micropython/micropython": CProfile,
-    "redis/redis": CProfile,
-    "valkey-io/valkey": CProfile,
+    "jqlang/jq": JqProfile,
+    "micropython/micropython": MicropythonProfile,
+    "redis/redis": RedisProfile,
+    "valkey-io/valkey": ValkeyProfile,
 
     # ── Go ────────────────────────────────────────────────────────────────
     "caddyserver/caddy": GoProfile,
@@ -71,7 +71,7 @@ REPO_LANGUAGE: dict[str, type[LanguageProfile]] = {
     "fluent/fluentd": RubyProfile,
     "jekyll/jekyll": RubyProfile,
     "jordansissel/fpm": RubyProfile,
-    "rubocop/rubocop": RubyProfile,
+    "rubocop/rubocop": RubocopProfile,
 
     # ── PHP ───────────────────────────────────────────────────────────────
     "briannesbitt/carbon": PhpProfile,

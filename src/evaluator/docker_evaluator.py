@@ -157,6 +157,7 @@ def _docker_exec(
     return subprocess.run(
         ["docker", "exec", container_id, "bash", "-c", full_cmd],
         capture_output=True, text=True, timeout=timeout,
+        encoding="utf-8", errors="replace",
     )
 
 
