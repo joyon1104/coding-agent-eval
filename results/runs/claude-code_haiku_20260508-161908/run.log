@@ -1,0 +1,12 @@
+2026-05-08 16:19:09,301 [INFO]   Cleaned up 2 stale temp directories
+2026-05-08 16:19:09,301 [INFO] 
+============================================================
+2026-05-08 16:19:09,301 [INFO] Agent: claude-code | Tasks: 1
+2026-05-08 16:19:09,301 [INFO] ============================================================
+2026-05-08 16:19:09,303 [INFO]   Running: pylint-dev__pylint-7080
+2026-05-08 16:19:09,303 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pylint-dev__pylint
+2026-05-08 16:19:09,303 [INFO]   Copying cached repo for pylint-dev__pylint-7080...
+2026-05-08 16:19:12,054 [INFO]   Completed: error | Cost: $0.000 | Time: 2.3s
+2026-05-08 16:19:12,114 [INFO]   Done: 1 run, 0 skipped
+2026-05-08 16:19:12,169 [INFO] Evaluating: pylint-dev__pylint-7080
+2026-05-08 16:19:12,169 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%

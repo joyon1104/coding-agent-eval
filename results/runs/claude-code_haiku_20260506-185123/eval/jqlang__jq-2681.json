@@ -1,0 +1,41 @@
+{
+  "instance_id": "jqlang__jq-2681",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "tests/jqtest": false
+  },
+  "pass_to_pass_results": {
+    "test_utf8": false,
+    "test_syntax": false,
+    "test_options": false,
+    "testc": false,
+    "testcu": false,
+    "test_regset": false,
+    "test_back": false,
+    "encode": false,
+    "listcap": false,
+    "names": false,
+    "simple": false,
+    "sql": false,
+    "syntax": false,
+    "user_property": false,
+    "callout": false,
+    "echo": false,
+    "count": false,
+    "bug_fix": false,
+    "regset": false,
+    "scan": false,
+    "callback_each_match": false,
+    "tests/optionaltest": false,
+    "tests/mantest": false,
+    "tests/onigtest": false,
+    "tests/shtest": false,
+    "tests/utf8test": false,
+    "tests/base64test": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

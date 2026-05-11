@@ -1,0 +1,18 @@
+2026-05-08 16:26:42,446 [INFO]   Cleaned up 2 stale temp directories
+2026-05-08 16:26:42,446 [INFO] 
+============================================================
+2026-05-08 16:26:42,446 [INFO] Agent: claude-code | Tasks: 2
+2026-05-08 16:26:42,446 [INFO] ============================================================
+2026-05-08 16:26:42,448 [INFO]   Running: scikit-learn__scikit-learn-10844
+2026-05-08 16:26:42,448 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/scikit-learn__scikit-learn
+2026-05-08 16:26:42,449 [INFO]   Copying cached repo for scikit-learn__scikit-learn-10844...
+2026-05-08 16:26:45,728 [INFO]   Completed: error | Cost: $0.000 | Time: 2.8s
+2026-05-08 16:26:45,749 [INFO]   Running: pytest-dev__pytest-5840
+2026-05-08 16:26:45,750 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/pytest-dev__pytest
+2026-05-08 16:26:45,750 [INFO]   Copying cached repo for pytest-dev__pytest-5840...
+2026-05-08 16:26:49,241 [INFO]   Completed: error | Cost: $0.000 | Time: 3.3s
+2026-05-08 16:26:49,252 [INFO]   Done: 2 run, 0 skipped
+2026-05-08 16:26:49,277 [INFO] Evaluating: scikit-learn__scikit-learn-10844
+2026-05-08 16:26:49,277 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-08 16:26:49,277 [INFO] Evaluating: pytest-dev__pytest-5840
+2026-05-08 16:26:49,277 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%

@@ -1,0 +1,22 @@
+{
+  "instance_id": "caddyserver__caddy-5761",
+  "agent_name": "claude-code",
+  "patch": "",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 30126,
+    "output_tokens": 597,
+    "cache_read_tokens": 24632,
+    "cache_write_tokens": 5485
+  },
+  "timestamps": {
+    "task_start": 1778063334.715467,
+    "task_end": 1778063343.341661,
+    "first_action": 1778063342.994467
+  },
+  "total_cost_usd": 0.01281445,
+  "convergence_steps": 1,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":6847,\"duration_api_ms\":8279,\"num_turns\":1,\"result\":\"The error is clear: heredoc markers in Caddy must contain **only alphanumeric characters, dashes, and underscores**. Spaces are not allowed.\\n\\nYou can't use `<< >>` because the marker `>>` contains nothing—it needs actual content between the `<<` and closing marker. The correct syntax is:\\n\\n```caddyfile\\nlocalhost {\\n  templates {\\n    between <<END\\n    ... content here ...\\n    END\\n  }\\n}\\n```\\n\\nThe marker (in this case `END`) can be any identifier with alphanumeric chars, dashes, or underscores. For example:\\n\\n```caddyfile\\nbetween <<EOF\\ncontent\\nEOF\\n```\\n\\nor \\n\\n```caddyfile\\nbetween <<TEMPLATE\\ncontent\\nTEMPLATE\\n```\\n\\nIs there a specific template content you're trying to define? If so, share the full block and I can help you structure it correctly.\",\"stop_reason\":\"end_turn\",\"session_id\":\"4cb7b656-ac0d-4dbf-af4e-e6707f8178cc\",\"total_cost_usd\":0.01281445,\"usage\":{\"input_tokens\":9,\"cache_creation_input_tokens\":5485,\"cache_read_input_tokens\":24632,\"output_tokens\":597,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":5485,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":9,\"output_tokens\":597,\"cache_read_input_tokens\":24632,\"cache_creation_input_tokens\":5485,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":5485},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":430,\"outputTokens\":613,\"cacheReadInputTokens\":24632,\"cacheCreationInputTokens\":5485,\"webSearchRequests\":0,\"costUSD\":0.01281445,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"65108a14-4c48-4fa4-b497-d9c277a5004c\"}\n",
+  "model_name": ""
+}

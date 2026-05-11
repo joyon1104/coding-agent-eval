@@ -1,0 +1,22 @@
+{
+  "instance_id": "gin-gonic__gin-1805",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/routergroup.go b/routergroup.go\nindex 297d357..1202b7d 100644\n--- a/routergroup.go\n+++ b/routergroup.go\n@@ -196,8 +196,8 @@ func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileS\n \t\tif _, err := fs.Open(file); err != nil {\n \t\t\tc.Writer.WriteHeader(http.StatusNotFound)\n \t\t\tc.handlers = group.engine.allNoRoute\n-\t\t\t// Reset index\n-\t\t\tc.index = -1\n+\t\t\t// Skip middleware handlers and start from the first NoRoute handler\n+\t\t\tc.index = int8(len(group.engine.Handlers)) - 1\n \t\t\treturn\n \t\t}\n \n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 2162135,
+    "output_tokens": 18496,
+    "cache_read_tokens": 2117090,
+    "cache_write_tokens": 44756
+  },
+  "timestamps": {
+    "task_start": 1778113349.9977689,
+    "task_end": 1778113537.8619971,
+    "first_action": 1778113354.4849885
+  },
+  "total_cost_usd": 0.3610550000000001,
+  "convergence_steps": 41,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":185981,\"duration_api_ms\":183976,\"num_turns\":41,\"result\":\"## Summary\\n\\nI've identified and fixed the issue causing duplicate log lines for 404s when using StaticFS.\\n\\n### Root Cause\\n\\nWhen a file wasn't found in the StaticFS handler, the code was:\\n1. Setting the 404 status\\n2. Replacing `c.handlers` with `allNoRoute` (which includes both middleware like Logger and the NoRoute handlers)\\n3. Resetting `c.index = -1` to restart the handler chain\\n\\nThis caused the handler chain to re-execute from the beginning, running all middleware (including Logger) a second time, resulting in duplicate log lines.\\n\\n### Solution\\n\\nChanged the index reset from `c.index = -1` to `c.index = int8(len(group.engine.Handlers)) - 1`. This:\\n- Still calls the NoRoute handlers (preserving existing behavior for custom 404 handling)\\n- But skips the middleware by jumping directly to the NoRoute handlers\\n- Prevents duplicate logging since middleware runs only once\\n\\nThe fix maintains backward compatibility with tests that expect NoRoute handlers to be called for StaticFS 404s, while eliminating the duplicate logs from the original issue.\",\"stop_reason\":\"end_turn\",\"session_id\":\"1f6b0e42-1024-4af0-9003-992759756722\",\"total_cost_usd\":0.3610550000000001,\"usage\":{\"input_tokens\":289,\"cache_creation_input_tokens\":44756,\"cache_read_input_tokens\":2117090,\"output_tokens\":18496,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":44756,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":7,\"output_tokens\":289,\"cache_read_input_tokens\":69192,\"cache_creation_input_tokens\":196,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":196},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":831,\"outputTokens\":18514,\"cacheReadInputTokens\":2117090,\"cacheCreationInputTokens\":44756,\"webSearchRequests\":0,\"costUSD\":0.3610550000000001,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"1614b704-86bf-4f41-a3dc-f7d6c54b9509\"}\n",
+  "model_name": ""
+}

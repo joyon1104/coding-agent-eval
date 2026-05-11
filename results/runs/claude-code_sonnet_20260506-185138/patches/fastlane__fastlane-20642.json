@@ -1,0 +1,22 @@
+{
+  "instance_id": "fastlane__fastlane-20642",
+  "agent_name": "claude-code",
+  "patch": "",
+  "status": "error",
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 0
+  },
+  "timestamps": {
+    "task_start": 1778067245.2798293,
+    "task_end": 1778067247.741239,
+    "first_action": 0.0
+  },
+  "total_cost_usd": 0.0,
+  "convergence_steps": 0,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":true,\"api_error_status\":429,\"duration_ms\":542,\"duration_api_ms\":0,\"num_turns\":1,\"result\":\"You've hit your limit · resets 11:30pm (Asia/Seoul)\",\"stop_reason\":\"stop_sequence\",\"session_id\":\"38f5d2b0-1c43-4de2-a525-e4af2866e0d3\",\"total_cost_usd\":0,\"usage\":{\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[],\"speed\":\"standard\"},\"modelUsage\":{},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"c5362995-4ce2-4e4d-bf72-67881785a8b7\"}\n",
+  "model_name": ""
+}

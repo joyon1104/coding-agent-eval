@@ -1,0 +1,22 @@
+{
+  "instance_id": "caddyserver__caddy-5870",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/admin.go b/admin.go\nindex 335b8e89..68cba798 100644\n--- a/admin.go\n+++ b/admin.go\n@@ -1205,6 +1205,12 @@ traverseLoop:\n \t\t\t\t\t}\n \t\t\t\t\tv[part] = val\n \t\t\t\tcase http.MethodDelete:\n+\t\t\t\t\tif _, ok := v[part]; !ok {\n+\t\t\t\t\t\treturn APIError{\n+\t\t\t\t\t\t\tHTTPStatus: http.StatusNotFound,\n+\t\t\t\t\t\t\tErr:        fmt.Errorf(\"[%s] key does not exist: %s\", path, part),\n+\t\t\t\t\t\t}\n+\t\t\t\t\t}\n \t\t\t\t\tdelete(v, part)\n \t\t\t\tdefault:\n \t\t\t\t\treturn fmt.Errorf(\"unrecognized method %s\", method)\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 291423,
+    "output_tokens": 4420,
+    "cache_read_tokens": 274092,
+    "cache_write_tokens": 17316
+  },
+  "timestamps": {
+    "task_start": 1778065337.1683624,
+    "task_end": 1778065437.3363378,
+    "first_action": 1778065343.7957623
+  },
+  "total_cost_usd": 0.24809665000000003,
+  "convergence_steps": 15,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":98530,\"duration_api_ms\":99411,\"num_turns\":15,\"result\":\"The fix is in `admin.go:1208-1213`. Here's what was wrong and what changed:\\n\\n**Root cause:** In Go, `delete(v, part)` on a `map[string]any` is silently a no-op when the key doesn't exist. The function returned `nil`, which propagated back as HTTP 200.\\n\\n**Fix:** Before calling `delete`, check if the key exists. If it doesn't, return an `APIError` with `http.StatusNotFound` (404). Using `APIError` (not a plain `fmt.Errorf`) is required because the error dispatch in `admin.go:849-854` only preserves the HTTP status code for `APIError` types — plain errors get promoted to 500.\\n\\nThis is consistent with the existing `PATCH` guard at line 1203 (which already checks for missing keys, though it uses `fmt.Errorf` and would incorrectly return 500 — a pre-existing separate issue).\",\"stop_reason\":\"end_turn\",\"session_id\":\"2dbde1f5-3a0a-485c-a7cf-7188155f3220\",\"total_cost_usd\":0.24809665000000003,\"usage\":{\"input_tokens\":15,\"cache_creation_input_tokens\":17316,\"cache_read_input_tokens\":274092,\"output_tokens\":4420,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":17316,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":225,\"cache_read_input_tokens\":28867,\"cache_creation_input_tokens\":345,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":345},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":935,\"outputTokens\":1749,\"cacheReadInputTokens\":120078,\"cacheCreationInputTokens\":10321,\"webSearchRequests\":0,\"costUSD\":0.034589049999999996,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-sonnet-4-6\":{\"inputTokens\":15,\"outputTokens\":4420,\"cacheReadInputTokens\":274092,\"cacheCreationInputTokens\":17316,\"webSearchRequests\":0,\"costUSD\":0.21350760000000002,\"contextWindow\":1000000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"4de8571e-0855-4103-9f75-7ab843c0a8df\"}\n",
+  "model_name": ""
+}

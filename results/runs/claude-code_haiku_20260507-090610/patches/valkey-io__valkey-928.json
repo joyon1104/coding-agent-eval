@@ -1,0 +1,22 @@
+{
+  "instance_id": "valkey-io__valkey-928",
+  "agent_name": "claude-code",
+  "patch": "",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 31693,
+    "output_tokens": 530,
+    "cache_read_tokens": 24632,
+    "cache_write_tokens": 7052
+  },
+  "timestamps": {
+    "task_start": 1778116312.9635122,
+    "task_end": 1778116321.1778684,
+    "first_action": 1778116320.6075122
+  },
+  "total_cost_usd": 0.0160122,
+  "convergence_steps": 1,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":6439,\"duration_api_ms\":7644,\"num_turns\":1,\"result\":\"I've reviewed the bug report. This is an issue with cluster rebalance failing when removing all shards from a node that has `cluster-allow-replica-migration no` configured—the command succeeds in 7.2.6 but fails in 8.0.0-rc1 with a \\\"NOREPLICAS\\\" error during slot migration.\\n\\nWhat would you like me to do? For example:\\n- Investigate the root cause of the regression\\n- Find and review the code that handles cluster slot migration with replica migration disabled\\n- Implement a fix to restore the 7.2.6 behavior\\n- Write a test case to prevent regression\\n\\nOr is there something else you'd like me to focus on?\",\"stop_reason\":\"end_turn\",\"session_id\":\"86a267bd-5de4-4090-9836-395318a9bd55\",\"total_cost_usd\":0.0160122,\"usage\":{\"input_tokens\":9,\"cache_creation_input_tokens\":7052,\"cache_read_input_tokens\":24632,\"output_tokens\":530,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":7052,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":9,\"output_tokens\":530,\"cache_read_input_tokens\":24632,\"cache_creation_input_tokens\":7052,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":7052},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1974,\"outputTokens\":552,\"cacheReadInputTokens\":24632,\"cacheCreationInputTokens\":7052,\"webSearchRequests\":0,\"costUSD\":0.0160122,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"ede9639d-6309-435b-9a2c-f394069bba48\"}\n",
+  "model_name": ""
+}

@@ -1,0 +1,783 @@
+2026-05-06 18:51:38,930 [INFO]   Cleaned up 1 stale temp directories
+2026-05-06 18:51:38,931 [INFO] 
+============================================================
+2026-05-06 18:51:38,931 [INFO] Agent: claude-code | Tasks: 50
+2026-05-06 18:51:38,931 [INFO] ============================================================
+2026-05-06 18:51:38,933 [INFO]   Running: fmtlib__fmt-2457
+2026-05-06 18:51:38,933 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/fmtlib__fmt
+2026-05-06 18:51:38,933 [INFO]   Copying cached repo for fmtlib__fmt-2457...
+2026-05-06 19:04:13,309 [INFO]   Completed: success | Cost: $1.649 | Time: 754.3s
+2026-05-06 19:04:13,310 [INFO]   Running: fmtlib__fmt-3729
+2026-05-06 19:04:13,310 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/fmtlib__fmt
+2026-05-06 19:04:13,310 [INFO]   Copying cached repo for fmtlib__fmt-3729...
+2026-05-06 19:07:52,896 [INFO]   Completed: success | Cost: $0.533 | Time: 219.5s
+2026-05-06 19:07:52,903 [INFO]   Running: jqlang__jq-2598
+2026-05-06 19:07:52,903 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/jqlang__jq
+2026-05-06 19:07:52,903 [INFO]   Copying cached repo for jqlang__jq-2598...
+2026-05-06 19:16:10,950 [INFO]   Completed: success | Cost: $0.530 | Time: 497.9s
+2026-05-06 19:16:10,966 [INFO]   Running: jqlang__jq-2681
+2026-05-06 19:16:10,967 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/jqlang__jq
+2026-05-06 19:16:10,967 [INFO]   Copying cached repo for jqlang__jq-2681...
+2026-05-06 19:35:09,111 [INFO]   Completed: success | Cost: $3.659 | Time: 1138.1s
+2026-05-06 19:35:09,121 [INFO]   Running: gin-gonic__gin-1957
+2026-05-06 19:35:09,122 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/gin-gonic__gin
+2026-05-06 19:35:09,122 [INFO]   Copying cached repo for gin-gonic__gin-1957...
+2026-05-06 19:37:40,791 [INFO]   Completed: success | Cost: $0.302 | Time: 151.6s
+2026-05-06 19:37:40,794 [INFO]   Running: gin-gonic__gin-1805
+2026-05-06 19:37:40,794 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/gin-gonic__gin
+2026-05-06 19:37:40,795 [INFO]   Copying cached repo for gin-gonic__gin-1805...
+2026-05-06 19:41:19,056 [INFO]   Completed: success | Cost: $0.387 | Time: 218.2s
+2026-05-06 19:41:19,066 [INFO]   Running: briannesbitt__carbon-3005
+2026-05-06 19:41:19,066 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/briannesbitt__carbon
+2026-05-06 19:41:19,066 [INFO]   Copying cached repo for briannesbitt__carbon-3005...
+2026-05-06 19:48:07,025 [INFO]   Completed: success | Cost: $1.263 | Time: 407.6s
+2026-05-06 19:48:07,070 [INFO]   Running: briannesbitt__carbon-2752
+2026-05-06 19:48:07,070 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/briannesbitt__carbon
+2026-05-06 19:48:07,070 [INFO]   Copying cached repo for briannesbitt__carbon-2752...
+2026-05-06 19:49:44,825 [INFO]   Completed: success | Cost: $0.258 | Time: 97.5s
+2026-05-06 19:49:44,867 [INFO]   Running: php-cs-fixer__php-cs-fixer-7523
+2026-05-06 19:49:44,868 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/php-cs-fixer__php-cs-fixer
+2026-05-06 19:49:44,868 [INFO]   Copying cached repo for php-cs-fixer__php-cs-fixer-7523...
+2026-05-06 19:51:58,364 [INFO]   Completed: success | Cost: $0.304 | Time: 133.2s
+2026-05-06 19:51:58,405 [INFO]   Running: php-cs-fixer__php-cs-fixer-7635
+2026-05-06 19:51:58,406 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/php-cs-fixer__php-cs-fixer
+2026-05-06 19:51:58,406 [INFO]   Copying cached repo for php-cs-fixer__php-cs-fixer-7635...
+2026-05-06 20:02:17,049 [INFO]   Completed: success | Cost: $1.332 | Time: 618.3s
+2026-05-06 20:02:17,091 [INFO]   Running: caddyserver__caddy-5870
+2026-05-06 20:02:17,091 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/caddyserver__caddy
+2026-05-06 20:02:17,091 [INFO]   Copying cached repo for caddyserver__caddy-5870...
+2026-05-06 20:03:57,354 [INFO]   Completed: success | Cost: $0.248 | Time: 100.2s
+2026-05-06 20:03:57,366 [INFO]   Running: caddyserver__caddy-5761
+2026-05-06 20:03:57,367 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/caddyserver__caddy
+2026-05-06 20:03:57,367 [INFO]   Copying cached repo for caddyserver__caddy-5761...
+2026-05-06 20:04:56,142 [INFO]   Completed: success | Cost: $0.124 | Time: 58.7s
+2026-05-06 20:04:56,155 [INFO]   Running: laravel__framework-51195
+2026-05-06 20:04:56,155 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/laravel__framework
+2026-05-06 20:04:56,156 [INFO]   Copying cached repo for laravel__framework-51195...
+2026-05-06 20:11:05,978 [INFO]   Completed: success | Cost: $0.806 | Time: 369.2s
+2026-05-06 20:11:06,039 [INFO]   Running: laravel__framework-48636
+2026-05-06 20:11:06,040 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/laravel__framework
+2026-05-06 20:11:06,040 [INFO]   Copying cached repo for laravel__framework-48636...
+2026-05-06 20:13:13,614 [INFO]   Completed: success | Cost: $0.337 | Time: 127.0s
+2026-05-06 20:13:13,672 [INFO]   Running: jordansissel__fpm-1829
+2026-05-06 20:13:13,672 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/jordansissel__fpm
+2026-05-06 20:13:13,672 [INFO]   Copying cached repo for jordansissel__fpm-1829...
+2026-05-06 20:15:19,238 [INFO]   Completed: success | Cost: $0.360 | Time: 125.5s
+2026-05-06 20:15:19,249 [INFO]   Running: jordansissel__fpm-1850
+2026-05-06 20:15:19,250 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/jordansissel__fpm
+2026-05-06 20:15:19,250 [INFO]   Copying cached repo for jordansissel__fpm-1850...
+2026-05-06 20:15:57,585 [INFO]   Completed: success | Cost: $0.090 | Time: 38.3s
+2026-05-06 20:15:57,599 [INFO]   Running: faker-ruby__faker-2705
+2026-05-06 20:15:57,600 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/faker-ruby__faker
+2026-05-06 20:15:57,600 [INFO]   Copying cached repo for faker-ruby__faker-2705...
+2026-05-06 20:19:33,647 [INFO]   Completed: success | Cost: $0.541 | Time: 215.9s
+2026-05-06 20:19:33,669 [INFO]   Running: faker-ruby__faker-2970
+2026-05-06 20:19:33,670 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/faker-ruby__faker
+2026-05-06 20:19:33,670 [INFO]   Copying cached repo for faker-ruby__faker-2970...
+2026-05-06 20:22:17,803 [INFO]   Completed: success | Cost: $0.387 | Time: 164.0s
+2026-05-06 20:22:17,827 [INFO]   Running: fluent__fluentd-3328
+2026-05-06 20:22:17,828 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/fluent__fluentd
+2026-05-06 20:22:17,828 [INFO]   Copying cached repo for fluent__fluentd-3328...
+2026-05-06 20:23:25,999 [INFO]   Completed: success | Cost: $0.152 | Time: 68.1s
+2026-05-06 20:23:26,017 [INFO]   Running: fluent__fluentd-3466
+2026-05-06 20:23:26,018 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/fluent__fluentd
+2026-05-06 20:23:26,018 [INFO]   Copying cached repo for fluent__fluentd-3466...
+2026-05-06 20:30:08,976 [INFO]   Completed: error | Cost: $0.000 | Time: 402.9s
+2026-05-06 20:30:08,989 [INFO]   Running: nlohmann__json-4237
+2026-05-06 20:30:08,989 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/nlohmann__json
+2026-05-06 20:30:08,989 [INFO]   Copying cached repo for nlohmann__json-4237...
+2026-05-06 20:30:11,445 [INFO]   Completed: error | Cost: $0.000 | Time: 2.3s
+2026-05-06 20:30:11,464 [INFO]   Running: valkey-io__valkey-790
+2026-05-06 20:30:11,464 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/valkey-io__valkey
+2026-05-06 20:30:11,465 [INFO]   Copying cached repo for valkey-io__valkey-790...
+2026-05-06 20:30:14,077 [INFO]   Completed: error | Cost: $0.000 | Time: 2.3s
+2026-05-06 20:30:14,104 [INFO]   Running: valkey-io__valkey-928
+2026-05-06 20:30:14,104 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/valkey-io__valkey
+2026-05-06 20:30:14,104 [INFO]   Copying cached repo for valkey-io__valkey-928...
+2026-05-06 20:30:16,615 [INFO]   Completed: error | Cost: $0.000 | Time: 2.2s
+2026-05-06 20:30:16,642 [INFO]   Running: redis__redis-9733
+2026-05-06 20:30:16,643 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/redis__redis
+2026-05-06 20:30:16,643 [INFO]   Copying cached repo for redis__redis-9733...
+2026-05-06 20:30:19,160 [INFO]   Completed: error | Cost: $0.000 | Time: 2.3s
+2026-05-06 20:30:19,177 [INFO]   Running: micropython__micropython-10095
+2026-05-06 20:30:19,178 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/micropython__micropython
+2026-05-06 20:30:19,178 [INFO]   Copying cached repo for micropython__micropython-10095...
+2026-05-06 20:30:22,077 [INFO]   Completed: error | Cost: $0.000 | Time: 2.2s
+2026-05-06 20:30:22,163 [INFO]   Running: redis__redis-10068
+2026-05-06 20:30:22,163 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/redis__redis
+2026-05-06 20:30:22,163 [INFO]   Copying cached repo for redis__redis-10068...
+2026-05-06 20:30:26,225 [INFO]   Completed: error | Cost: $0.000 | Time: 3.8s
+2026-05-06 20:30:26,251 [INFO]   Running: micropython__micropython-12158
+2026-05-06 20:30:26,251 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/micropython__micropython
+2026-05-06 20:30:26,251 [INFO]   Copying cached repo for micropython__micropython-12158...
+2026-05-06 20:30:29,313 [INFO]   Completed: error | Cost: $0.000 | Time: 2.4s
+2026-05-06 20:30:29,409 [INFO]   Running: rubocop__rubocop-13393
+2026-05-06 20:30:29,410 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/rubocop__rubocop
+2026-05-06 20:30:29,410 [INFO]   Copying cached repo for rubocop__rubocop-13393...
+2026-05-06 20:30:29,420 [INFO]   Commit not found, updating cache...
+2026-05-06 20:31:11,917 [INFO]   Completed: error | Cost: $0.000 | Time: 2.7s
+2026-05-06 20:31:11,948 [INFO]   Running: rubocop__rubocop-13375
+2026-05-06 20:31:11,948 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/rubocop__rubocop
+2026-05-06 20:31:11,948 [INFO]   Copying cached repo for rubocop__rubocop-13375...
+2026-05-06 20:31:15,049 [INFO]   Completed: error | Cost: $0.000 | Time: 2.9s
+2026-05-06 20:31:15,088 [INFO]   Running: phpoffice__phpspreadsheet-3469
+2026-05-06 20:31:15,090 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/phpoffice__phpspreadsheet
+2026-05-06 20:31:15,090 [INFO]   Copying cached repo for phpoffice__phpspreadsheet-3469...
+2026-05-06 20:31:15,110 [INFO]   Commit not found, updating cache...
+2026-05-06 20:31:57,605 [INFO]   Completed: error | Cost: $0.000 | Time: 2.4s
+2026-05-06 20:31:57,649 [INFO]   Running: phpoffice__phpspreadsheet-3463
+2026-05-06 20:31:57,649 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/phpoffice__phpspreadsheet
+2026-05-06 20:31:57,649 [INFO]   Copying cached repo for phpoffice__phpspreadsheet-3463...
+2026-05-06 20:32:00,242 [INFO]   Completed: error | Cost: $0.000 | Time: 2.4s
+2026-05-06 20:32:00,288 [INFO]   Running: google__gson-1014
+2026-05-06 20:32:00,289 [INFO]   Caching repo (attempt 1/3): google/gson
+2026-05-06 20:32:07,367 [INFO]   Repo cached: /home/going114kim/coding-agent-eval/.repo_cache/google__gson
+2026-05-06 20:32:07,367 [INFO]   Copying cached repo for google__gson-1014...
+2026-05-06 20:32:09,802 [INFO]   Completed: error | Cost: $0.000 | Time: 2.4s
+2026-05-06 20:32:09,813 [INFO]   Running: google__gson-1093
+2026-05-06 20:32:09,813 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/google__gson
+2026-05-06 20:32:09,814 [INFO]   Copying cached repo for google__gson-1093...
+2026-05-06 20:32:12,169 [INFO]   Completed: error | Cost: $0.000 | Time: 2.3s
+2026-05-06 20:32:12,178 [INFO]   Running: jekyll__jekyll-8047
+2026-05-06 20:32:12,179 [INFO]   Caching repo (attempt 1/3): jekyll/jekyll
+2026-05-06 20:32:58,271 [INFO]   Repo cached: /home/going114kim/coding-agent-eval/.repo_cache/jekyll__jekyll
+2026-05-06 20:32:58,271 [INFO]   Copying cached repo for jekyll__jekyll-8047...
+2026-05-06 20:33:02,349 [INFO]   Completed: error | Cost: $0.000 | Time: 4.0s
+2026-05-06 20:33:02,363 [INFO]   Running: jekyll__jekyll-8167
+2026-05-06 20:33:02,364 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/jekyll__jekyll
+2026-05-06 20:33:02,364 [INFO]   Copying cached repo for jekyll__jekyll-8167...
+2026-05-06 20:33:04,901 [INFO]   Completed: error | Cost: $0.000 | Time: 2.4s
+2026-05-06 20:33:04,916 [INFO]   Running: fastlane__fastlane-19207
+2026-05-06 20:33:04,916 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/fastlane__fastlane
+2026-05-06 20:33:04,916 [INFO]   Copying cached repo for fastlane__fastlane-19207...
+2026-05-06 20:33:04,936 [INFO]   Commit not found, updating cache...
+2026-05-06 20:34:04,433 [INFO]   Completed: error | Cost: $0.000 | Time: 2.4s
+2026-05-06 20:34:04,498 [INFO]   Running: fastlane__fastlane-20642
+2026-05-06 20:34:04,498 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/fastlane__fastlane
+2026-05-06 20:34:04,498 [INFO]   Copying cached repo for fastlane__fastlane-20642...
+2026-05-06 20:34:07,741 [INFO]   Completed: error | Cost: $0.000 | Time: 2.5s
+2026-05-06 20:34:07,808 [INFO]   Running: prometheus__prometheus-10633
+2026-05-06 20:34:07,808 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/prometheus__prometheus
+2026-05-06 20:34:07,808 [INFO]   Copying cached repo for prometheus__prometheus-10633...
+2026-05-06 20:34:07,828 [INFO]   Commit not found, updating cache...
+2026-05-06 20:36:18,077 [INFO]   Completed: error | Cost: $0.000 | Time: 2.3s
+2026-05-06 20:36:18,100 [INFO]   Running: tokio-rs__tokio-4384
+2026-05-06 20:36:18,100 [INFO]   Caching repo (attempt 1/3): tokio-rs/tokio
+2026-05-06 20:36:31,634 [INFO]   Repo cached: /home/going114kim/coding-agent-eval/.repo_cache/tokio-rs__tokio
+2026-05-06 20:36:31,634 [INFO]   Copying cached repo for tokio-rs__tokio-4384...
+2026-05-06 20:36:34,234 [INFO]   Completed: error | Cost: $0.000 | Time: 2.5s
+2026-05-06 20:36:34,246 [INFO]   Running: javaparser__javaparser-4538
+2026-05-06 20:36:34,247 [INFO]   Caching repo (attempt 1/3): javaparser/javaparser
+2026-05-06 20:37:10,108 [INFO]   Repo cached: /home/going114kim/coding-agent-eval/.repo_cache/javaparser__javaparser
+2026-05-06 20:37:10,108 [INFO]   Copying cached repo for javaparser__javaparser-4538...
+2026-05-06 20:37:13,021 [INFO]   Completed: error | Cost: $0.000 | Time: 2.4s
+2026-05-06 20:37:13,075 [INFO]   Running: javaparser__javaparser-4561
+2026-05-06 20:37:13,075 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/javaparser__javaparser
+2026-05-06 20:37:13,075 [INFO]   Copying cached repo for javaparser__javaparser-4561...
+2026-05-06 20:37:15,806 [INFO]   Completed: error | Cost: $0.000 | Time: 2.3s
+2026-05-06 20:37:15,860 [INFO]   Running: sharkdp__bat-562
+2026-05-06 20:37:15,861 [INFO]   Caching repo (attempt 1/3): sharkdp/bat
+2026-05-06 20:37:42,886 [INFO]   Repo cached: /home/going114kim/coding-agent-eval/.repo_cache/sharkdp__bat
+2026-05-06 20:37:42,886 [INFO]   Copying cached repo for sharkdp__bat-562...
+2026-05-06 20:37:45,319 [INFO]   Completed: error | Cost: $0.000 | Time: 2.3s
+2026-05-06 20:37:45,324 [INFO]   Running: gohugoio__hugo-12204
+2026-05-06 20:37:45,324 [INFO]   Caching repo (attempt 1/3): gohugoio/hugo
+2026-05-06 20:39:19,886 [INFO]   Repo cached: /home/going114kim/coding-agent-eval/.repo_cache/gohugoio__hugo
+2026-05-06 20:39:19,887 [INFO]   Copying cached repo for gohugoio__hugo-12204...
+2026-05-06 20:39:22,568 [INFO]   Completed: error | Cost: $0.000 | Time: 2.3s
+2026-05-06 20:39:22,616 [INFO]   Running: reactivex__rxjava-7597
+2026-05-06 20:39:22,617 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/reactivex__rxjava
+2026-05-06 20:39:22,617 [INFO]   Copying cached repo for reactivex__rxjava-7597...
+2026-05-06 20:39:22,627 [INFO]   Commit not found, updating cache...
+2026-05-06 20:40:08,945 [INFO]   Completed: error | Cost: $0.000 | Time: 2.2s
+2026-05-06 20:40:08,974 [INFO]   Running: gohugoio__hugo-12171
+2026-05-06 20:40:08,975 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/gohugoio__hugo
+2026-05-06 20:40:08,975 [INFO]   Copying cached repo for gohugoio__hugo-12171...
+2026-05-06 20:40:11,694 [INFO]   Completed: error | Cost: $0.000 | Time: 2.3s
+2026-05-06 20:40:11,739 [INFO]   Running: prometheus__prometheus-9248
+2026-05-06 20:40:11,739 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/prometheus__prometheus
+2026-05-06 20:40:11,739 [INFO]   Copying cached repo for prometheus__prometheus-9248...
+2026-05-06 20:40:14,517 [INFO]   Completed: error | Cost: $0.000 | Time: 2.5s
+2026-05-06 20:40:14,541 [INFO]   Running: hashicorp__terraform-34814
+2026-05-06 20:40:14,542 [INFO]   Caching repo (attempt 1/3): hashicorp/terraform
+2026-05-06 20:44:21,972 [INFO]   Repo cached: /home/going114kim/coding-agent-eval/.repo_cache/hashicorp__terraform
+2026-05-06 20:44:21,972 [INFO]   Copying cached repo for hashicorp__terraform-34814...
+2026-05-06 20:44:24,975 [INFO]   Completed: error | Cost: $0.000 | Time: 2.3s
+2026-05-06 20:44:25,088 [INFO]   Running: projectlombok__lombok-3009
+2026-05-06 20:44:25,088 [INFO]   Caching repo (attempt 1/3): projectlombok/lombok
+2026-05-06 20:45:18,856 [INFO]   Repo cached: /home/going114kim/coding-agent-eval/.repo_cache/projectlombok__lombok
+2026-05-06 20:45:18,856 [INFO]   Copying cached repo for projectlombok__lombok-3009...
+2026-05-06 20:45:21,481 [INFO]   Completed: error | Cost: $0.000 | Time: 2.4s
+2026-05-06 20:45:21,517 [INFO]   Running: projectlombok__lombok-3042
+2026-05-06 20:45:21,518 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/projectlombok__lombok
+2026-05-06 20:45:21,518 [INFO]   Copying cached repo for projectlombok__lombok-3042...
+2026-05-06 20:45:24,341 [INFO]   Completed: error | Cost: $0.000 | Time: 2.6s
+2026-05-06 20:45:24,379 [INFO]   Running: axios__axios-5085
+2026-05-06 20:45:24,380 [INFO]   Caching repo (attempt 1/3): axios/axios
+2026-05-06 20:45:43,985 [INFO]   Repo cached: /home/going114kim/coding-agent-eval/.repo_cache/axios__axios
+2026-05-06 20:45:43,986 [INFO]   Copying cached repo for axios__axios-5085...
+2026-05-06 20:45:46,349 [INFO]   Completed: error | Cost: $0.000 | Time: 2.3s
+2026-05-06 20:45:46,357 [INFO]   Done: 50 run, 0 skipped
+2026-05-06 20:45:46,400 [INFO] Evaluating: fmtlib__fmt-2457
+2026-05-06 20:45:46,400 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:45:46,400 [INFO] Evaluating: fmtlib__fmt-3729
+2026-05-06 20:45:46,419 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.fmtlib_1776_fmt-3729:latest
+2026-05-06 20:45:48,056 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.fmtlib_1776_fmt-3729:latest
+2026-05-06 20:45:48,056 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.fmtlib_1776_fmt-3729:latest
+2026-05-06 20:45:48,334 [INFO]   Container started: 06ab8082d74e
+2026-05-06 20:45:48,461 [INFO]   Patch applied successfully
+2026-05-06 20:45:48,570 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 20:45:48,681 [INFO]   C++ post-patch: running cmake --build...
+2026-05-06 20:46:28,224 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-05-06 20:46:28,321 [INFO]   Test exit code: 0
+2026-05-06 20:46:28,321 [INFO]   Test output (last 500 chars):  1 test from std_test (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+Note: Google Test filter = std_test.path
+[==========] Running 0 tests from 0 test suites.
+[==========] 0 tests from 0 test suites ran. (0 ms total)
+[  PASSED  ] 0 tests.
+Note: Google Test filter = std_test.path
+[==========] Running 0 tests from 0 test suites.
+[==========] 0 tests from 0 test suites ran. (0 ms total)
+[  PASSED  ] 0 tests.
+
+2026-05-06 20:46:28,321 [INFO]   Running PASS_TO_PASS tests (12)...
+2026-05-06 20:46:28,404 [INFO]   Test exit code: 0
+2026-05-06 20:46:28,404 [INFO]   Test output (last 500 chars): s ran. (0 ms total)
+[  PASSED  ] 0 tests.
+Note: Google Test filter = std_test.thread_id:std_test.optional:std_test.optional_format_as:std_test.variant:std_test.error_code:std_test.exception:std_test.format_bit_reference:std_test.format_const_bit_reference:std_test.format_bitset:std_test.format_atomic:ranges_std_test.format_vector_path:ranges_std_test.format_quote_path
+[==========] Running 0 tests from 0 test suites.
+[==========] 0 tests from 0 test suites ran. (0 ms total)
+[  PASSED  ] 0 tests.
+
+2026-05-06 20:46:28,632 [INFO]   Container removed
+2026-05-06 20:46:28,632 [INFO]   Result: RESOLVED | F2P: 100% | P2P: 100%
+2026-05-06 20:46:28,632 [INFO] Evaluating: jqlang__jq-2598
+2026-05-06 20:46:28,648 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.jqlang_1776_jq-2598:latest
+2026-05-06 20:46:30,069 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.jqlang_1776_jq-2598:latest
+2026-05-06 20:46:30,069 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.jqlang_1776_jq-2598:latest
+2026-05-06 20:46:30,312 [INFO]   Container started: b405bddc8616
+2026-05-06 20:46:30,431 [INFO]   Patch applied successfully
+2026-05-06 20:46:30,511 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 20:46:30,617 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-05-06 20:46:30,688 [INFO]   Test exit code: 0
+2026-05-06 20:46:30,689 [INFO]   Test output (last 500 chars): Internal ctest changing into directory: /testbed/build
+Test project /testbed/build
+No tests were found!!!
+
+2026-05-06 20:46:30,689 [INFO]   Running PASS_TO_PASS tests (27)...
+2026-05-06 20:46:30,771 [INFO]   Test exit code: 0
+2026-05-06 20:46:30,771 [INFO]   Test output (last 500 chars): Internal ctest changing into directory: /testbed/build
+Test project /testbed/build
+No tests were found!!!
+
+2026-05-06 20:46:31,016 [INFO]   Container removed
+2026-05-06 20:46:31,016 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 0%
+2026-05-06 20:46:31,016 [INFO] Evaluating: jqlang__jq-2681
+2026-05-06 20:46:31,030 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.jqlang_1776_jq-2681:latest
+2026-05-06 20:46:32,438 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.jqlang_1776_jq-2681:latest
+2026-05-06 20:46:32,438 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.jqlang_1776_jq-2681:latest
+2026-05-06 20:46:32,682 [INFO]   Container started: 2b8a2d64d4b4
+2026-05-06 20:46:32,790 [INFO]   Patch applied successfully
+2026-05-06 20:46:32,872 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 20:46:32,953 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-05-06 20:46:33,052 [INFO]   Test exit code: 0
+2026-05-06 20:46:33,052 [INFO]   Test output (last 500 chars): Internal ctest changing into directory: /testbed/build
+Test project /testbed/build
+No tests were found!!!
+
+2026-05-06 20:46:33,052 [INFO]   Running PASS_TO_PASS tests (27)...
+2026-05-06 20:46:33,138 [INFO]   Test exit code: 0
+2026-05-06 20:46:33,138 [INFO]   Test output (last 500 chars): Internal ctest changing into directory: /testbed/build
+Test project /testbed/build
+No tests were found!!!
+
+2026-05-06 20:46:33,389 [INFO]   Container removed
+2026-05-06 20:46:33,389 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 0%
+2026-05-06 20:46:33,389 [INFO] Evaluating: gin-gonic__gin-1957
+2026-05-06 20:46:33,403 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.gin-gonic_1776_gin-1957:latest
+2026-05-06 20:46:35,030 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.gin-gonic_1776_gin-1957:latest
+2026-05-06 20:46:35,031 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.gin-gonic_1776_gin-1957:latest
+2026-05-06 20:46:35,271 [INFO]   Container started: d9daa761eb82
+2026-05-06 20:46:35,363 [INFO]   Patch applied successfully
+2026-05-06 20:46:35,457 [INFO]   Reset 2 test path(s) before test_patch
+2026-05-06 20:46:35,545 [INFO]   Running FAIL_TO_PASS tests (2)...
+2026-05-06 20:46:36,870 [INFO]   Test exit code: 1
+2026-05-06 20:46:36,870 [INFO]   Test output (last 500 chars): # github.com/gin-gonic/gin/binding
+binding/header.go:35:47: undefined: textproto.CanonicalHeaderKey
+FAIL	github.com/gin-gonic/gin [build failed]
+FAIL	github.com/gin-gonic/gin/binding [build failed]
+FAIL	github.com/gin-gonic/gin/ginS [build failed]
+?   	github.com/gin-gonic/gin/internal/json	[no test files]
+testing: warning: no tests to run
+PASS
+ok  	github.com/gin-gonic/gin/render	0.003s [no tests to run]
+FAIL
+
+2026-05-06 20:46:36,870 [INFO]   Running PASS_TO_PASS tests (13)...
+2026-05-06 20:46:37,288 [INFO]   Test exit code: 1
+2026-05-06 20:46:37,288 [INFO]   Test output (last 500 chars): # github.com/gin-gonic/gin/binding
+binding/header.go:35:47: undefined: textproto.CanonicalHeaderKey
+FAIL	github.com/gin-gonic/gin [build failed]
+FAIL	github.com/gin-gonic/gin/binding [build failed]
+FAIL	github.com/gin-gonic/gin/ginS [build failed]
+?   	github.com/gin-gonic/gin/internal/json	[no test files]
+testing: warning: no tests to run
+PASS
+ok  	github.com/gin-gonic/gin/render	0.005s [no tests to run]
+FAIL
+
+2026-05-06 20:46:37,615 [INFO]   Container removed
+2026-05-06 20:46:37,615 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 0%
+2026-05-06 20:46:37,615 [INFO] Evaluating: gin-gonic__gin-1805
+2026-05-06 20:46:37,631 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.gin-gonic_1776_gin-1805:latest
+2026-05-06 20:46:39,059 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.gin-gonic_1776_gin-1805:latest
+2026-05-06 20:46:39,059 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.gin-gonic_1776_gin-1805:latest
+2026-05-06 20:46:39,274 [INFO]   Container started: 81bbaf54847c
+2026-05-06 20:46:39,362 [INFO]   Patch applied successfully
+2026-05-06 20:46:39,459 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 20:46:39,541 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-05-06 20:46:41,553 [INFO]   Test exit code: 0
+2026-05-06 20:46:41,553 [INFO]   Test output (last 500 chars): ?   	github.com/gin-gonic/gin/ginS	[no test files]
+?   	github.com/gin-gonic/gin/internal/json	[no test files]
+=== RUN   TestMiddlewareCalledOnceByRouterStaticFSNotFound
+--- PASS: TestMiddlewareCalledOnceByRouterStaticFSNotFound (0.00s)
+PASS
+ok  	github.com/gin-gonic/gin	0.004s
+testing: warning: no tests to run
+PASS
+ok  	github.com/gin-gonic/gin/binding	0.005s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/gin-gonic/gin/render	0.004s [no tests to run]
+
+2026-05-06 20:46:41,553 [INFO]   Running PASS_TO_PASS tests (13)...
+2026-05-06 20:46:42,023 [INFO]   Test exit code: 0
+2026-05-06 20:46:42,023 [INFO]   Test output (last 500 chars): pRouteOK (0.00s)
+=== RUN   TestRouterNotFound
+--- PASS: TestRouterNotFound (0.00s)
+=== RUN   TestRouterStaticFSNotFound
+--- PASS: TestRouterStaticFSNotFound (0.00s)
+=== RUN   TestRouterStaticFSFileNotFound
+--- PASS: TestRouterStaticFSFileNotFound (0.00s)
+PASS
+ok  	github.com/gin-gonic/gin	0.016s
+testing: warning: no tests to run
+PASS
+ok  	github.com/gin-gonic/gin/binding	0.007s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/gin-gonic/gin/render	0.005s [no tests to run]
+
+2026-05-06 20:46:42,355 [INFO]   Container removed
+2026-05-06 20:46:42,355 [INFO]   Result: RESOLVED | F2P: 100% | P2P: 100%
+2026-05-06 20:46:42,355 [INFO] Evaluating: briannesbitt__carbon-3005
+2026-05-06 20:46:42,371 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.briannesbitt_1776_carbon-3005:latest
+2026-05-06 20:46:44,013 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.briannesbitt_1776_carbon-3005:latest
+2026-05-06 20:46:44,013 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.briannesbitt_1776_carbon-3005:latest
+2026-05-06 20:46:44,246 [INFO]   Container started: 9f8b344722fb
+2026-05-06 20:46:44,323 [INFO]   Patch applied successfully
+2026-05-06 20:46:44,429 [INFO]   Reset 2 test path(s) before test_patch
+2026-05-06 20:46:44,510 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-05-06 20:46:45,145 [INFO]   Test exit code: 0
+2026-05-06 20:46:45,145 [INFO]   Test output (last 500 chars): PHPUnit 10.5.45 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.3.16
+Configuration: /testbed/phpunit.xml.dist
+
+No tests executed!
+
+2026-05-06 20:46:45,145 [INFO]   Running PASS_TO_PASS tests (34)...
+2026-05-06 20:46:45,749 [INFO]   Test exit code: 0
+2026-05-06 20:46:45,749 [INFO]   Test output (last 500 chars): PHPUnit 10.5.45 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.3.16
+Configuration: /testbed/phpunit.xml.dist
+
+No tests executed!
+
+2026-05-06 20:46:46,033 [INFO]   Container removed
+2026-05-06 20:46:46,033 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 0%
+2026-05-06 20:46:46,033 [INFO] Evaluating: briannesbitt__carbon-2752
+2026-05-06 20:46:46,048 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.briannesbitt_1776_carbon-2752:latest
+2026-05-06 20:46:47,690 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.briannesbitt_1776_carbon-2752:latest
+2026-05-06 20:46:47,691 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.briannesbitt_1776_carbon-2752:latest
+2026-05-06 20:46:47,923 [INFO]   Container started: 81ca442df77a
+2026-05-06 20:46:48,011 [INFO]   Patch applied successfully
+2026-05-06 20:46:48,104 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 20:46:48,190 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-05-06 20:46:48,641 [INFO]   Test exit code: 0
+2026-05-06 20:46:48,641 [INFO]   Test output (last 500 chars): PHPUnit 9.6.22 by Sebastian Bergmann and contributors.
+
+Warning:       Your XML configuration validates against a deprecated schema.
+Suggestion:    Migrate your XML configuration using "--migrate-configuration"!
+
+
+Time: 00:00.017, Memory: 66.00 MB
+
+No tests executed!
+
+2026-05-06 20:46:48,641 [INFO]   Running PASS_TO_PASS tests (150)...
+2026-05-06 20:46:49,121 [INFO]   Test exit code: 0
+2026-05-06 20:46:49,121 [INFO]   Test output (last 500 chars): PHPUnit 9.6.22 by Sebastian Bergmann and contributors.
+
+Warning:       Your XML configuration validates against a deprecated schema.
+Suggestion:    Migrate your XML configuration using "--migrate-configuration"!
+
+
+Time: 00:00.037, Memory: 64.00 MB
+
+No tests executed!
+
+2026-05-06 20:46:49,361 [INFO]   Container removed
+2026-05-06 20:46:49,362 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 0%
+2026-05-06 20:46:49,362 [INFO] Evaluating: php-cs-fixer__php-cs-fixer-7523
+2026-05-06 20:46:49,377 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.php-cs-fixer_1776_php-cs-fixer-7523:latest
+2026-05-06 20:46:51,004 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.php-cs-fixer_1776_php-cs-fixer-7523:latest
+2026-05-06 20:46:51,004 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.php-cs-fixer_1776_php-cs-fixer-7523:latest
+2026-05-06 20:46:51,242 [INFO]   Container started: 4e40668a4c83
+2026-05-06 20:46:51,331 [INFO]   Patch applied successfully
+2026-05-06 20:46:51,424 [INFO]   Reset 2 test path(s) before test_patch
+2026-05-06 20:46:51,506 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-05-06 20:46:52,305 [INFO]   Test exit code: 0
+2026-05-06 20:46:52,305 [INFO]   Test output (last 500 chars): PHPUnit 9.6.22 by Sebastian Bergmann and contributors.
+
+
+Error:         PHP extension pcntl is required for enforcing time limits
+
+Time: 00:00.056, Memory: 126.00 MB
+
+No tests executed!
+
+2026-05-06 20:46:52,305 [INFO]   Running PASS_TO_PASS tests (236)...
+2026-05-06 20:46:53,251 [INFO]   Test exit code: 0
+2026-05-06 20:46:53,251 [INFO]   Test output (last 500 chars): PHPUnit 9.6.22 by Sebastian Bergmann and contributors.
+
+
+Error:         PHP extension pcntl is required for enforcing time limits
+
+Time: 00:00.214, Memory: 126.00 MB
+
+No tests executed!
+
+2026-05-06 20:46:53,523 [INFO]   Container removed
+2026-05-06 20:46:53,523 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 0%
+2026-05-06 20:46:53,523 [INFO] Evaluating: php-cs-fixer__php-cs-fixer-7635
+2026-05-06 20:46:53,539 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.php-cs-fixer_1776_php-cs-fixer-7635:latest
+2026-05-06 20:46:55,008 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.php-cs-fixer_1776_php-cs-fixer-7635:latest
+2026-05-06 20:46:55,008 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.php-cs-fixer_1776_php-cs-fixer-7635:latest
+2026-05-06 20:46:55,224 [INFO]   Container started: cdb24acdb2fc
+2026-05-06 20:46:55,307 [INFO]   Patch applied successfully
+2026-05-06 20:46:55,403 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 20:46:55,486 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-05-06 20:46:57,668 [INFO]   Test exit code: 2
+2026-05-06 20:46:57,668 [INFO]   Test output (last 500 chars): r\Import\FullyQualifiedStrictTypesFixerTest::testCodeWithReturnTypes
+The data provider specified for PhpCsFixer\Tests\Fixer\Import\FullyQualifiedStrictTypesFixerTest::testCodeWithReturnTypes is invalid
+The key "Partial class name looks like FQCN" has already been defined by a previous data provider
+
+/testbed/tests/Fixer/Import/FullyQualifiedStrictTypesFixerTest.php:583
+
+--
+
+There was 1 PHPUnit test runner warning:
+
+1) The pcntl extension is required for enforcing time limits
+
+No tests executed!
+
+2026-05-06 20:46:57,669 [INFO]   Running PASS_TO_PASS tests (80)...
+2026-05-06 20:47:00,080 [INFO]   Test exit code: 2
+2026-05-06 20:47:00,080 [INFO]   Test output (last 500 chars): r\Import\FullyQualifiedStrictTypesFixerTest::testCodeWithReturnTypes
+The data provider specified for PhpCsFixer\Tests\Fixer\Import\FullyQualifiedStrictTypesFixerTest::testCodeWithReturnTypes is invalid
+The key "Partial class name looks like FQCN" has already been defined by a previous data provider
+
+/testbed/tests/Fixer/Import/FullyQualifiedStrictTypesFixerTest.php:583
+
+--
+
+There was 1 PHPUnit test runner warning:
+
+1) The pcntl extension is required for enforcing time limits
+
+No tests executed!
+
+2026-05-06 20:47:00,284 [INFO]   Container removed
+2026-05-06 20:47:00,284 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 0%
+2026-05-06 20:47:00,285 [INFO] Evaluating: caddyserver__caddy-5870
+2026-05-06 20:47:00,300 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.caddyserver_1776_caddy-5870:latest
+2026-05-06 20:47:01,958 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.caddyserver_1776_caddy-5870:latest
+2026-05-06 20:47:01,958 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.caddyserver_1776_caddy-5870:latest
+2026-05-06 20:47:02,232 [INFO]   Container started: dc5fdc4e9761
+2026-05-06 20:47:02,322 [INFO]   Patch applied successfully
+2026-05-06 20:47:02,411 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 20:47:02,493 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-05-06 20:47:05,678 [INFO]   Test exit code: 1
+2026-05-06 20:47:05,678 [INFO]   Test output (last 500 chars): gned by unknown authority
+modules/caddypki/acmeserver/acmeserver.go:36:2: github.com/smallstep/nosql@v0.6.0: Get "https://proxy.golang.org/github.com/smallstep/nosql/@v/v0.6.0.zip": tls: failed to verify certificate: x509: certificate signed by unknown authority
+modules/logging/filewriter.go:26:2: gopkg.in/natefinch/lumberjack.v2@v2.2.1: Get "https://proxy.golang.org/gopkg.in/natefinch/lumberjack.v2/@v/v2.2.1.zip": tls: failed to verify certificate: x509: certificate signed by unknown authority
+
+2026-05-06 20:47:05,678 [INFO]   Running PASS_TO_PASS tests (0)...
+2026-05-06 20:47:05,974 [INFO]   Container removed
+2026-05-06 20:47:05,974 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:47:05,974 [INFO] Evaluating: caddyserver__caddy-5761
+2026-05-06 20:47:05,974 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:47:05,974 [INFO] Evaluating: laravel__framework-51195
+2026-05-06 20:47:05,993 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.laravel_1776_framework-51195:latest
+2026-05-06 20:47:07,555 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.laravel_1776_framework-51195:latest
+2026-05-06 20:47:07,555 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.laravel_1776_framework-51195:latest
+2026-05-06 20:47:07,796 [INFO]   Container started: f5fec1fc527f
+2026-05-06 20:47:07,876 [INFO]   Patch applied successfully
+2026-05-06 20:47:07,978 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 20:47:08,058 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-05-06 20:47:08,307 [INFO]   Test exit code: 255
+2026-05-06 20:47:08,307 [INFO]   Test output (last 500 chars): estbed/vendor/phpunit/phpunit/src/TextUI/Application.php(418): PHPUnit\TextUI\Configuration\TestSuiteBuilder->build(Object(PHPUnit\TextUI\Configuration\Configuration))
+#10 /testbed/vendor/phpunit/phpunit/src/TextUI/Application.php(181): PHPUnit\TextUI\Application->buildTestSuite(Object(PHPUnit\TextUI\Configuration\Configuration))
+#11 /testbed/vendor/phpunit/phpunit/phpunit(104): PHPUnit\TextUI\Application->run(Array)
+#12 /testbed/vendor/bin/phpunit(122): include('/testbed/vendor...')
+#13 {main}
+
+2026-05-06 20:47:08,307 [INFO]   Running PASS_TO_PASS tests (6)...
+2026-05-06 20:47:08,551 [INFO]   Test exit code: 255
+2026-05-06 20:47:08,551 [INFO]   Test output (last 500 chars): estbed/vendor/phpunit/phpunit/src/TextUI/Application.php(418): PHPUnit\TextUI\Configuration\TestSuiteBuilder->build(Object(PHPUnit\TextUI\Configuration\Configuration))
+#10 /testbed/vendor/phpunit/phpunit/src/TextUI/Application.php(181): PHPUnit\TextUI\Application->buildTestSuite(Object(PHPUnit\TextUI\Configuration\Configuration))
+#11 /testbed/vendor/phpunit/phpunit/phpunit(104): PHPUnit\TextUI\Application->run(Array)
+#12 /testbed/vendor/bin/phpunit(122): include('/testbed/vendor...')
+#13 {main}
+
+2026-05-06 20:47:08,814 [INFO]   Container removed
+2026-05-06 20:47:08,814 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 0%
+2026-05-06 20:47:08,814 [INFO] Evaluating: laravel__framework-48636
+2026-05-06 20:47:08,831 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.laravel_1776_framework-48636:latest
+2026-05-06 20:47:10,432 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.laravel_1776_framework-48636:latest
+2026-05-06 20:47:10,432 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.laravel_1776_framework-48636:latest
+2026-05-06 20:47:10,676 [INFO]   Container started: 9946c17e7990
+2026-05-06 20:47:10,771 [INFO]   Patch applied successfully
+2026-05-06 20:47:10,988 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 20:47:11,061 [INFO]   Running FAIL_TO_PASS tests (2)...
+2026-05-06 20:47:11,438 [INFO]   Test exit code: 255
+2026-05-06 20:47:11,438 [INFO]   Test output (last 500 chars): estbed/vendor/phpunit/phpunit/src/TextUI/Application.php(400): PHPUnit\TextUI\Configuration\TestSuiteBuilder->build(Object(PHPUnit\TextUI\Configuration\Configuration))
+#11 /testbed/vendor/phpunit/phpunit/src/TextUI/Application.php(113): PHPUnit\TextUI\Application->buildTestSuite(Object(PHPUnit\TextUI\Configuration\Configuration))
+#12 /testbed/vendor/phpunit/phpunit/phpunit(104): PHPUnit\TextUI\Application->run(Array)
+#13 /testbed/vendor/bin/phpunit(122): include('/testbed/vendor...')
+#14 {main}
+
+2026-05-06 20:47:11,438 [INFO]   Running PASS_TO_PASS tests (166)...
+2026-05-06 20:47:11,649 [INFO]   Test exit code: 255
+2026-05-06 20:47:11,650 [INFO]   Test output (last 500 chars): estbed/vendor/phpunit/phpunit/src/TextUI/Application.php(400): PHPUnit\TextUI\Configuration\TestSuiteBuilder->build(Object(PHPUnit\TextUI\Configuration\Configuration))
+#11 /testbed/vendor/phpunit/phpunit/src/TextUI/Application.php(113): PHPUnit\TextUI\Application->buildTestSuite(Object(PHPUnit\TextUI\Configuration\Configuration))
+#12 /testbed/vendor/phpunit/phpunit/phpunit(104): PHPUnit\TextUI\Application->run(Array)
+#13 /testbed/vendor/bin/phpunit(122): include('/testbed/vendor...')
+#14 {main}
+
+2026-05-06 20:47:11,911 [INFO]   Container removed
+2026-05-06 20:47:11,911 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 0%
+2026-05-06 20:47:11,911 [INFO] Evaluating: jordansissel__fpm-1829
+2026-05-06 20:47:11,925 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.jordansissel_1776_fpm-1829:latest
+2026-05-06 20:47:13,432 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.jordansissel_1776_fpm-1829:latest
+2026-05-06 20:47:13,433 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.jordansissel_1776_fpm-1829:latest
+2026-05-06 20:47:13,699 [INFO]   Container started: bb86b09d4e69
+2026-05-06 20:47:13,791 [INFO]   Patch applied successfully
+2026-05-06 20:47:13,864 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 20:47:13,958 [INFO]   Running FAIL_TO_PASS tests (6)...
+2026-05-06 20:47:14,215 [INFO]   Test exit code: 1
+2026-05-06 20:47:14,216 [INFO]   Test output (last 500 chars): rake aborted!
+No Rakefile found (looking for: rakefile, Rakefile, rakefile.rb, Rakefile.rb)
+/usr/local/bin/bundle:25:in `load'
+/usr/local/bin/bundle:25:in `<main>'
+(See full trace by running task with --trace)
+
+2026-05-06 20:47:14,216 [INFO]   Running PASS_TO_PASS tests (41)...
+2026-05-06 20:47:14,464 [INFO]   Test exit code: 1
+2026-05-06 20:47:14,464 [INFO]   Test output (last 500 chars): rake aborted!
+No Rakefile found (looking for: rakefile, Rakefile, rakefile.rb, Rakefile.rb)
+/usr/local/bin/bundle:25:in `load'
+/usr/local/bin/bundle:25:in `<main>'
+(See full trace by running task with --trace)
+
+2026-05-06 20:47:14,715 [INFO]   Container removed
+2026-05-06 20:47:14,715 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 0%
+2026-05-06 20:47:14,715 [INFO] Evaluating: jordansissel__fpm-1850
+2026-05-06 20:47:14,730 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.jordansissel_1776_fpm-1850:latest
+2026-05-06 20:47:16,147 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.jordansissel_1776_fpm-1850:latest
+2026-05-06 20:47:16,147 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.jordansissel_1776_fpm-1850:latest
+2026-05-06 20:47:16,386 [INFO]   Container started: 6c72c2f87d18
+2026-05-06 20:47:16,483 [INFO]   Patch applied successfully
+2026-05-06 20:47:16,573 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 20:47:16,653 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-05-06 20:47:16,866 [INFO]   Test exit code: 1
+2026-05-06 20:47:16,866 [INFO]   Test output (last 500 chars): cal/lib/ruby/3.3.0/bundler/vendor/thor/lib/thor/base.rb:584:in `start'
+	from /usr/local/lib/ruby/3.3.0/bundler/cli.rb:29:in `start'
+	from /usr/local/lib/ruby/gems/3.3.0/gems/bundler-2.5.22/exe/bundle:28:in `block in <top (required)>'
+	from /usr/local/lib/ruby/3.3.0/bundler/friendly_errors.rb:117:in `with_friendly_errors'
+	from /usr/local/lib/ruby/gems/3.3.0/gems/bundler-2.5.22/exe/bundle:20:in `<top (required)>'
+	from /usr/local/bin/bundle:25:in `load'
+	from /usr/local/bin/bundle:25:in `<main>'
+
+2026-05-06 20:47:16,866 [INFO]   Running PASS_TO_PASS tests (2)...
+2026-05-06 20:47:17,094 [INFO]   Test exit code: 1
+2026-05-06 20:47:17,095 [INFO]   Test output (last 500 chars): cal/lib/ruby/3.3.0/bundler/vendor/thor/lib/thor/base.rb:584:in `start'
+	from /usr/local/lib/ruby/3.3.0/bundler/cli.rb:29:in `start'
+	from /usr/local/lib/ruby/gems/3.3.0/gems/bundler-2.5.22/exe/bundle:28:in `block in <top (required)>'
+	from /usr/local/lib/ruby/3.3.0/bundler/friendly_errors.rb:117:in `with_friendly_errors'
+	from /usr/local/lib/ruby/gems/3.3.0/gems/bundler-2.5.22/exe/bundle:20:in `<top (required)>'
+	from /usr/local/bin/bundle:25:in `load'
+	from /usr/local/bin/bundle:25:in `<main>'
+
+2026-05-06 20:47:17,341 [INFO]   Container removed
+2026-05-06 20:47:17,341 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 0%
+2026-05-06 20:47:17,341 [INFO] Evaluating: faker-ruby__faker-2705
+2026-05-06 20:47:17,357 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.faker-ruby_1776_faker-2705:latest
+2026-05-06 20:47:18,762 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.faker-ruby_1776_faker-2705:latest
+2026-05-06 20:47:18,762 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.faker-ruby_1776_faker-2705:latest
+2026-05-06 20:47:18,955 [INFO]   Container started: 6dcfb455ed1d
+2026-05-06 20:47:19,034 [INFO]   Patch applied successfully
+2026-05-06 20:47:19,110 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 20:47:19,209 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-05-06 20:47:19,463 [INFO]   Test exit code: 1
+2026-05-06 20:47:19,463 [INFO]   Test output (last 500 chars): thod_missing'
+  /usr/local/bundle/gems/bundler-2.1.4/lib/bundler/rubygems_integration.rb:365:in `block (2 levels) in replace_bin_path'
+  /usr/local/bundle/gems/bundler-2.1.4/lib/bundler/rubygems_integration.rb:365:in `select'
+  /usr/local/bundle/gems/bundler-2.1.4/lib/bundler/rubygems_integration.rb:365:in `block in replace_bin_path'
+  /usr/local/bundle/gems/bundler-2.1.4/lib/bundler/rubygems_integration.rb:402:in `block in replace_bin_path'
+  /usr/local/bundle/bin/rake:25:in `<top (required)>'
+
+2026-05-06 20:47:19,486 [INFO]   Running PASS_TO_PASS tests (15)...
+2026-05-06 20:47:19,728 [INFO]   Test exit code: 1
+2026-05-06 20:47:19,728 [INFO]   Test output (last 500 chars): thod_missing'
+  /usr/local/bundle/gems/bundler-2.1.4/lib/bundler/rubygems_integration.rb:365:in `block (2 levels) in replace_bin_path'
+  /usr/local/bundle/gems/bundler-2.1.4/lib/bundler/rubygems_integration.rb:365:in `select'
+  /usr/local/bundle/gems/bundler-2.1.4/lib/bundler/rubygems_integration.rb:365:in `block in replace_bin_path'
+  /usr/local/bundle/gems/bundler-2.1.4/lib/bundler/rubygems_integration.rb:402:in `block in replace_bin_path'
+  /usr/local/bundle/bin/rake:25:in `<top (required)>'
+
+2026-05-06 20:47:20,367 [INFO]   Container removed
+2026-05-06 20:47:20,367 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 0%
+2026-05-06 20:47:20,367 [INFO] Evaluating: faker-ruby__faker-2970
+2026-05-06 20:47:20,382 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.faker-ruby_1776_faker-2970:latest
+2026-05-06 20:47:21,796 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.faker-ruby_1776_faker-2970:latest
+2026-05-06 20:47:21,796 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.faker-ruby_1776_faker-2970:latest
+2026-05-06 20:47:22,019 [INFO]   Container started: 700a9ed687af
+2026-05-06 20:47:22,099 [INFO]   Patch applied successfully
+2026-05-06 20:47:22,199 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 20:47:22,289 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-05-06 20:47:33,586 [INFO]   Test exit code: 0
+2026-05-06 20:47:33,587 [INFO]   Test output (last 500 chars): ------------
+2213 tests, 250159 assertions, 0 failures, 0 errors, 0 pendings, 0 omissions, 0 notifications
+100% passed
+-------------------------------------------------------------------------------
+251.56 tests/s, 28436.25 assertions/s
+Run options: --seed 35557
+
+# Running:
+
+
+
+Finished in 0.000988s, 0.0000 runs/s, 0.0000 assertions/s.
+
+0 runs, 0 assertions, 0 failures, 0 errors, 0 skips
+JSON Coverage report generated for Unit Tests to /testbed/coverage.         4917 / 4985 LOC (98.64%) covered.
+
+2026-05-06 20:47:33,587 [INFO]   Running PASS_TO_PASS tests (8)...
+2026-05-06 20:47:44,990 [INFO]   Test exit code: 0
+2026-05-06 20:47:44,990 [INFO]   Test output (last 500 chars): ------------
+2213 tests, 251584 assertions, 0 failures, 0 errors, 0 pendings, 0 omissions, 0 notifications
+100% passed
+-------------------------------------------------------------------------------
+254.59 tests/s, 28943.35 assertions/s
+Run options: --seed 48525
+
+# Running:
+
+
+
+Finished in 0.001729s, 0.0000 runs/s, 0.0000 assertions/s.
+
+0 runs, 0 assertions, 0 failures, 0 errors, 0 skips
+JSON Coverage report generated for Unit Tests to /testbed/coverage.         4918 / 4985 LOC (98.66%) covered.
+
+2026-05-06 20:47:45,180 [INFO]   Container removed
+2026-05-06 20:47:45,180 [INFO]   Result: RESOLVED | F2P: 100% | P2P: 100%
+2026-05-06 20:47:45,180 [INFO] Evaluating: fluent__fluentd-3328
+2026-05-06 20:47:45,197 [INFO]   Pulling image (attempt 1/4): docker.io/swebench/sweb.eval.x86_64.fluent_1776_fluentd-3328:latest
+2026-05-06 20:47:46,648 [INFO]   Pull complete: docker.io/swebench/sweb.eval.x86_64.fluent_1776_fluentd-3328:latest
+2026-05-06 20:47:46,648 [INFO]   Starting container from docker.io/swebench/sweb.eval.x86_64.fluent_1776_fluentd-3328:latest
+2026-05-06 20:47:47,172 [INFO]   Container started: 956d55a40a38
+2026-05-06 20:47:47,280 [INFO]   Patch applied successfully
+2026-05-06 20:47:47,368 [INFO]   Reset 1 test path(s) before test_patch
+2026-05-06 20:47:47,454 [INFO]   Running FAIL_TO_PASS tests (1)...
+2026-05-06 20:56:22,875 [INFO]   Test exit code: 1
+2026-05-06 20:56:22,880 [INFO]   Test output (last 500 chars): id.rb" "test/test_process.rb" "test/test_root_agent.rb" "test/test_static_config_analysis.rb" "test/test_supervisor.rb" "test/test_test_drivers.rb" "test/test_time_formatter.rb" "test/test_time_parser.rb" "test/test_tls.rb" "test/test_unique_id.rb" "test/test_variable_store.rb" ]
+/usr/local/bundle/gems/rake-13.2.1/exe/rake:27:in `<top (required)>'
+/usr/local/bin/bundle:25:in `load'
+/usr/local/bin/bundle:25:in `<main>'
+Tasks: TOP => test => base_test
+(See full trace by running task with --trace)
+
+2026-05-06 20:56:22,881 [INFO]   Running PASS_TO_PASS tests (0)...
+2026-05-06 20:56:24,094 [INFO]   Container removed
+2026-05-06 20:56:24,095 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,095 [INFO] Evaluating: fluent__fluentd-3466
+2026-05-06 20:56:24,095 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,095 [INFO] Evaluating: nlohmann__json-4237
+2026-05-06 20:56:24,095 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,095 [INFO] Evaluating: valkey-io__valkey-790
+2026-05-06 20:56:24,095 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,095 [INFO] Evaluating: valkey-io__valkey-928
+2026-05-06 20:56:24,095 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,095 [INFO] Evaluating: redis__redis-9733
+2026-05-06 20:56:24,095 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,095 [INFO] Evaluating: micropython__micropython-10095
+2026-05-06 20:56:24,095 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,096 [INFO] Evaluating: redis__redis-10068
+2026-05-06 20:56:24,096 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,096 [INFO] Evaluating: micropython__micropython-12158
+2026-05-06 20:56:24,096 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,096 [INFO] Evaluating: rubocop__rubocop-13393
+2026-05-06 20:56:24,096 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,096 [INFO] Evaluating: rubocop__rubocop-13375
+2026-05-06 20:56:24,096 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,096 [INFO] Evaluating: phpoffice__phpspreadsheet-3469
+2026-05-06 20:56:24,096 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,096 [INFO] Evaluating: phpoffice__phpspreadsheet-3463
+2026-05-06 20:56:24,096 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,096 [INFO] Evaluating: google__gson-1014
+2026-05-06 20:56:24,096 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,096 [INFO] Evaluating: google__gson-1093
+2026-05-06 20:56:24,097 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,097 [INFO] Evaluating: jekyll__jekyll-8047
+2026-05-06 20:56:24,097 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,097 [INFO] Evaluating: jekyll__jekyll-8167
+2026-05-06 20:56:24,097 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,097 [INFO] Evaluating: fastlane__fastlane-19207
+2026-05-06 20:56:24,097 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,097 [INFO] Evaluating: fastlane__fastlane-20642
+2026-05-06 20:56:24,097 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,097 [INFO] Evaluating: prometheus__prometheus-10633
+2026-05-06 20:56:24,097 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,097 [INFO] Evaluating: tokio-rs__tokio-4384
+2026-05-06 20:56:24,097 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,097 [INFO] Evaluating: javaparser__javaparser-4538
+2026-05-06 20:56:24,098 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,098 [INFO] Evaluating: javaparser__javaparser-4561
+2026-05-06 20:56:24,098 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,098 [INFO] Evaluating: sharkdp__bat-562
+2026-05-06 20:56:24,098 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,098 [INFO] Evaluating: gohugoio__hugo-12204
+2026-05-06 20:56:24,098 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,098 [INFO] Evaluating: reactivex__rxjava-7597
+2026-05-06 20:56:24,098 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,098 [INFO] Evaluating: gohugoio__hugo-12171
+2026-05-06 20:56:24,098 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,098 [INFO] Evaluating: prometheus__prometheus-9248
+2026-05-06 20:56:24,098 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,098 [INFO] Evaluating: hashicorp__terraform-34814
+2026-05-06 20:56:24,098 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,098 [INFO] Evaluating: projectlombok__lombok-3009
+2026-05-06 20:56:24,098 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,099 [INFO] Evaluating: projectlombok__lombok-3042
+2026-05-06 20:56:24,099 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%
+2026-05-06 20:56:24,099 [INFO] Evaluating: axios__axios-5085
+2026-05-06 20:56:24,099 [INFO]   Result: NOT RESOLVED | F2P: 0% | P2P: 100%

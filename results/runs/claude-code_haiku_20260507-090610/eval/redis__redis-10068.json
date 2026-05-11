@@ -1,0 +1,11 @@
+{
+  "instance_id": "redis__redis-10068",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "error",
+  "fail_to_pass_results": {},
+  "pass_to_pass_results": {},
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 1.0,
+  "error": "Task not found in dataset"
+}

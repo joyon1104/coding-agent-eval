@@ -1,0 +1,22 @@
+{
+  "instance_id": "jordansissel__fpm-1850",
+  "agent_name": "claude-code",
+  "patch": "diff --git a/lib/fpm/package/empty.rb b/lib/fpm/package/empty.rb\nindex 29c2529..2a77479 100644\n--- a/lib/fpm/package/empty.rb\n+++ b/lib/fpm/package/empty.rb\n@@ -4,9 +4,19 @@ require \"backports/latest\"\n # Empty Package type. For strict/meta/virtual package creation\n \n class FPM::Package::Empty < FPM::Package\n+  private\n+\n+  def initialize\n+    super\n+    @architecture = \"all\"\n+  end\n+\n   def output(output_path)\n     logger.warn(\"Your package has gone into the void.\")\n   end\n+\n+  public\n+\n   def to_s(fmt)\n     return \"\"\n   end\n",
+  "status": "success",
+  "token_usage": {
+    "input_tokens": 775616,
+    "output_tokens": 4255,
+    "cache_read_tokens": 759513,
+    "cache_write_tokens": 15954
+  },
+  "timestamps": {
+    "task_start": 1778063945.8977714,
+    "task_end": 1778064016.5038555,
+    "first_action": 1778063948.9267714
+  },
+  "total_cost_usd": 0.1178438,
+  "convergence_steps": 23,
+  "error_message": "",
+  "raw_output": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":68849,\"duration_api_ms\":69667,\"num_turns\":23,\"result\":\"Perfect! I can see that your suggestion aligns with existing patterns in fpm. Other architecture-independent packages already default to \\\"all\\\":\\n- **gem** packages default to \\\"all\\\" if they have no C extensions\\n- **cpan** packages default to \\\"all\\\"  \\n- **deb** packages have handling for \\\"all\\\" (noarch)\\n\\nThe change I've made is complete. Here's what was done:\\n\\n## Summary of Change\\n\\nModified `lib/fpm/package/empty.rb` to override the `initialize` method and set the default architecture to `\\\"all\\\"` instead of `\\\"native\\\"`.\\n\\n**Why this is safe:**\\n- Empty packages have no files, so they're inherently architecture-independent\\n- The existing test already sets `architecture = \\\"all\\\"` (line 9 of `empty_spec.rb`), suggesting this was the intended use case\\n- RPM, Debian, and other package types already have logic to handle the \\\"all\\\" architecture value\\n- This follows the same pattern used by other metadata-only packages like gems and CPAN packages\\n\\n**No negative impacts expected:**\\n- Empty packages are no-op (their `output()` method just warns and does nothing)\\n- The semantic meaning is actually more correct - \\\"all\\\" is the standard way to mark architecture-independent packages across Linux distributions\",\"stop_reason\":\"end_turn\",\"session_id\":\"cfc88802-61ce-43e5-8105-84f2c3a198bc\",\"total_cost_usd\":0.1178438,\"usage\":{\"input_tokens\":149,\"cache_creation_input_tokens\":15954,\"cache_read_input_tokens\":759513,\"output_tokens\":4255,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":15954,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[{\"input_tokens\":7,\"output_tokens\":400,\"cache_read_input_tokens\":40203,\"cache_creation_input_tokens\":383,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":383},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":595,\"outputTokens\":4271,\"cacheReadInputTokens\":759513,\"cacheCreationInputTokens\":15954,\"webSearchRequests\":0,\"costUSD\":0.1178438,\"contextWindow\":200000,\"maxOutputTokens\":32000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"728d28e2-0213-4078-b196-da95681a1c9e\"}\n",
+  "model_name": ""
+}

@@ -1,0 +1,20 @@
+{
+  "instance_id": "laravel__framework-51195",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "Blade Verbatim > Newlines are inserted correctly after echo": false
+  },
+  "pass_to_pass_results": {
+    "Blade Verbatim > Verbatim blocks are compiled": false,
+    "Blade Verbatim > Verbatim blocks with multiple lines are compiled": false,
+    "Blade Verbatim > Multiple verbatim blocks are compiled": false,
+    "Blade Verbatim > Raw blocks are rendered in the right order": false,
+    "Blade Verbatim > Multiline templates with raw blocks are rendered in the right order": false,
+    "Blade Verbatim > Raw blocks dont get mixed up when some are removed by blade comments": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}
