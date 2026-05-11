@@ -1,0 +1,26 @@
+{
+  "instance_id": "gohugoio__hugo-12171",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "TestPagesSimilarSectionNames": false
+  },
+  "pass_to_pass_results": {
+    "TestBundleDuplicatePagesAndResources": false,
+    "TestRegularPagesRecursive": false,
+    "TestRegularPagesRecursiveHome": false,
+    "TestPagesPrevNext": false,
+    "TestPaginatorNodePagesOnly": false,
+    "TestRebuildAddPageListPagesInHome": false,
+    "TestRebuildAddPageWithSpaceListPagesInHome": false,
+    "TestTaxonomiesListPages": false,
+    "TestOrderedPages": false,
+    "TestGroupedPages": false,
+    "TestTitleCaseStyleWithAutomaticSectionPages": false,
+    "TestMenusSectionPagesMenu": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

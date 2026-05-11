@@ -1,0 +1,30 @@
+{
+  "instance_id": "hashicorp__terraform-34814",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "TestProvisionerTimeout": false
+  },
+  "pass_to_pass_results": {
+    "TestResourceProvider_Validate_good": false,
+    "TestResourceProvider_Validate_bad": false,
+    "TestResourceProvider_generateScript": false,
+    "TestResourceProvider_generateScriptEmptyInline": false,
+    "TestResourceProvider_CollectScripts_inline": false,
+    "TestResourceProvider_CollectScripts_script": false,
+    "TestResourceProvider_CollectScripts_scripts": false,
+    "TestResourceProvider_CollectScripts_scriptsEmpty": false,
+    "TestResourceProvisioner_StopClose": false,
+    "TestResourceProvisioner_connectionRequired": false,
+    "TestResourceProvisioner_nullsInOptionals": false,
+    "TestResourceProvisioner_nullsInOptionals/0": false,
+    "TestResourceProvisioner_nullsInOptionals/1": false,
+    "TestResourceProvisioner_nullsInOptionals/2": false,
+    "TestResourceProvisioner_nullsInOptionals/3": false,
+    "TestResourceProvisioner_nullsInOptionals/4": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

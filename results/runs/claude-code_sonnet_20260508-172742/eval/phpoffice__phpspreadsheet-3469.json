@@ -1,0 +1,22 @@
+{
+  "instance_id": "phpoffice__phpspreadsheet-3469",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "Style > Style cell address object": false,
+    "Style > Style cell range object": false
+  },
+  "pass_to_pass_results": {
+    "Style > Style odd methods": false,
+    "Style > Style column": false,
+    "Style > Style is reused": false,
+    "Style > Style row": false,
+    "Style > Issue 1712 a": false,
+    "Style > Issue 1712 b": false,
+    "Style > Style loop upwards": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

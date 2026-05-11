@@ -1,0 +1,14 @@
+{
+  "instance_id": "tokio-rs__tokio-4384",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "net_types_are_unwind_safe": false,
+    "unix_net_types_are_unwind_safe": false
+  },
+  "pass_to_pass_results": {},
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

@@ -1,0 +1,33 @@
+{
+  "instance_id": "jekyll__jekyll-8167",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "TestUtils#test_: The `Utils.slugify` method should not replace Unicode 'Mark', 'Letter', or 'Number: Decimal Digit' category characters": true
+  },
+  "pass_to_pass_results": {
+    "TestUtils#test_: The `Utils.slugify` method should not change behaviour if mode is nil": true,
+    "TestUtils#test_: The `Utils.slugify` method should ignore hyphens": true,
+    "TestUtils#test_: The `Utils.slugify` method should Keep all uppercase letters if cased is true": true,
+    "TestUtils#test_: The `Utils.slugify` method should trim leading and trailing whitespace": true,
+    "TestUtils#test_: The `Utils.slugify` method should replace everything else but ASCII characters": true,
+    "TestUtils#test_: The `Utils.slugify` method should replace punctuation in any scripts by hyphens": true,
+    "TestUtils#test_: The `Utils.slugify` method should not replace period and underscore if mode is pretty": true,
+    "TestUtils#test_: The `Utils.slugify` method should only replace whitespace if mode is raw": true,
+    "TestUtils#test_: The `Utils.slugify` method should map accented latin characters to ASCII characters": true,
+    "TestUtils#test_: The `Utils.slugify` method should not modify the original string": true,
+    "TestUtils#test_: The `Utils.slugify` method should combine adjacent hyphens and spaces": true,
+    "TestUtils#test_: The `Utils.slugify` method should replace consecutive whitespace with a single hyphen": true,
+    "TestUtils#test_: The `Utils.slugify` method should not change behaviour if mode is default": true,
+    "TestUtils#test_: The `Utils.slugify` method should replace whitespace with hyphens": true,
+    "TestUtils#test_: The `Utils.slugify` method should return the given string if mode is none": true,
+    "TestUtils#test_: The `Utils.slugify` method should replace underscores with hyphens": true,
+    "TestUtils#test_: The `Utils.slugify` method should drop trailing punctuation": true,
+    "TestUtils#test_: The `Utils.slugify` method should records a warning in the log if the returned slug is empty": true,
+    "TestUtils#test_: The `Utils.slugify` method should return nil if passed nil": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

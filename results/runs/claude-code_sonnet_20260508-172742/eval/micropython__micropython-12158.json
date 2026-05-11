@@ -1,0 +1,32 @@
+{
+  "instance_id": "micropython__micropython-12158",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "thread/thread_ident1.py": false
+  },
+  "pass_to_pass_results": {
+    "thread/thread_exc1.py": false,
+    "thread/stress_recurse.py": false,
+    "thread/stress_schedule.py": false,
+    "thread/thread_heap_lock.py": false,
+    "thread/thread_gc1.py": false,
+    "thread/thread_exc2.py": false,
+    "thread/stress_create.py": false,
+    "thread/thread_shared1.py": false,
+    "thread/thread_shared2.py": false,
+    "thread/thread_sleep1.py": false,
+    "thread/thread_stacksize1.py": false,
+    "thread/thread_exit1.py": false,
+    "thread/stress_heap.py": false,
+    "thread/thread_exit2.py": false,
+    "thread/stress_aes.py": false,
+    "thread/thread_qstr1.py": false,
+    "thread/thread_start1.py": false,
+    "thread/thread_start2.py": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

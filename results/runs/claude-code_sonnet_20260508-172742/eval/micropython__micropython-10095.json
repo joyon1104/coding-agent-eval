@@ -1,0 +1,36 @@
+{
+  "instance_id": "micropython__micropython-10095",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "basics/fun_calldblstar.py": false
+  },
+  "pass_to_pass_results": {
+    "basics/fun_defargs.py": false,
+    "basics/fun1.py": false,
+    "basics/fun_defargs2.py": false,
+    "basics/fun2.py": false,
+    "basics/fun_error.py": false,
+    "basics/fun3.py": false,
+    "basics/fun_error2.py": false,
+    "basics/fun_annotations.py": false,
+    "basics/fun_globals.py": false,
+    "basics/fun_kwargs.py": false,
+    "basics/fun_calldblstar2.py": false,
+    "basics/fun_kwonly.py": false,
+    "basics/fun_calldblstar3.py": false,
+    "basics/fun_kwonlydef.py": false,
+    "basics/fun_calldblstar4.py": false,
+    "basics/fun_kwvarargs.py": false,
+    "basics/fun_callstar.py": false,
+    "basics/fun_largestate.py": false,
+    "basics/fun_callstardblstar.py": false,
+    "basics/fun_name.py": false,
+    "basics/fun_str.py": false,
+    "basics/fun_varargs.py": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}
