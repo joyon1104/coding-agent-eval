@@ -1,8 +1,0 @@
-2026-05-08 12:15:19,477 [INFO]   Cleaned up 1 stale temp directories
-2026-05-08 12:15:19,477 [INFO] 
-============================================================
-2026-05-08 12:15:19,477 [INFO] Agent: claude-code | Tasks: 50
-2026-05-08 12:15:19,477 [INFO] ============================================================
-2026-05-08 12:15:19,479 [INFO]   Running: fmtlib__fmt-2457
-2026-05-08 12:15:19,479 [INFO]   Using cached repo: /home/going114kim/coding-agent-eval/.repo_cache/fmtlib__fmt
-2026-05-08 12:15:19,480 [INFO]   Copying cached repo for fmtlib__fmt-2457...
