@@ -6,7 +6,7 @@ import json
 import logging
 import subprocess
 import tempfile
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
 
@@ -32,6 +32,12 @@ class EvalResult:
     `resolved` semantics:
       - True only when ALL F2P AND ALL P2P tests pass.
       - Any test failure (or the task not reaching test execution) → False.
+
+    Failure classification fields (set on non-success outcomes):
+      - `failure_stage`:    which pipeline stage failed
+      - `failure_category`: class of problem (model_failure / environment_failure / …)
+      - `root_cause`:       machine-readable identifier (e.g. "ssl_verification_failed")
+      - `details`:          structured extras (command, stderr_snippet, exit_code)
     """
     instance_id: str
     agent_name: str
@@ -40,12 +46,19 @@ class EvalResult:
     fail_to_pass_results: dict[str, bool] = None  # test_name -> passed
     pass_to_pass_results: dict[str, bool] = None  # test_name -> passed
     error: str = ""
+    # Failure classification — empty strings mean "not classified yet"
+    failure_stage: str = ""
+    failure_category: str = ""
+    root_cause: str = ""
+    details: dict = field(default_factory=dict)
 
     def __post_init__(self):
         if self.fail_to_pass_results is None:
             self.fail_to_pass_results = {}
         if self.pass_to_pass_results is None:
             self.pass_to_pass_results = {}
+        if self.details is None:
+            self.details = {}
 
     @property
     def fail_to_pass_rate(self) -> float:
@@ -72,6 +85,10 @@ class EvalResult:
             "fail_to_pass_rate": self.fail_to_pass_rate,
             "pass_to_pass_rate": self.pass_to_pass_rate,
             "error": self.error,
+            "failure_stage": self.failure_stage,
+            "failure_category": self.failure_category,
+            "root_cause": self.root_cause,
+            "details": self.details,
         }
 
 

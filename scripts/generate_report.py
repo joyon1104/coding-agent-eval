@@ -113,6 +113,10 @@ def main(run_id, fmt, merge_dirs):
                     fail_to_pass_results=data.get("fail_to_pass_results", {}),
                     pass_to_pass_results=data.get("pass_to_pass_results", {}),
                     error=data.get("error", ""),
+                    failure_stage=data.get("failure_stage", ""),
+                    failure_category=data.get("failure_category", ""),
+                    root_cause=data.get("root_cause", ""),
+                    details=data.get("details", {}),
                 )
                 eval_results_map.setdefault(er.agent_name, []).append(er)
             except (json.JSONDecodeError, KeyError):
@@ -157,7 +161,11 @@ def main(run_id, fmt, merge_dirs):
 
     for f in formats:
         if f == "markdown":
-            content = format_markdown(agent_scores, run_id, tier, num_tasks)
+            all_evals_for_report = [er for evals in eval_results_map.values() for er in evals]
+            content = format_markdown(
+                agent_scores, run_id, tier, num_tasks,
+                eval_results=all_evals_for_report or None,
+            )
         elif f == "json":
             content = format_json(agent_scores, run_id, tier, num_tasks)
         elif f == "csv":

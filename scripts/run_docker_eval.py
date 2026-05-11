@@ -128,8 +128,13 @@ def main(run_id, agent, dataset, timeout):
 
     # 4. Run Docker-based evaluation (images pulled automatically)
     console.print(f"\n[bold]Step 2: Test Verification[/bold]")
+    # diagnostics_dir is the same eval output dir — per-task subdirs are
+    # created inside it (eval/<instance_id>/) alongside the flat JSON files.
+    eval_output_dir = PROJECT_ROOT / "results" / "runs" / run_id / "eval"
+    eval_output_dir.mkdir(parents=True, exist_ok=True)
     eval_results = evaluate_batch(
-        tasks, agent_results, timeout_per_task=timeout, tier=run_tier
+        tasks, agent_results, timeout_per_task=timeout, tier=run_tier,
+        diagnostics_dir=eval_output_dir,
     )
 
     # 5. Display results
@@ -176,14 +181,47 @@ def main(run_id, agent, dataset, timeout):
     console.print(f"  Task Resolution Rate: {trr*100:.1f}% (resolved / (success + fail))")
 
     # 7. Save eval results
-    eval_output_dir = PROJECT_ROOT / "results" / "runs" / run_id / "eval"
-    eval_output_dir.mkdir(parents=True, exist_ok=True)
-
     for er in eval_results:
         eval_path = eval_output_dir / f"{er.instance_id}.json"
         eval_path.write_text(json.dumps(er.to_dict(), indent=2, ensure_ascii=False))
 
     console.print(f"\n  Eval results saved to: {eval_output_dir}")
+
+    # 8. Failure breakdown by category
+    from src.evaluator.failure_classifier import is_infrastructure_failure
+    from collections import Counter
+    cat_counts: Counter = Counter()
+    for er in eval_results:
+        cat = er.failure_category
+        if cat:
+            cat_counts[cat] += 1
+    if cat_counts:
+        console.print(f"\n[bold]Failure Breakdown[/bold]")
+        label_map = {
+            "model_failure": "Model failures (agent-side)",
+            "environment_failure": "Environment failures",
+            "network_failure": "Network / SSL / proxy failures",
+            "registry_failure": "Registry / auth failures",
+            "docker_failure": "Docker failures",
+            "dependency_failure": "Dependency installation failures",
+            "timeout": "Timeout failures",
+            "configuration_error": "Configuration errors",
+            "internal_error": "Internal errors",
+        }
+        for cat, cnt in sorted(cat_counts.items(), key=lambda x: -x[1]):
+            label = label_map.get(cat, cat)
+            color = "red" if not is_infrastructure_failure(cat) else "yellow"
+            console.print(f"  [{color}]{label}[/{color}]: {cnt}")
+        model_cnt = cat_counts.get("model_failure", 0)
+        infra_cnt = sum(v for k, v in cat_counts.items() if is_infrastructure_failure(k))
+        console.print(
+            f"\n  Model failures: [red]{model_cnt}[/red]  |  "
+            f"Infrastructure failures: [yellow]{infra_cnt}[/yellow]"
+        )
+        if infra_cnt:
+            console.print(
+                "  [dim]Infrastructure failures are not counted against model capability.[/dim]"
+            )
 
 
 if __name__ == "__main__":

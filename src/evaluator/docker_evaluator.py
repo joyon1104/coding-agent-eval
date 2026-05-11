@@ -12,19 +12,40 @@ Workflow per instance:
   5. Call profile.post_patch_hook() (C++ recompile; no-op for others)
   6. Run FAIL_TO_PASS tests → should pass if fix is correct
   7. Run PASS_TO_PASS tests → should still pass (regression check)
+
+Failure diagnostics:
+  Every returned EvalResult carries failure_stage / failure_category / root_cause
+  / details so the report can distinguish model failures from infra failures.
+  When diagnostics_dir is passed to evaluate_single() / evaluate_batch(), a
+  per-task subdirectory is written with structured log artifacts.
 """
 
 from __future__ import annotations
 
+import json
 import logging
 import platform
 import re
 import subprocess
 import tempfile
 import time
+from datetime import datetime
 from pathlib import Path
 
 from src.core.models import AgentResult, EvalTask
+from src.evaluator.failure_classifier import (
+    STAGE_DOCKER_PULL,
+    STAGE_CONTAINER_STARTUP,
+    STAGE_DEPENDENCY_INSTALLATION,
+    STAGE_TEST_EXECUTION,
+    STAGE_PATCH_EXTRACTION,
+    build_details,
+    classify_container_failure,
+    classify_dependency_failure,
+    classify_patch_failure,
+    classify_pull_failure,
+    classify_test_execution_failure,
+)
 from src.evaluator.languages.dispatch import get_profile
 from src.evaluator.languages.profile import LanguageProfile
 from src.evaluator.registry_utils import RETRYABLE, backoff_seconds, classify
@@ -161,36 +182,83 @@ def _docker_exec(
     )
 
 
+def _check_container_environment(container_id: str) -> dict:
+    """Quick sanity check of the container environment before running tests.
+
+    Verifies that basic tools and the testbed directory are accessible.
+    Returns a dict suitable for writing to environment_check.json.
+    """
+    checks: dict = {
+        "container_id": container_id,
+        "timestamp": datetime.now().isoformat(),
+        "checks": {},
+    }
+
+    probe_commands = [
+        ("git", "git --version 2>&1"),
+        ("testbed_accessible", "ls /testbed 2>&1"),
+        ("python", "python --version 2>&1 || python3 --version 2>&1"),
+        ("pip", "pip --version 2>&1 || pip3 --version 2>&1"),
+    ]
+
+    all_ok = True
+    for name, cmd in probe_commands:
+        try:
+            r = _docker_exec(container_id, cmd, timeout=15)
+            ok = r.returncode == 0
+            checks["checks"][name] = {
+                "available": ok,
+                "output": (r.stdout or r.stderr or "").strip()[:120],
+            }
+            if not ok:
+                all_ok = False
+        except subprocess.TimeoutExpired:
+            checks["checks"][name] = {"available": False, "output": "timeout"}
+            all_ok = False
+
+    checks["all_ok"] = all_ok
+    return checks
+
+
 def _run_tests_in_container(
     container_id: str,
     test_names: list[str],
     profile: LanguageProfile,
     task: EvalTask,
     timeout: int = 300,
-) -> dict[str, bool]:
+) -> tuple[dict[str, bool], str, str]:
     """Run tests inside the SWE-bench container via the language profile.
+
+    Returns (outcomes, stdout, stderr). stdout and stderr are returned
+    separately so callers can save them as diagnostic artifacts.
 
     profile.build_test_command() constructs the shell command (and may stage
     input files via docker cp). profile.parse_test_output() maps runner output
     to pass/fail per test name. All language-specific logic lives in the profile.
     """
     if not test_names:
-        return {}
+        return {}, "", ""
 
     cmd = profile.build_test_command(test_names, task, container_id)
+    raw_stdout = ""
+    raw_stderr = ""
+    timed_out = False
 
     try:
         result = _docker_exec(
             container_id, cmd, timeout=timeout, prefix=profile.shell_prefix()
         )
-        output = (result.stdout or "") + (result.stderr or "")
+        raw_stdout = result.stdout or ""
+        raw_stderr = result.stderr or ""
+        output = raw_stdout + raw_stderr
         logger.info(f"  Test exit code: {result.returncode}")
     except subprocess.TimeoutExpired as e:
         # Salvage whatever the runner wrote before we killed it — tests that
         # completed before the timeout still have valid results in the buffer.
-        partial_stdout = (e.stdout or b"").decode("utf-8", errors="replace") if isinstance(e.stdout, bytes) else (e.stdout or "")
-        partial_stderr = (e.stderr or b"").decode("utf-8", errors="replace") if isinstance(e.stderr, bytes) else (e.stderr or "")
-        output = partial_stdout + partial_stderr
+        raw_stdout = (e.stdout or b"").decode("utf-8", errors="replace") if isinstance(e.stdout, bytes) else (e.stdout or "")
+        raw_stderr = (e.stderr or b"").decode("utf-8", errors="replace") if isinstance(e.stderr, bytes) else (e.stderr or "")
+        output = raw_stdout + raw_stderr
+        timed_out = True
         logger.warning(
             f"  Test execution timed out after {timeout}s; parsing {len(output)} "
             f"chars of partial output (completed tests keep real results; rest are False)"
@@ -198,7 +266,7 @@ def _run_tests_in_container(
 
     logger.info(f"  Test output (last 500 chars): {output[-500:]}")
     outcomes = profile.parse_test_output(output, "", test_names)
-    return {o.name: o.passed for o in outcomes}
+    return {o.name: o.passed for o in outcomes}, raw_stdout, raw_stderr
 
 
 def _write_patch_file(patch_text: str) -> str:
@@ -211,6 +279,40 @@ def _write_patch_file(patch_text: str) -> str:
     return f.name
 
 
+def _save_task_diagnostics(
+    task_diag_dir: Path,
+    *,
+    docker_setup_log: str = "",
+    env_check: dict | None = None,
+    test_stdout: str = "",
+    test_stderr: str = "",
+    failure_summary: dict | None = None,
+) -> None:
+    """Persist per-task diagnostic artifacts under task_diag_dir."""
+    task_diag_dir.mkdir(parents=True, exist_ok=True)
+
+    if docker_setup_log:
+        (task_diag_dir / "docker_setup.log").write_text(
+            docker_setup_log, encoding="utf-8"
+        )
+    if env_check is not None:
+        (task_diag_dir / "environment_check.json").write_text(
+            json.dumps(env_check, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
+    if test_stdout:
+        (task_diag_dir / "test_stdout.log").write_text(
+            test_stdout, encoding="utf-8"
+        )
+    if test_stderr:
+        (task_diag_dir / "test_stderr.log").write_text(
+            test_stderr, encoding="utf-8"
+        )
+    if failure_summary is not None:
+        (task_diag_dir / "failure_summary.json").write_text(
+            json.dumps(failure_summary, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
+
+
 def evaluate_single(
     task: EvalTask,
     agent_result: AgentResult,
@@ -218,6 +320,7 @@ def evaluate_single(
     f2p_timeout: int | None = None,
     p2p_timeout: int | None = None,
     tier: str = "lite",
+    diagnostics_dir: Path | None = None,
 ) -> EvalResult:
     """Evaluate a single agent result using the SWE-bench Docker image.
 
@@ -226,87 +329,208 @@ def evaluate_single(
     tests on Django instances, so it gets a more generous default (1.5x).
     `tier` selects the language profile: "lite"/"verified"/"full" → Python;
     "multi" → dispatch by repo.
+
+    `diagnostics_dir`: if provided, per-task subdirectory is created with
+    docker_setup.log, environment_check.json, test_stdout.log, test_stderr.log,
+    and (on failure) failure_summary.json.
     """
     f2p_timeout = f2p_timeout if f2p_timeout is not None else timeout
     p2p_timeout = p2p_timeout if p2p_timeout is not None else int(timeout * 1.5)
 
+    task_diag_dir = (
+        diagnostics_dir / task.instance_id if diagnostics_dir is not None else None
+    )
+
     profile = get_profile(task, tier)
 
-    # No patch from agent → fail (agent-side issue, not environment).
+    # --- Accumulators for docker_setup.log ---
+    setup_log_parts: list[str] = []
+
+    def _log(msg: str) -> None:
+        logger.info(msg)
+        setup_log_parts.append(msg)
+
+    def _flush_diag(
+        *,
+        env_check: dict | None = None,
+        test_stdout: str = "",
+        test_stderr: str = "",
+        failure_summary: dict | None = None,
+    ) -> None:
+        if task_diag_dir is None:
+            return
+        _save_task_diagnostics(
+            task_diag_dir,
+            docker_setup_log="\n".join(setup_log_parts),
+            env_check=env_check,
+            test_stdout=test_stdout,
+            test_stderr=test_stderr,
+            failure_summary=failure_summary,
+        )
+
+    # --- No patch — agent-side failure ---
     if not agent_result.patch:
-        return EvalResult(
+        result = EvalResult(
             instance_id=task.instance_id,
             agent_name=agent_result.agent_name,
             resolved=False,
             eval_status="fail",
             error="No patch generated",
+            failure_stage=STAGE_PATCH_EXTRACTION,
+            failure_category="model_failure",
+            root_cause="no_patch_generated",
         )
+        _flush_diag(
+            failure_summary={
+                "status": "FAILED",
+                "failure_stage": result.failure_stage,
+                "failure_category": result.failure_category,
+                "root_cause": result.root_cause,
+                "error": result.error,
+            }
+        )
+        return result
 
     image = profile.get_image_name(task.instance_id)
 
-    # 1. Pull image — environmental dependency, classify failures as "error".
+    # --- 1. Pull image ---
+    _log(f"[docker_pull] Pulling image: {image}")
     if not pull_image(task.instance_id, tier=tier):
-        return EvalResult(
+        pull_err = f"Failed to pull image: {image}"
+        cat, root = classify_pull_failure(pull_err)
+        result = EvalResult(
             instance_id=task.instance_id,
             agent_name=agent_result.agent_name,
             eval_status="error",
-            error=f"Failed to pull image: {image}",
+            error=pull_err,
+            failure_stage=STAGE_DOCKER_PULL,
+            failure_category=cat,
+            root_cause=root,
+            details=build_details(
+                command=f"docker pull {image}",
+                stderr_snippet=pull_err,
+            ),
         )
+        _flush_diag(
+            failure_summary={
+                "status": "FAILED",
+                "failure_stage": result.failure_stage,
+                "failure_category": result.failure_category,
+                "root_cause": result.root_cause,
+                "details": result.details,
+            }
+        )
+        return result
+
+    _log(f"[docker_pull] Image ready: {image}")
 
     container_name = f"cae_{task.instance_id}"
     container_id = None
+    env_check: dict | None = None
 
     try:
-        # 2. Start container (image already has repo at /testbed with deps)
-        logger.info(f"  Starting container from {image}")
+        # --- 2. Start container ---
+        _log(f"[container_startup] Starting container from {image}")
 
-        # Remove existing container if any
         subprocess.run(
             ["docker", "rm", "-f", container_name],
             capture_output=True, timeout=10,
         )
 
-        result = subprocess.run(
+        result_proc = subprocess.run(
             ["docker", "run", "-d", "--name", container_name,
              image, "tail", "-f", "/dev/null"],
             capture_output=True, text=True, timeout=30,
         )
-        if result.returncode != 0:
-            return EvalResult(
+        if result_proc.returncode != 0:
+            stderr_snippet = result_proc.stderr[:400]
+            cat, root = classify_container_failure(stderr_snippet)
+            result = EvalResult(
                 instance_id=task.instance_id,
                 agent_name=agent_result.agent_name,
                 eval_status="error",
-                error=f"Container start failed: {result.stderr[:300]}",
+                error=f"Container start failed: {stderr_snippet}",
+                failure_stage=STAGE_CONTAINER_STARTUP,
+                failure_category=cat,
+                root_cause=root,
+                details=build_details(
+                    command=f"docker run -d --name {container_name} {image}",
+                    stderr_snippet=stderr_snippet,
+                    exit_code=result_proc.returncode,
+                ),
             )
+            _flush_diag(
+                failure_summary={
+                    "status": "FAILED",
+                    "failure_stage": result.failure_stage,
+                    "failure_category": result.failure_category,
+                    "root_cause": result.root_cause,
+                    "details": result.details,
+                }
+            )
+            return result
 
-        container_id = result.stdout.strip()[:12]
-        logger.info(f"  Container started: {container_id}")
+        container_id = result_proc.stdout.strip()[:12]
+        _log(f"[container_startup] Container started: {container_id}")
 
-        # 3. Apply agent's patch — three-tier fallback (patch content never modified):
-        #    (1) strict `git apply`
-        #    (2) `git apply --3way` (blob-SHA merge; recovers from test_patch drift)
-        #    (3) `git apply --3way --ignore-whitespace` (tolerates whitespace drift)
+        # --- Environment check (before touching the repo) ---
+        env_check = _check_container_environment(container_id)
+        _log(f"[env_check] all_ok={env_check.get('all_ok', False)}")
+
+        # Detect dependency-level issues from env check (e.g. pip broken)
+        if not env_check.get("all_ok", True):
+            # Testbed inaccessible = container/image problem, not model
+            testbed_ok = env_check["checks"].get("testbed_accessible", {}).get("available", True)
+            if not testbed_ok:
+                env_output = str(env_check["checks"].get("testbed_accessible", {}).get("output", ""))
+                cat, root = classify_dependency_failure(env_output)
+                result = EvalResult(
+                    instance_id=task.instance_id,
+                    agent_name=agent_result.agent_name,
+                    eval_status="error",
+                    error=f"Container environment check failed: /testbed not accessible",
+                    failure_stage=STAGE_DEPENDENCY_INSTALLATION,
+                    failure_category=cat,
+                    root_cause=root,
+                    details=build_details(
+                        command="ls /testbed",
+                        stderr_snippet=env_output,
+                    ),
+                )
+                _flush_diag(
+                    env_check=env_check,
+                    failure_summary={
+                        "status": "FAILED",
+                        "failure_stage": result.failure_stage,
+                        "failure_category": result.failure_category,
+                        "root_cause": result.root_cause,
+                        "details": result.details,
+                    },
+                )
+                return result
+
+        # --- 3. Apply agent's patch ---
         patch_path = _write_patch_file(agent_result.patch)
         subprocess.run(
             ["docker", "cp", patch_path, f"{container_name}:/tmp/agent.patch"],
             capture_output=True, timeout=10,
         )
 
-        result = _docker_exec(
+        result_proc = _docker_exec(
             container_name,
             "cd /testbed && git apply --verbose /tmp/agent.patch",
             timeout=30,
         )
-        if result.returncode != 0:
-            logger.info(f"  git apply failed, retrying with --3way...")
-            result = _docker_exec(
+        if result_proc.returncode != 0:
+            _log(f"  git apply failed, retrying with --3way...")
+            result_proc = _docker_exec(
                 container_name,
                 "cd /testbed && git apply --verbose --3way /tmp/agent.patch",
                 timeout=30,
             )
-        if result.returncode != 0:
-            logger.info(f"  --3way failed, retrying with --ignore-whitespace...")
-            result = _docker_exec(
+        if result_proc.returncode != 0:
+            _log(f"  --3way failed, retrying with --ignore-whitespace...")
+            result_proc = _docker_exec(
                 container_name,
                 "cd /testbed && git apply --verbose --3way --ignore-whitespace /tmp/agent.patch",
                 timeout=30,
@@ -314,28 +538,39 @@ def evaluate_single(
 
         Path(patch_path).unlink(missing_ok=True)
 
-        if result.returncode != 0:
-            detail = _format_apply_failure(result, agent_result.patch)
-            # Patch apply failures are agent-side issues (malformed patch,
-            # context mismatch from agent's poor edits). Classify as "fail".
-            return EvalResult(
+        if result_proc.returncode != 0:
+            detail_text = _format_apply_failure(result_proc, agent_result.patch)
+            cat, root = classify_patch_failure(detail_text)
+            result = EvalResult(
                 instance_id=task.instance_id,
                 agent_name=agent_result.agent_name,
                 resolved=False,
                 eval_status="fail",
-                error=f"Agent patch apply failed: {detail}",
+                error=f"Agent patch apply failed: {detail_text}",
+                failure_stage=STAGE_PATCH_EXTRACTION,
+                failure_category=cat,
+                root_cause=root,
+                details=build_details(
+                    command="git apply /tmp/agent.patch",
+                    stderr_snippet=(result_proc.stderr or "")[:400],
+                    exit_code=result_proc.returncode,
+                ),
             )
+            _flush_diag(
+                env_check=env_check,
+                failure_summary={
+                    "status": "FAILED",
+                    "failure_stage": result.failure_stage,
+                    "failure_category": result.failure_category,
+                    "root_cause": result.root_cause,
+                    "details": result.details,
+                },
+            )
+            return result
 
-        logger.info(f"  Patch applied successfully")
+        _log(f"  Patch applied successfully")
 
-        # 4. SWE-bench official guard: reset paths that test_patch will touch.
-        # Some agents include changes to test files; without this reset, those
-        # changes would conflict with test_patch (which we apply next), even
-        # though SWE-bench's contract is that test files are owned by
-        # test_patch and the agent is evaluated only on its production-code
-        # changes. Mirroring the official harness order (agent → reset →
-        # test_patch) keeps production changes intact while restoring test
-        # files so test_patch always applies cleanly.
+        # --- 4. Reset test-file paths before test_patch ---
         if task.test_patch:
             test_paths = _paths_in_patch(task.test_patch)
             if test_paths:
@@ -350,20 +585,15 @@ def evaluate_single(
                     )
                 finally:
                     Path(tmp.name).unlink(missing_ok=True)
-                # `|| true`: paths newly created by test_patch don't exist in
-                # HEAD, so checkout prints a warning for them. That's expected.
                 _docker_exec(
                     container_name,
                     "cd /testbed && xargs -d '\\n' git checkout HEAD -- "
                     "< /tmp/test_paths.txt 2>&1 || true",
                     timeout=30,
                 )
-                logger.info(f"  Reset {len(test_paths)} test path(s) before test_patch")
+                _log(f"  Reset {len(test_paths)} test path(s) before test_patch")
 
-        # 5. Apply test_patch (SWE-bench verification tests).
-        # Resets above guarantee target files are at base, so a strict
-        # `git apply` should succeed for the SWE-bench-curated test_patch.
-        # We keep the `--3way` fallback as a safety net for unusual cases.
+        # --- 5. Apply test_patch ---
         if task.test_patch:
             patch_path = _write_patch_file(task.test_patch)
             subprocess.run(
@@ -371,42 +601,43 @@ def evaluate_single(
                  f"{container_name}:/tmp/test.patch"],
                 capture_output=True, timeout=10,
             )
-            result = _docker_exec(
+            result_proc = _docker_exec(
                 container_name,
                 "cd /testbed && git apply --verbose /tmp/test.patch",
                 timeout=30,
             )
-            if result.returncode != 0:
-                logger.info("  test_patch apply failed, retrying with --3way...")
-                result = _docker_exec(
+            if result_proc.returncode != 0:
+                _log("  test_patch apply failed, retrying with --3way...")
+                result_proc = _docker_exec(
                     container_name,
                     "cd /testbed && git apply --verbose --3way /tmp/test.patch",
                     timeout=30,
                 )
             Path(patch_path).unlink(missing_ok=True)
-            if result.returncode != 0:
-                detail = (result.stderr.strip() or result.stdout.strip()
+            if result_proc.returncode != 0:
+                detail = (result_proc.stderr.strip() or result_proc.stdout.strip()
                           or "(no output)")[:300]
                 logger.error(f"  test_patch apply failed: {detail}")
 
-        # 6. Post-patch hook (language-specific; no-op for Python, recompile for C++)
+        # --- 6. Post-patch hook ---
         profile.post_patch_hook(container_name)
 
-        # 7. Run FAIL_TO_PASS tests
-        logger.info(f"  Running FAIL_TO_PASS tests ({len(task.FAIL_TO_PASS)})...")
-        f2p_results = _run_tests_in_container(
+        # --- 7. Run FAIL_TO_PASS tests ---
+        _log(f"  Running FAIL_TO_PASS tests ({len(task.FAIL_TO_PASS)})...")
+        f2p_results, f2p_stdout, f2p_stderr = _run_tests_in_container(
             container_name, task.FAIL_TO_PASS, profile, task, timeout=f2p_timeout,
         )
 
-        # 8. Run PASS_TO_PASS tests
-        logger.info(f"  Running PASS_TO_PASS tests ({len(task.PASS_TO_PASS)})...")
-        p2p_results = _run_tests_in_container(
+        # --- 8. Run PASS_TO_PASS tests ---
+        _log(f"  Running PASS_TO_PASS tests ({len(task.PASS_TO_PASS)})...")
+        p2p_results, p2p_stdout, p2p_stderr = _run_tests_in_container(
             container_name, task.PASS_TO_PASS, profile, task, timeout=p2p_timeout,
         )
 
-        # Reaching this point means both F2P and P2P test batches were
-        # executed → eval_status="success". Resolved is the stricter
-        # conjunction: ALL F2P AND ALL P2P tests passed.
+        # Combine test output for artifact saving
+        combined_stdout = f2p_stdout + p2p_stdout
+        combined_stderr = f2p_stderr + p2p_stderr
+
         all_f2p_pass = all(f2p_results.values()) if f2p_results else False
         all_p2p_pass = (all(p2p_results.values()) if p2p_results else True)
         resolved = all_f2p_pass and all_p2p_pass
@@ -415,6 +646,8 @@ def evaluate_single(
         if not task.FAIL_TO_PASS:
             error_note = "no FAIL_TO_PASS tests in dataset row; resolution unverifiable"
             resolved = False
+
+        _flush_diag(env_check=env_check, test_stdout=combined_stdout, test_stderr=combined_stderr)
 
         return EvalResult(
             instance_id=task.instance_id,
@@ -427,22 +660,52 @@ def evaluate_single(
         )
 
     except subprocess.TimeoutExpired:
-        # Test runner exceeded the wall clock. Environmental, not agent fault.
-        return EvalResult(
+        # Wall-clock exceeded — environmental, not agent fault.
+        cat, root = classify_test_execution_failure("timeout", timed_out=True)
+        result = EvalResult(
             instance_id=task.instance_id,
             agent_name=agent_result.agent_name,
             eval_status="error",
             error=f"Timeout after {timeout}s",
+            failure_stage=STAGE_TEST_EXECUTION,
+            failure_category=cat,
+            root_cause=root,
+            details=build_details(stderr_snippet=f"Timeout after {timeout}s"),
         )
+        _flush_diag(
+            env_check=env_check,
+            failure_summary={
+                "status": "FAILED",
+                "failure_stage": result.failure_stage,
+                "failure_category": result.failure_category,
+                "root_cause": result.root_cause,
+                "error": result.error,
+            },
+        )
+        return result
     except Exception as e:
-        return EvalResult(
+        result = EvalResult(
             instance_id=task.instance_id,
             agent_name=agent_result.agent_name,
             eval_status="error",
             error=str(e),
+            failure_stage=STAGE_TEST_EXECUTION,
+            failure_category="internal_error",
+            root_cause="unexpected_exception",
+            details=build_details(stderr_snippet=str(e)[:400]),
         )
+        _flush_diag(
+            env_check=env_check,
+            failure_summary={
+                "status": "FAILED",
+                "failure_stage": result.failure_stage,
+                "failure_category": result.failure_category,
+                "root_cause": result.root_cause,
+                "error": result.error,
+            },
+        )
+        return result
     finally:
-        # Cleanup container
         subprocess.run(
             ["docker", "rm", "-f", container_name],
             capture_output=True, timeout=30,
@@ -457,8 +720,13 @@ def evaluate_batch(
     f2p_timeout: int | None = None,
     p2p_timeout: int | None = None,
     tier: str = "lite",
+    diagnostics_dir: Path | None = None,
 ) -> list[EvalResult]:
-    """Evaluate a batch of agent results."""
+    """Evaluate a batch of agent results.
+
+    diagnostics_dir: optional root directory for per-task diagnostic artifacts.
+    A sub-directory named after each instance_id is created inside it.
+    """
     task_map = {t.instance_id: t for t in tasks}
     eval_results = []
 
@@ -469,6 +737,9 @@ def evaluate_batch(
                 instance_id=result.instance_id,
                 agent_name=result.agent_name,
                 error="Task not found in dataset",
+                failure_stage="",
+                failure_category="internal_error",
+                root_cause="task_not_found",
             ))
             continue
 
@@ -479,6 +750,7 @@ def evaluate_batch(
             f2p_timeout=f2p_timeout,
             p2p_timeout=p2p_timeout,
             tier=tier,
+            diagnostics_dir=diagnostics_dir,
         )
 
         status = "RESOLVED" if eval_result.resolved else "NOT RESOLVED"

@@ -24,12 +24,13 @@ Grading thresholds (from `src/reporter/scorer.py`) — lower bound for each grad
 - Python 3.10+; project targets a `.venv` at the repo root.
 - Install: `pip install -r requirements.txt` (runtime) or `requirements-dev.txt` (adds `pytest`, `pytest-mock`).
 - `pip install -e .` is recommended — imports across the codebase use absolute `src.*` paths (e.g. `from src.core.config import Config`), so running from a directory other than the project root fails without an editable install.
-- Secrets live in `.env` (see `.env.example`). `src.core.config.Config()` loads it automatically via `python-dotenv`.
+- Secrets live in `.env` (see `.env.example`). `src.core.config.Config()` loads it automatically via `python-dotenv`. Required: `ANTHROPIC_API_KEY` (Claude Code) or `OPENAI_API_KEY` (OpenCode). For vLLM mode: `CLAUDE_CODE_VLLM_BASE_URL`, `CLAUDE_CODE_VLLM_AUTH_TOKEN`, `CLAUDE_CODE_VLLM_MODEL`.
 
 ## Common commands
 
 ```bash
 # Full pipeline (patch generation → Docker verify → report)
+# --agents accepts: claude-code, opencode (comma-separated for multi-agent comparison)
 python scripts/run_eval.py --tier lite --agents claude-code --model sonnet \
     --sample-size 3 --run-id <id> --verify
 
@@ -110,6 +111,8 @@ The `multi` tier (`SWE-bench/SWE-bench_Multilingual`) covers 9 languages (C, C++
 1. Create `src/evaluator/languages/<lang>.py` implementing `LanguageProfile`
 2. Add `"owner/repo": <Lang>Profile` entries to `REPO_LANGUAGE` in `dispatch.py`
 3. Smoke-test: `python scripts/run_eval.py --tier multi --sample-size 1`
+
+**vLLM backend**: pass `--claude-code-vllm` to `run_eval.py` to route Claude Code against a local vLLM-backed Anthropic-compatible endpoint. Requires `CLAUDE_CODE_VLLM_BASE_URL`, `CLAUDE_CODE_VLLM_AUTH_TOKEN`, and `CLAUDE_CODE_VLLM_MODEL` in `.env`; validation is eager (all three must be set before any tasks run).
 
 **Docker registry for multi tier**: multi instances use Docker Hub (`docker.io/swebench/sweb.eval.x86_64.<id>`) not GHCR. The instance ID also undergoes `__` → `_1776_` substitution. Pass `--tier multi` to any script that calls `get_image_name()` — omitting it silently tries GHCR and fails with auth/not-found errors.
 

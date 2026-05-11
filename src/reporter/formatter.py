@@ -5,10 +5,67 @@ from __future__ import annotations
 import csv
 import io
 import json
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
 from src.reporter.scorer import MetricScore
+
+
+def _build_failure_breakdown_table(eval_results: list) -> list[str]:
+    """Return markdown lines for the failure category breakdown table.
+
+    Only called when eval_results is non-empty and contains non-success entries.
+    """
+    from src.evaluator.failure_classifier import is_infrastructure_failure
+
+    category_counts: Counter = Counter()
+    for er in eval_results:
+        cat = getattr(er, "failure_category", "")
+        if cat:
+            category_counts[cat] += 1
+
+    model_failures = sum(1 for er in eval_results
+                         if getattr(er, "failure_category", "") == "model_failure")
+    infra_failures = sum(
+        1 for er in eval_results
+        if is_infrastructure_failure(getattr(er, "failure_category", ""))
+    )
+
+    if not category_counts:
+        return []
+
+    lines = [
+        "",
+        "## Failure Breakdown",
+        "",
+        "| Failure Type | Count |",
+        "|---|---|",
+    ]
+
+    label_map = {
+        "model_failure": "Model failures (agent-side)",
+        "environment_failure": "Environment failures",
+        "network_failure": "Network / SSL / proxy failures",
+        "registry_failure": "Registry / auth failures",
+        "docker_failure": "Docker failures",
+        "dependency_failure": "Dependency installation failures",
+        "timeout": "Timeout failures",
+        "configuration_error": "Configuration errors",
+        "internal_error": "Internal errors",
+    }
+
+    for cat, count in sorted(category_counts.items(), key=lambda x: -x[1]):
+        label = label_map.get(cat, cat)
+        lines.append(f"| {label} | {count} |")
+
+    lines.extend([
+        "",
+        f"> Model failures: **{model_failures}** | "
+        f"Infrastructure failures: **{infra_failures}**  ",
+        "> Infrastructure failures should NOT count against model capability.",
+    ])
+    return lines
 
 
 def format_markdown(
@@ -16,8 +73,14 @@ def format_markdown(
     run_id: str,
     tier: str,
     num_tasks: int,
+    eval_results: list | None = None,
 ) -> str:
-    """Generate markdown comparison report."""
+    """Generate markdown comparison report.
+
+    eval_results: optional list of EvalResult objects; when provided a failure
+    breakdown table is appended so infrastructure issues are clearly separated
+    from model capability failures.
+    """
     lines = [
         f"# Coding Agent Eval Report",
         f"",
@@ -74,6 +137,10 @@ def format_markdown(
 
     lines.extend(["", "## Grade Legend", ""])
     lines.append("S = Excellent | A = Good | B = Average | C = Below Average | D = Poor | F = Failing")
+
+    # Failure breakdown (only when Step 2 results are available)
+    if eval_results:
+        lines.extend(_build_failure_breakdown_table(eval_results))
 
     return "\n".join(lines)
 
@@ -242,6 +309,21 @@ def save_summary(
     evaluable = counts["success"] + counts["fail"]
     trr_pct = (counts["resolved"] / evaluable * 100) if evaluable > 0 else 0.0
 
+    # Failure breakdown by category (Step 2)
+    failure_breakdown: dict[str, int] = {}
+    if eval_results:
+        from src.evaluator.failure_classifier import is_infrastructure_failure
+        for er in eval_results:
+            cat = getattr(er, "failure_category", "")
+            if cat:
+                failure_breakdown[cat] = failure_breakdown.get(cat, 0) + 1
+
+    model_failures = failure_breakdown.get("model_failure", 0)
+    infra_failures = sum(
+        v for k, v in failure_breakdown.items()
+        if is_infrastructure_failure(k)
+    ) if failure_breakdown else 0
+
     summary = {
         "run_id": metadata.get("run_id", ""),
         "agent": metadata.get("agent", ""),
@@ -259,6 +341,11 @@ def save_summary(
             "resolved": counts["resolved"],
             "evaluable": evaluable,
             "resolution_rate_pct": round(trr_pct, 1),
+        },
+        "failure_breakdown": {
+            "by_category": failure_breakdown,
+            "model_failures": model_failures,
+            "infrastructure_failures": infra_failures,
         },
         "per_task": per_task,
         "generated_at": datetime.now().isoformat(),

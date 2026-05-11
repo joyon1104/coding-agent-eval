@@ -14,6 +14,13 @@ from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskPr
 from src.adapters.base import AgentAdapter
 from src.core.config import Config, PROJECT_ROOT
 from src.core.models import AgentResult, EvalTask, TaskStatus
+from src.evaluator.failure_classifier import (
+    STAGE_REPO_CLONE,
+    STAGE_SANDBOX_SETUP,
+    STAGE_AGENT_EXECUTION,
+    classify_agent_failure,
+    classify_sandbox_failure,
+)
 from src.runner.logger import setup_logging, save_run_metadata
 from src.runner.sandbox import DiskAwareSandbox, DiskSpaceError
 
@@ -193,12 +200,17 @@ class Orchestrator:
         try:
             self.sandbox.check_disk()
         except DiskSpaceError as e:
-            logger.error(f"  Disk error: {e}")
+            err_text = str(e)
+            logger.error(f"  Disk error: {err_text}")
+            cat, root = classify_sandbox_failure(err_text)
             return AgentResult(
                 instance_id=task.instance_id,
                 agent_name=agent.name,
                 status=TaskStatus.ERROR,
-                error_message=str(e),
+                error_message=err_text,
+                failure_stage=STAGE_SANDBOX_SETUP,
+                failure_category=cat,
+                root_cause=root,
             )
 
         # Setup repo
@@ -207,12 +219,17 @@ class Orchestrator:
                 task.instance_id, task.repo, task.base_commit
             )
         except Exception as e:
-            logger.error(f"  Repo setup failed: {e}")
+            err_text = f"Repo setup failed: {e}"
+            logger.error(f"  {err_text}")
+            cat, root = classify_sandbox_failure(str(e))
             return AgentResult(
                 instance_id=task.instance_id,
                 agent_name=agent.name,
                 status=TaskStatus.ERROR,
-                error_message=f"Repo setup failed: {e}",
+                error_message=err_text,
+                failure_stage=STAGE_REPO_CLONE,
+                failure_category=cat,
+                root_cause=root,
             )
 
         # Run agent
@@ -224,12 +241,17 @@ class Orchestrator:
                 f"Time: {result.timestamps.e2e_time:.1f}s"
             )
         except Exception as e:
-            logger.error(f"  Agent error: {e}")
+            err_text = str(e)
+            logger.error(f"  Agent error: {err_text}")
+            cat, root = classify_agent_failure(err_text)
             result = AgentResult(
                 instance_id=task.instance_id,
                 agent_name=agent.name,
                 status=TaskStatus.ERROR,
-                error_message=str(e),
+                error_message=err_text,
+                failure_stage=STAGE_AGENT_EXECUTION,
+                failure_category=cat,
+                root_cause=root,
             )
         finally:
             if self.sandbox.clean_after:

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field, asdict, fields
 from enum import Enum
 from pathlib import Path
 from typing import Optional
@@ -62,6 +62,11 @@ class AgentResult:
     error_message: str = ""
     raw_output: str = ""
     model_name: str = ""
+    # Step-1 failure classification (set when status is ERROR or FAILED)
+    failure_stage: str = ""
+    failure_category: str = ""
+    root_cause: str = ""
+    failure_details: dict = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         d = asdict(self)
@@ -74,6 +79,10 @@ class AgentResult:
         d["status"] = TaskStatus(d.get("status", "pending"))
         d["token_usage"] = TokenUsage(**d.get("token_usage", {}))
         d["timestamps"] = Timestamps(**d.get("timestamps", {}))
+        # Filter to known fields so loading JSON written by a newer version
+        # of this class (with extra fields) doesn't crash older code.
+        known = {f.name for f in fields(cls)}
+        d = {k: v for k, v in d.items() if k in known}
         return cls(**d)
 
     def save(self, path: Path):
