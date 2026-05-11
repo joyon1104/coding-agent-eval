@@ -1,0 +1,25 @@
+{
+  "instance_id": "jekyll__jekyll-8047",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "TestFilters#test_: filters where_exp filter should filter objects across multiple conditions": true
+  },
+  "pass_to_pass_results": {
+    "TestFilters#test_: filters where_exp filter should filter objects appropriately": true,
+    "TestFilters#test_: filters where_exp filter should filter with other operators": true,
+    "TestFilters#test_: filters where_exp filter should filter objects appropriately with 'or', 'and' operators": true,
+    "TestFilters#test_: filters where_exp filter should always return an array if the object responds to 'select'": true,
+    "TestFilters#test_: filters where_exp filter should filter with the contains operator over hash keys": true,
+    "TestFilters#test_: filters where_exp filter should return any input that is not an array": true,
+    "TestFilters#test_: filters where_exp filter should filter posts": true,
+    "TestFilters#test_: filters where_exp filter should filter by variable values": true,
+    "TestFilters#test_: filters where_exp filter should filter objects in a hash appropriately": true,
+    "TestFilters#test_: filters where_exp filter should filter with the contains operator over arrays": true,
+    "TestFilters#test_: filters where_exp filter should stringify during comparison for compatibility with liquid parsing": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

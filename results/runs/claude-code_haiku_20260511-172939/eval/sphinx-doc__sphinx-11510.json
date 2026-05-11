@@ -1,0 +1,22 @@
+{
+  "instance_id": "sphinx-doc__sphinx-11510",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "tests/test_directive_other.py::test_include_source_read_event": false,
+    "tests/test_directive_other.py::test_include_source_read_event_nested_includes": false
+  },
+  "pass_to_pass_results": {
+    "tests/test_directive_other.py::test_toctree": true,
+    "tests/test_directive_other.py::test_relative_toctree": true,
+    "tests/test_directive_other.py::test_toctree_urls_and_titles": true,
+    "tests/test_directive_other.py::test_toctree_glob": true,
+    "tests/test_directive_other.py::test_toctree_glob_and_url": true,
+    "tests/test_directive_other.py::test_reversed_toctree": true,
+    "tests/test_directive_other.py::test_toctree_twice": true
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

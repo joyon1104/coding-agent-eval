@@ -1,0 +1,11 @@
+{
+  "instance_id": "jqlang__jq-2681",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "fail",
+  "fail_to_pass_results": {},
+  "pass_to_pass_results": {},
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 1.0,
+  "error": "Agent patch apply failed: Checking patch Dockerfile.regen...\nerror: Dockerfile.regen: does not exist in index\nerror: cannot read the current contents of 'Dockerfile.regen'\nFalling back to direct application...\nChecking patch src/lexer.c...\nerror: src/lexer.c: does not match index\nChecking patch src/lexer.h...\nerror: src/lexer.h: does not match index\nChecking patch src/parser.c...\nerror: src/parser.c: does not match index\nChecking patch src/parser.h...\nerror: src/parser.h: does not match index\nChecking patch src/parser.y."
+}

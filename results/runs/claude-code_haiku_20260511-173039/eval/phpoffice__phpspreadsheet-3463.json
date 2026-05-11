@@ -1,0 +1,26 @@
+{
+  "instance_id": "phpoffice__phpspreadsheet-3463",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "Function Prefix > Function prefix with data set \"DAYS/NETWORKDAYS 5\"": false
+  },
+  "pass_to_pass_results": {
+    "Function Prefix > Function prefix with data set \"Basic Legacy Function\"": false,
+    "Function Prefix > Function prefix with data set \"New Function without Prefix\"": false,
+    "Function Prefix > Function prefix with data set \"New Function already Prefixed\"": false,
+    "Function Prefix > Function prefix with data set \"New Function requiring Double-Prefix\"": false,
+    "Function Prefix > Function prefix with data set \"New Function requiring Double-Prefix already partially Prefixed\"": false,
+    "Function Prefix > Function prefix with data set \"New Function requiring Double-Prefix already partially Prefixed #2\"": false,
+    "Function Prefix > Function prefix with data set \"New Function requiring Double-Prefix already Fully Prefixed\"": false,
+    "Function Prefix > Function prefix with data set \"Multiple Functions\"": false,
+    "Function Prefix > Function prefix with data set \"DAYS/NETWORKDAYS 1\"": false,
+    "Function Prefix > Function prefix with data set \"DAYS/NETWORKDAYS 2\"": false,
+    "Function Prefix > Function prefix with data set \"DAYS/NETWORKDAYS 3\"": false,
+    "Function Prefix > Function prefix with data set \"DAYS/NETWORKDAYS 4\"": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

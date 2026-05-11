@@ -1,0 +1,31 @@
+{
+  "instance_id": "django__django-12304",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "test_templates (model_enums.tests.ChoicesTests)": true
+  },
+  "pass_to_pass_results": {
+    "test_integerchoices (model_enums.tests.ChoicesTests)": true,
+    "test_integerchoices_auto_label (model_enums.tests.ChoicesTests)": true,
+    "test_integerchoices_containment (model_enums.tests.ChoicesTests)": true,
+    "test_integerchoices_empty_label (model_enums.tests.ChoicesTests)": true,
+    "test_integerchoices_functional_api (model_enums.tests.ChoicesTests)": true,
+    "test_invalid_definition (model_enums.tests.ChoicesTests)": true,
+    "test_str (model_enums.tests.ChoicesTests)": true,
+    "test_textchoices (model_enums.tests.ChoicesTests)": true,
+    "test_textchoices_auto_label (model_enums.tests.ChoicesTests)": true,
+    "test_textchoices_blank_value (model_enums.tests.ChoicesTests)": true,
+    "test_textchoices_containment (model_enums.tests.ChoicesTests)": true,
+    "test_textchoices_empty_label (model_enums.tests.ChoicesTests)": true,
+    "test_textchoices_functional_api (model_enums.tests.ChoicesTests)": true,
+    "test_bool_unsupported (model_enums.tests.CustomChoicesTests)": true,
+    "test_labels_valid (model_enums.tests.CustomChoicesTests)": true,
+    "test_timezone_unsupported (model_enums.tests.CustomChoicesTests)": true,
+    "test_uuid_unsupported (model_enums.tests.CustomChoicesTests)": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

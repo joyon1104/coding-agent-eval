@@ -1,0 +1,14 @@
+{
+  "instance_id": "google__gson-1014",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "com.google.gson.internal.bind.JsonTreeReaderTest#testSkipValue_emptyJsonObject": true,
+    "com.google.gson.internal.bind.JsonTreeReaderTest#testSkipValue_filledJsonObject": true
+  },
+  "pass_to_pass_results": {},
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

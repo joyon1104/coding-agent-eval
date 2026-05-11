@@ -1,0 +1,28 @@
+{
+  "instance_id": "redis__redis-9733",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "COMMAND GETKEYS EVAL without keys": true
+  },
+  "pass_to_pass_results": {
+    "TTL, TYPE and EXISTS do not alter the last access time of a key": true,
+    "TOUCH alters the last access time of a key": true,
+    "TOUCH returns the number of existing keys specified": true,
+    "command stats for GEOADD": true,
+    "command stats for EXPIRE": true,
+    "command stats for BRPOP": true,
+    "command stats for MULTI": true,
+    "command stats for scripts": true,
+    "COMMAND GETKEYS GET": true,
+    "COMMAND GETKEYS MEMORY USAGE": true,
+    "COMMAND GETKEYS XGROUP": true,
+    "COMMAND GETKEYS EVAL with keys": true,
+    "COMMAND LIST FILTERBY ACLCAT": true,
+    "COMMAND LIST FILTERBY PATTERN": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

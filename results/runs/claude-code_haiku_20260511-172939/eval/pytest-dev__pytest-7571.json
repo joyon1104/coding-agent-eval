@@ -1,0 +1,28 @@
+{
+  "instance_id": "pytest-dev__pytest-7571",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "testing/logging/test_fixture.py::test_change_level_undos_handler_level": true
+  },
+  "pass_to_pass_results": {
+    "testing/logging/test_fixture.py::test_change_level": true,
+    "testing/logging/test_fixture.py::test_with_statement": true,
+    "testing/logging/test_fixture.py::test_log_access": true,
+    "testing/logging/test_fixture.py::test_messages": true,
+    "testing/logging/test_fixture.py::test_record_tuples": true,
+    "testing/logging/test_fixture.py::test_unicode": true,
+    "testing/logging/test_fixture.py::test_clear": true,
+    "testing/logging/test_fixture.py::test_caplog_captures_for_all_stages": true,
+    "testing/logging/test_fixture.py::test_fixture_help": true,
+    "testing/logging/test_fixture.py::test_change_level_undo": true,
+    "testing/logging/test_fixture.py::test_ini_controls_global_log_level": true,
+    "testing/logging/test_fixture.py::test_caplog_can_override_global_log_level": true,
+    "testing/logging/test_fixture.py::test_caplog_captures_despite_exception": true,
+    "testing/logging/test_fixture.py::test_log_report_captures_according_to_config_option_upon_failure": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

@@ -1,0 +1,16 @@
+{
+  "instance_id": "sympy__sympy-23413",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "test_hermite_normal": false
+  },
+  "pass_to_pass_results": {
+    "test_smith_normal": false,
+    "test_smith_normal_deprecated": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

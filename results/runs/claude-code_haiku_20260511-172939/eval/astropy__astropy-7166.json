@@ -1,0 +1,20 @@
+{
+  "instance_id": "astropy__astropy-7166",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "astropy/utils/tests/test_misc.py::test_inherit_docstrings": false
+  },
+  "pass_to_pass_results": {
+    "astropy/utils/tests/test_misc.py::test_isiterable": false,
+    "astropy/utils/tests/test_misc.py::test_signal_number_to_name_no_failure": false,
+    "astropy/utils/tests/test_misc.py::test_skip_hidden": false,
+    "astropy/utils/tests/test_misc.py::test_JsonCustomEncoder": false,
+    "astropy/utils/tests/test_misc.py::test_check_broadcast": false,
+    "astropy/utils/tests/test_misc.py::test_dtype_bytes_or_chars": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

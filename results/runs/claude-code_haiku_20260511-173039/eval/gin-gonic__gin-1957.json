@@ -1,0 +1,28 @@
+{
+  "instance_id": "gin-gonic__gin-1957",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "TestContextBindHeader": false,
+    "TestContextShouldBindHeader": false
+  },
+  "pass_to_pass_results": {
+    "TestContextAutoBindJSON": true,
+    "TestContextBindWithJSON": true,
+    "TestContextBindWithXML": true,
+    "TestContextBindWithQuery": true,
+    "TestContextBindWithYAML": true,
+    "TestContextBadAutoBind": true,
+    "TestContextAutoShouldBindJSON": true,
+    "TestContextShouldBindWithJSON": true,
+    "TestContextShouldBindWithXML": true,
+    "TestContextShouldBindWithQuery": true,
+    "TestContextShouldBindWithYAML": true,
+    "TestContextBadAutoShouldBind": true,
+    "TestContextShouldBindBodyWith": true
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

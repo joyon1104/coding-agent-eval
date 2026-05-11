@@ -1,0 +1,26 @@
+{
+  "instance_id": "fmtlib__fmt-3729",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "std_test.path": true
+  },
+  "pass_to_pass_results": {
+    "std_test.thread_id": true,
+    "std_test.optional": true,
+    "std_test.optional_format_as": true,
+    "std_test.variant": true,
+    "std_test.error_code": true,
+    "std_test.exception": true,
+    "std_test.format_bit_reference": true,
+    "std_test.format_const_bit_reference": true,
+    "std_test.format_bitset": true,
+    "std_test.format_atomic": true,
+    "ranges_std_test.format_vector_path": true,
+    "ranges_std_test.format_quote_path": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}

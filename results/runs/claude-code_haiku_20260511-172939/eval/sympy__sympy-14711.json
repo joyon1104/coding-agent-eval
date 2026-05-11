@@ -1,0 +1,16 @@
+{
+  "instance_id": "sympy__sympy-14711",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "test_Vector": false
+  },
+  "pass_to_pass_results": {
+    "test_Vector_diffs": false,
+    "test_vector_var_in_dcm": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

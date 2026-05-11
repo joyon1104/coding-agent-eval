@@ -1,0 +1,15 @@
+{
+  "instance_id": "gohugoio__hugo-12204",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "TestEmbeddedImageRenderHookMarkdownAttributes": false
+  },
+  "pass_to_pass_results": {
+    "TestEmbeddedLinkRenderHook": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": ""
+}

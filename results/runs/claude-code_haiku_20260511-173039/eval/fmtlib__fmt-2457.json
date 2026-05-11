@@ -1,0 +1,32 @@
+{
+  "instance_id": "fmtlib__fmt-2457",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "ranges_test.join_tuple": true
+  },
+  "pass_to_pass_results": {
+    "ranges_test.format_array": true,
+    "ranges_test.format_2d_array": true,
+    "ranges_test.format_array_of_literals": true,
+    "ranges_test.format_vector": true,
+    "ranges_test.format_vector2": true,
+    "ranges_test.format_map": true,
+    "ranges_test.format_pair": true,
+    "ranges_test.format_tuple": true,
+    "ranges_test.format_struct": true,
+    "ranges_test.format_to": true,
+    "ranges_test.path_like": true,
+    "ranges_test.range": true,
+    "ranges_test.unformattable_range": true,
+    "ranges_test.join_initializer_list": true,
+    "ranges_test.join_sentinel": true,
+    "ranges_test.join_range": true,
+    "ranges_test.is_printable": true,
+    "ranges_test.escape_string": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": ""
+}
