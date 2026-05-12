@@ -9,8 +9,8 @@ import logging
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import click
+from datetime import datetime
 from pathlib import Path
-from rich.console import Console
 from rich.markup import escape as _esc
 
 from src.core.config import PROJECT_ROOT
@@ -20,8 +20,9 @@ from src.dataset.loader import load_from_jsonl
 from src.evaluator.docker_evaluator import evaluate_batch, get_image_name
 from src.evaluator.swebench_harness import EvalResult
 from src.metrics.accuracy import task_resolution_rate
+from src.runner.logger import LoggingConsole, setup_logging
 
-console = Console()
+console = LoggingConsole()
 logger = logging.getLogger("coding-agent-eval")
 
 
@@ -62,14 +63,26 @@ def _resolve_dataset(dataset_arg, run_dir):
 def main(run_id, agent, dataset, timeout, corp):
     """Verify agent patches using Docker-based test execution."""
 
-    logging.basicConfig(level=logging.INFO, format="%(message)s")
-
-    console.print("[bold blue]Coding Agent Eval — Docker Test Verification[/bold blue]\n")
-
     run_dir = PROJECT_ROOT / "results" / "runs" / run_id
     if not run_dir.exists():
+        # Don't auto-create — setup_logging would otherwise mask a real
+        # "missing run" condition by spawning an empty directory. The
+        # module-level console has no log path yet, so this print stays
+        # terminal-only.
         console.print(f"[red]Run directory not found: {run_dir}[/red]")
         sys.exit(1)
+
+    log_path = setup_logging(run_id)
+    console.set_log_path(log_path)
+
+    logger.info(f"\n{'=' * 60}")
+    logger.info(f"Coding Agent Eval — Step 2 (Docker verification)")
+    logger.info(f"run_id: {run_id}")
+    logger.info(f"command: {' '.join(sys.argv)}")
+    logger.info(f"started_at: {datetime.now().isoformat()}")
+    logger.info(f"{'=' * 60}")
+
+    console.print("[bold blue]Coding Agent Eval — Docker Test Verification[/bold blue]\n")
 
     # 1. Load agent results — new layout uses patches/; fall back to legacy <agent>/ layout
     patches_dir = run_dir / "patches"

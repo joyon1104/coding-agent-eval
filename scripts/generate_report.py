@@ -4,12 +4,13 @@
 import sys
 import os
 import json
+import logging
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import click
+from datetime import datetime
 from pathlib import Path
-from rich.console import Console
 
 from src.core.config import PROJECT_ROOT
 from src.core.models import AgentResult
@@ -21,8 +22,10 @@ from src.metrics.process import avg_convergence_steps
 from src.reporter.comparator import load_run_results, merge_results
 from src.reporter.scorer import score_agent
 from src.reporter.formatter import format_markdown, format_json, format_csv, save_report, save_summary
+from src.runner.logger import LoggingConsole, setup_logging
 
-console = Console()
+console = LoggingConsole()
+logger = logging.getLogger("coding-agent-eval")
 
 
 def compute_metrics(
@@ -70,6 +73,22 @@ def compute_metrics(
 def main(run_id, fmt, merge_dirs):
     """Generate Coding Agent Eval comparison report."""
 
+    # Wire run.log when this script is invoked standalone for an existing
+    # run (skip for merge mode — there's no single run.log to write to).
+    if not merge_dirs:
+        run_dir = PROJECT_ROOT / "results" / "runs" / run_id
+        if not run_dir.exists():
+            console.print(f"[red]Run directory not found: {run_dir}[/red]")
+            sys.exit(1)
+        log_path = setup_logging(run_id)
+        console.set_log_path(log_path)
+        logger.info(f"\n{'=' * 60}")
+        logger.info(f"Coding Agent Eval — Step 3 (report generation)")
+        logger.info(f"run_id: {run_id}")
+        logger.info(f"command: {' '.join(sys.argv)}")
+        logger.info(f"started_at: {datetime.now().isoformat()}")
+        logger.info(f"{'=' * 60}")
+
     console.print("[bold blue]Coding Agent Eval Report Generator[/bold blue]")
 
     # Load results
@@ -77,10 +96,6 @@ def main(run_id, fmt, merge_dirs):
         dirs = [d.strip() for d in merge_dirs.split(",")]
         all_results = merge_results(dirs)
     else:
-        run_dir = PROJECT_ROOT / "results" / "runs" / run_id
-        if not run_dir.exists():
-            console.print(f"[red]Run directory not found: {run_dir}[/red]")
-            sys.exit(1)
         all_results = load_run_results(run_dir)
 
     if not all_results:

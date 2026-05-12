@@ -11,7 +11,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import click
 from datetime import datetime
-from rich.console import Console
 
 from src.core.config import Config, PROJECT_ROOT
 from src.core.corp_env import CorpConfigError, load as load_corp, metadata_dict as corp_metadata, raise_on_invalid as validate_corp
@@ -21,9 +20,11 @@ from src.dataset.loader import load_dataset_for_tier, load_from_jsonl
 from src.dataset.sampler import sample_tasks
 from src.adapters.claude_code import ClaudeCodeAdapter
 from src.adapters.opencode import OpenCodeAdapter
+from src.runner.logger import LoggingConsole, setup_logging
 from src.runner.orchestrator import Orchestrator
 
-console = Console()
+console = LoggingConsole()
+logger = logging.getLogger("coding-agent-eval")
 
 AGENT_REGISTRY = {
     "claude-code": ClaudeCodeAdapter,
@@ -62,6 +63,22 @@ def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry
          claude_code_vllm, corp):
     """Coding Agent Eval — AI Coding Agent Performance Evaluation"""
 
+    # Determine run_id immediately so run.log captures the full session
+    # (env detection, dataset loading, agent init, Step 2 + Step 3 output).
+    primary_agent = [a.strip() for a in agents.split(",")][0]
+    if not run_id:
+        run_id = generate_run_id(primary_agent, model)
+    run_dir = PROJECT_ROOT / "results" / "runs" / run_id
+    log_path = setup_logging(run_id)
+    console.set_log_path(log_path)
+
+    logger.info(f"\n{'=' * 60}")
+    logger.info(f"Coding Agent Eval — Step 1+ (agent run)")
+    logger.info(f"run_id: {run_id}")
+    logger.info(f"command: {' '.join(sys.argv)}")
+    logger.info(f"started_at: {datetime.now().isoformat()}")
+    logger.info(f"{'=' * 60}")
+
     console.print("[bold blue]Coding Agent Eval[/bold blue] — AI Coding Agent Evaluation")
     console.print()
 
@@ -84,17 +101,11 @@ def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry
             sys.exit(2)
         console.print("[bold yellow]Corporate mode ON[/bold yellow] — proxy/CA/mirror vars active")
 
-    # Determine primary agent for run-id generation
-    primary_agent = [a.strip() for a in agents.split(",")][0]
-
-    # Run ID — auto-generated if omitted; if provided and results/runs/<run-id>/
-    # already exists, the orchestrator resumes from where it left off.
-    if not run_id:
-        run_id = generate_run_id(primary_agent, model)
     console.print(f"Run ID: [bold]{run_id}[/bold]")
 
-    run_dir = PROJECT_ROOT / "results" / "runs" / run_id
-    if run_dir.exists():
+    # Resume indicator: prior Step 1 output exists (run.log alone doesn't count
+    # since setup_logging just created it).
+    if (run_dir / "metadata.json").exists() or (run_dir / "patches").exists():
         console.print(f"[dim]Existing run directory found; resuming from saved results[/dim]")
 
     # Load dataset
