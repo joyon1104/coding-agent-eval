@@ -1,0 +1,41 @@
+{
+  "instance_id": "django__django-14915",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "test_choice_value_hash (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true
+  },
+  "pass_to_pass_results": {
+    "test_basics (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true,
+    "test_choice_iterator_passes_model_to_widget (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true,
+    "test_choices (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true,
+    "test_choices_bool (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true,
+    "test_choices_bool_empty_label (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true,
+    "test_choices_freshness (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true,
+    "test_choices_not_fetched_when_not_rendering (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true,
+    "test_choices_radio_blank (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true,
+    "test_clean_model_instance (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true,
+    "test_clean_to_field_name (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true,
+    "test_custom_choice_iterator_passes_model_to_widget (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true,
+    "test_deepcopies_widget (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true,
+    "test_disabled_modelchoicefield (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true,
+    "test_disabled_modelchoicefield_has_changed (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true,
+    "test_disabled_modelchoicefield_initial_model_instance (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true,
+    "test_disabled_modelmultiplechoicefield_has_changed (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true,
+    "test_disabled_multiplemodelchoicefield (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true,
+    "ModelChoiceField with RadioSelect widget doesn't produce unnecessary": false,
+    "Widgets that render multiple subwidgets shouldn't make more than one": false,
+    "Iterator defaults to ModelChoiceIterator and can be overridden with": false,
+    "test_queryset_manager (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true,
+    "test_queryset_none (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true,
+    "test_result_cache_not_shared (model_forms.test_modelchoicefield.ModelChoiceFieldTests)": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 0.8695652173913043,
+  "error": "",
+  "failure_stage": "",
+  "failure_category": "",
+  "root_cause": "",
+  "details": {}
+}

@@ -1,0 +1,40 @@
+{
+  "run_id": "claude-code_sonnet_20260512-082540",
+  "tier": "verified",
+  "num_tasks": 50,
+  "generated_at": "2026-05-12T11:53:31.941853",
+  "agents": {
+    "claude-code": {
+      "task_resolution_rate": {
+        "value": 0.36,
+        "unit": "%",
+        "grade": "B"
+      },
+      "token_efficiency": {
+        "value": 569657.7777777778,
+        "unit": "tokens/task",
+        "grade": "D"
+      },
+      "cost_per_resolved_task": {
+        "value": 1.7132945805555555,
+        "unit": "USD",
+        "grade": "B"
+      },
+      "e2e_time": {
+        "value": 244.25184364318847,
+        "unit": "sec",
+        "grade": "B"
+      },
+      "time_to_first_action": {
+        "value": 7.062648960884581,
+        "unit": "sec",
+        "grade": "B"
+      },
+      "convergence_steps": {
+        "value": 27.25531914893617,
+        "unit": "steps",
+        "grade": "C"
+      }
+    }
+  }
+}
