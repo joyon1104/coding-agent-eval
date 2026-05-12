@@ -5,9 +5,11 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING
 
+from src.evaluator.languages import corp_setup
 from src.evaluator.languages.profile import LanguageProfile, TestOutcome
 
 if TYPE_CHECKING:
+    from src.core.corp_env import CorpConfig
     from src.core.models import EvalTask
 
 
@@ -59,3 +61,6 @@ class PhpProfile(LanguageProfile):
                 outcomes.append(TestOutcome(name=test_name, passed=False))
 
         return outcomes
+
+    def pre_test_hook(self, container_id: str, corp: "CorpConfig | None") -> None:
+        corp_setup.configure_composer(container_id, corp)

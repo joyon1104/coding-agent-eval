@@ -7,9 +7,11 @@ import shlex
 import subprocess
 from typing import TYPE_CHECKING
 
+from src.evaluator.languages import corp_setup
 from src.evaluator.languages.profile import LanguageProfile, TestOutcome
 
 if TYPE_CHECKING:
+    from src.core.corp_env import CorpConfig
     from src.core.models import EvalTask
 
 
@@ -93,6 +95,9 @@ class JavaProfile(LanguageProfile):
     def expected_dirty_at_base(self) -> bool:
         # druid's setup_repo.sh mutates pom.xml at base commit
         return True
+
+    def pre_test_hook(self, container_id: str, corp: "CorpConfig | None") -> None:
+        corp_setup.write_maven_settings(container_id, corp)
 
 
 def _resolve_maven_module(container_id: str, test_name: str) -> str:

@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
 import time
 from abc import ABC, abstractmethod
 from pathlib import Path
 
+from src.core.corp_env import CorpConfig, build_host_env
 from src.core.models import AgentResult, TaskStatus, TokenUsage, Timestamps
 
 
@@ -20,6 +22,22 @@ class AgentAdapter(ABC):
         self.max_turns = self.config.get("max_turns", 50)
         self.max_budget = self.config.get("max_budget", 5.0)
         self.timeout = self.config.get("timeout", 1800)
+        # Corporate-network config (no-op when --corp absent). Adapters merge
+        # this into the subprocess env via build_subprocess_env() so corp
+        # variables propagate to pip/npm/git invoked by the agent.
+        self.corp_config: CorpConfig | None = self.config.get("corp_config")
+
+    def build_subprocess_env(self) -> dict[str, str]:
+        """Return a copy of os.environ merged with corp variables (if any).
+
+        When corp mode is off this is just ``os.environ.copy()`` — identical
+        to the previous behavior. When on, proxy/CA/mirror vars are layered
+        on top so they reach pip/npm/git invoked by the agent.
+        """
+        env = os.environ.copy()
+        if self.corp_config is not None:
+            env.update(build_host_env(self.corp_config))
+        return env
 
     @abstractmethod
     def run(

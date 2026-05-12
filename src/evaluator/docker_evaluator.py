@@ -32,6 +32,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+from src.core.corp_env import CorpConfig, build_docker_run_args
 from src.core.models import AgentResult, EvalTask
 from src.evaluator.failure_classifier import (
     STAGE_DOCKER_PULL,
@@ -46,6 +47,7 @@ from src.evaluator.failure_classifier import (
     classify_pull_failure,
     classify_test_execution_failure,
 )
+from src.evaluator.languages import corp_setup
 from src.evaluator.languages.dispatch import get_profile
 from src.evaluator.languages.profile import LanguageProfile
 from src.evaluator.registry_utils import RETRYABLE, backoff_seconds, classify
@@ -321,6 +323,7 @@ def evaluate_single(
     p2p_timeout: int | None = None,
     tier: str = "lite",
     diagnostics_dir: Path | None = None,
+    corp_config: CorpConfig | None = None,
 ) -> EvalResult:
     """Evaluate a single agent result using the SWE-bench Docker image.
 
@@ -333,6 +336,11 @@ def evaluate_single(
     `diagnostics_dir`: if provided, per-task subdirectory is created with
     docker_setup.log, environment_check.json, test_stdout.log, test_stderr.log,
     and (on failure) failure_summary.json.
+
+    `corp_config`: when ``enabled``, ``docker run`` is extended with ``-e``
+    proxy/mirror/CA vars and ``-v`` for the host CA bundle, and
+    ``profile.pre_test_hook`` writes language-specific config files. A None
+    or disabled value preserves current behavior bit-for-bit.
     """
     f2p_timeout = f2p_timeout if f2p_timeout is not None else timeout
     p2p_timeout = p2p_timeout if p2p_timeout is not None else int(timeout * 1.5)
@@ -437,10 +445,16 @@ def evaluate_single(
             capture_output=True, timeout=10,
         )
 
+        # Corp-mode injects -e/-v flags here; empty list when corp is off so
+        # the docker run command is bit-for-bit identical to before.
+        corp_run_args = build_docker_run_args(corp_config) if corp_config else []
+        run_cmd = (
+            ["docker", "run", "-d", "--name", container_name]
+            + corp_run_args
+            + [image, "tail", "-f", "/dev/null"]
+        )
         result_proc = subprocess.run(
-            ["docker", "run", "-d", "--name", container_name,
-             image, "tail", "-f", "/dev/null"],
-            capture_output=True, text=True, timeout=30,
+            run_cmd, capture_output=True, text=True, timeout=30,
         )
         if result_proc.returncode != 0:
             stderr_snippet = result_proc.stderr[:400]
@@ -476,6 +490,15 @@ def evaluate_single(
         # --- Environment check (before touching the repo) ---
         env_check = _check_container_environment(container_id)
         _log(f"[env_check] all_ok={env_check.get('all_ok', False)}")
+
+        # --- Corp-mode bootstrap (no-op when corp is off) ---
+        # apt mirror is universal; language config files are profile-specific.
+        if corp_config is not None and corp_config.enabled:
+            corp_setup.rewrite_apt_sources(container_name, corp_config)
+            try:
+                profile.pre_test_hook(container_name, corp_config)
+            except Exception as e:
+                _log(f"[corp_setup] pre_test_hook warning: {e}")
 
         # Detect dependency-level issues from env check (e.g. pip broken)
         if not env_check.get("all_ok", True):
@@ -721,11 +744,17 @@ def evaluate_batch(
     p2p_timeout: int | None = None,
     tier: str = "lite",
     diagnostics_dir: Path | None = None,
+    corp_config: CorpConfig | None = None,
 ) -> list[EvalResult]:
     """Evaluate a batch of agent results.
 
     diagnostics_dir: optional root directory for per-task diagnostic artifacts.
     A sub-directory named after each instance_id is created inside it.
+
+    corp_config: opt-in corporate-network configuration; when ``enabled``,
+    ``docker run`` injects proxy/CA/mirror env vars and the language profile's
+    ``pre_test_hook`` writes any language-specific config files inside the
+    container. ``None`` (default) preserves existing behavior.
     """
     task_map = {t.instance_id: t for t in tasks}
     eval_results = []
@@ -751,6 +780,7 @@ def evaluate_batch(
             p2p_timeout=p2p_timeout,
             tier=tier,
             diagnostics_dir=diagnostics_dir,
+            corp_config=corp_config,
         )
 
         status = "RESOLVED" if eval_result.resolved else "NOT RESOLVED"

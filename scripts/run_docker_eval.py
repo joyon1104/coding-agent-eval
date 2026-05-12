@@ -14,6 +14,7 @@ from rich.console import Console
 from rich.markup import escape as _esc
 
 from src.core.config import PROJECT_ROOT
+from src.core.corp_env import CorpConfigError, load as load_corp, raise_on_invalid as validate_corp
 from src.core.models import AgentResult, EvalTask
 from src.dataset.loader import load_from_jsonl
 from src.evaluator.docker_evaluator import evaluate_batch, get_image_name
@@ -54,7 +55,11 @@ def _resolve_dataset(dataset_arg, run_dir):
 @click.option("--dataset", default=None,
               help="Dataset JSONL path (default: auto-detect from run's tier)")
 @click.option("--timeout", default=600, help="Timeout per task (seconds)")
-def main(run_id, agent, dataset, timeout):
+@click.option("--corp", is_flag=True, default=False,
+              help="Corporate-network mode: inject proxy/CA/mirror env vars from .env "
+                   "into Docker containers. Requires HTTPS_PROXY, CORP_CA_BUNDLE_PATH, "
+                   "PIP_INDEX_URL at minimum.")
+def main(run_id, agent, dataset, timeout, corp):
     """Verify agent patches using Docker-based test execution."""
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -121,6 +126,16 @@ def main(run_id, agent, dataset, timeout):
         except (json.JSONDecodeError, KeyError):
             pass
 
+    # Corporate-network mode (loads .env values; no-op when --corp absent).
+    corp_config = load_corp(corp, tier=run_tier)
+    if corp_config.enabled:
+        try:
+            validate_corp(corp_config, tier=run_tier)
+        except CorpConfigError as exc:
+            console.print(f"[red]{exc}[/red]")
+            sys.exit(2)
+        console.print("[bold yellow]Corporate mode ON[/bold yellow] — proxy/CA/mirror vars active")
+
     # 3. Show SWE-bench Docker images to be used
     console.print(f"\n[bold]Step 1: SWE-bench Docker Images[/bold] (tier={run_tier})")
     for t in tasks:
@@ -135,6 +150,7 @@ def main(run_id, agent, dataset, timeout):
     eval_results = evaluate_batch(
         tasks, agent_results, timeout_per_task=timeout, tier=run_tier,
         diagnostics_dir=eval_output_dir,
+        corp_config=corp_config,
     )
 
     # 5. Display results

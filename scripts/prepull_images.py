@@ -49,10 +49,22 @@ console = Console()
               help="Timeout per pull attempt (seconds). Large images need more.")
 @click.option("--dry-run", is_flag=True,
               help="List what would be pulled without pulling")
-def main(datasets, tier, max_retries, timeout, dry_run):
+@click.option("--corp", is_flag=True, default=False,
+              help="Acknowledge corporate-network mode. NOTE: docker pull uses the "
+                   "Docker daemon's own proxy config (/etc/docker/daemon.json or "
+                   "~/.docker/config.json) — this flag does NOT configure the daemon. "
+                   "Set up daemon proxy separately if pulls fail.")
+def main(datasets, tier, max_retries, timeout, dry_run, corp):
     """Pre-pull SWE-bench Docker images for specified dataset JSONL file(s)."""
     # Enable pull_image's internal INFO/WARNING logs to show on stdout
     logging.basicConfig(level=logging.INFO, format="%(message)s")
+
+    if corp:
+        console.print(
+            "[yellow]Corporate mode acknowledged. Make sure Docker daemon proxy is "
+            "configured in /etc/docker/daemon.json or ~/.docker/config.json — "
+            "this script cannot inject proxy settings into 'docker pull'.[/yellow]"
+        )
 
     # 1. Load unique instance_ids across all datasets
     console.print("[bold]Datasets[/bold]")

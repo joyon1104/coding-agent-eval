@@ -14,6 +14,7 @@ from datetime import datetime
 from rich.console import Console
 
 from src.core.config import Config, PROJECT_ROOT
+from src.core.corp_env import CorpConfigError, load as load_corp, metadata_dict as corp_metadata, raise_on_invalid as validate_corp
 from src.core.env_detect import detect_environment
 from src.core.run_id import generate_run_id
 from src.dataset.loader import load_dataset_for_tier, load_from_jsonl
@@ -53,8 +54,12 @@ AGENT_REGISTRY = {
               help="Run Claude Code against a vLLM-backed Anthropic-compatible endpoint "
                    "(requires CLAUDE_CODE_VLLM_BASE_URL, CLAUDE_CODE_VLLM_AUTH_TOKEN, "
                    "CLAUDE_CODE_VLLM_MODEL in .env or environment)")
+@click.option("--corp", is_flag=True, default=False,
+              help="Corporate-network mode: inject proxy/CA/mirror env vars from .env "
+                   "into the agent subprocess and Docker containers. Requires "
+                   "HTTPS_PROXY, CORP_CA_BUNDLE_PATH, PIP_INDEX_URL at minimum.")
 def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry_run,
-         claude_code_vllm):
+         claude_code_vllm, corp):
     """Coding Agent Eval — AI Coding Agent Performance Evaluation"""
 
     console.print("[bold blue]Coding Agent Eval[/bold blue] — AI Coding Agent Evaluation")
@@ -67,6 +72,17 @@ def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry
     # Config
     config = Config(tier=tier, offline=offline)
     console.print(f"Tier: [bold]{config.tier}[/bold]")
+
+    # Corporate-network mode (loads .env values; no-op when --corp absent).
+    # Fail fast here, before any task runs, on missing required variables.
+    corp_config = load_corp(corp, tier=config.tier)
+    if corp_config.enabled:
+        try:
+            validate_corp(corp_config, tier=config.tier)
+        except CorpConfigError as exc:
+            console.print(f"[red]{exc}[/red]")
+            sys.exit(2)
+        console.print("[bold yellow]Corporate mode ON[/bold yellow] — proxy/CA/mirror vars active")
 
     # Determine primary agent for run-id generation
     primary_agent = [a.strip() for a in agents.split(",")][0]
@@ -103,6 +119,7 @@ def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry
             "max_turns": config.execution_config.get("max_turns_per_task", 50),
             "max_budget": config.execution_config.get("max_budget_per_task", 5.0),
             "timeout": config.execution_config.get("max_time_per_task", 1800),
+            "corp_config": corp_config,
         }
         if model:
             agent_config["model"] = model
@@ -145,6 +162,8 @@ def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry
         extra_metadata["claude_code_backend"] = primary_adapter.backend
         if primary_adapter.backend == "vllm" and hasattr(primary_adapter, "vllm_model"):
             extra_metadata["claude_code_vllm_model"] = primary_adapter.vllm_model
+    # corp_mode + which categories were active (no secret values leaked)
+    extra_metadata.update(corp_metadata(corp_config))
 
     orchestrator = Orchestrator(config, run_id, model=model, extra_metadata=extra_metadata)
     results = orchestrator.run(sampled, agent_instances)
@@ -190,7 +209,8 @@ def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry
             console.print(f"    {t.instance_id} -> {get_image_name(t.instance_id, tier or 'lite')}")
 
         eval_results = evaluate_batch(
-            matching_tasks, agent_results, timeout_per_task=600, tier=tier or "lite"
+            matching_tasks, agent_results, timeout_per_task=600, tier=tier or "lite",
+            corp_config=corp_config,
         )
 
         # Save eval results

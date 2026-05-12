@@ -41,7 +41,8 @@ class OpenCodeAdapter(AgentAdapter):
         if model:
             cmd.extend(["--model", model])
 
-        env = os.environ.copy()
+        # Starts from os.environ + corp-mode overrides (proxy/CA/mirrors).
+        env = self.build_subprocess_env()
         if self.config.get("proxy"):
             env["HTTPS_PROXY"] = self.config["proxy"]
 

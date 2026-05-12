@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from src.core.corp_env import CorpConfig
     from src.core.models import EvalTask
 
 
@@ -60,6 +61,18 @@ class LanguageProfile(ABC):
         """Called after the agent patch is applied; no-op by default.
 
         C++ override: cmake --build build -j$(nproc) to recompile.
+        """
+
+    def pre_test_hook(self, container_id: str, corp: "CorpConfig | None") -> None:
+        """Called right after the container starts; no-op by default.
+
+        Use this to write language-specific config files (settings.xml,
+        config.toml, .npmrc, …) when ``corp`` is enabled. The container env
+        already has standard variables injected via ``docker run -e``; this
+        hook covers tools that don't honor env vars.
+
+        Implementations should silently no-op when ``corp is None`` or
+        ``corp.enabled is False`` so non-corp runs are unaffected.
         """
 
     def expected_dirty_at_base(self) -> bool:

@@ -96,7 +96,9 @@ class ClaudeCodeAdapter(AgentAdapter):
         if model:
             cmd.extend(["--model", model])
 
-        env = os.environ.copy()
+        # Starts from os.environ + corp-mode overrides (proxy/CA/mirrors).
+        # Corp mode is a no-op when --corp wasn't passed.
+        env = self.build_subprocess_env()
         if self.config.get("proxy"):
             env["HTTPS_PROXY"] = self.config["proxy"]
         # Apply vLLM overrides on top of the copied env (never mutates os.environ).
