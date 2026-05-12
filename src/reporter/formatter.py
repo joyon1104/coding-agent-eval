@@ -51,6 +51,7 @@ def _build_failure_breakdown_table(eval_results: list) -> list[str]:
         "docker_failure": "Docker failures",
         "dependency_failure": "Dependency installation failures",
         "timeout": "Timeout failures",
+        "quota_exceeded": "API quota / rate-limit failures",
         "configuration_error": "Configuration errors",
         "internal_error": "Internal errors",
     }

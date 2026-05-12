@@ -33,8 +33,11 @@ from datetime import datetime
 from pathlib import Path
 
 from src.core.corp_env import CorpConfig, build_docker_run_args
-from src.core.models import AgentResult, EvalTask
+from src.core.models import AgentResult, EvalTask, TaskStatus
 from src.evaluator.failure_classifier import (
+    CAT_INTERNAL_ERROR,
+    CAT_MODEL_FAILURE,
+    STAGE_AGENT_EXECUTION,
     STAGE_DOCKER_PULL,
     STAGE_CONTAINER_STARTUP,
     STAGE_DEPENDENCY_INSTALLATION,
@@ -376,17 +379,33 @@ def evaluate_single(
             failure_summary=failure_summary,
         )
 
-    # --- No patch — agent-side failure ---
+    # --- No patch ---
+    # ``root_cause`` is always ``no_patch_generated`` (the observable symptom),
+    # but ``failure_stage`` / ``failure_category`` reflect the *underlying*
+    # cause from Step 1. If the agent subprocess errored (rate limit, timeout,
+    # crash …) those should NOT be misattributed to ``model_failure``.
+    # Only when Step 1 finished SUCCESS with an empty patch is it a genuine
+    # model failure (the model returned without making any edits).
     if not agent_result.patch:
+        if agent_result.status == TaskStatus.ERROR:
+            step1_stage = agent_result.failure_stage or STAGE_AGENT_EXECUTION
+            step1_cat = agent_result.failure_category or CAT_INTERNAL_ERROR
+            step1_err = agent_result.error_message or "No patch generated"
+        else:
+            step1_stage = STAGE_PATCH_EXTRACTION
+            step1_cat = CAT_MODEL_FAILURE
+            step1_err = "No patch generated"
+
         result = EvalResult(
             instance_id=task.instance_id,
             agent_name=agent_result.agent_name,
             resolved=False,
             eval_status="fail",
-            error="No patch generated",
-            failure_stage=STAGE_PATCH_EXTRACTION,
-            failure_category="model_failure",
+            error=step1_err,
+            failure_stage=step1_stage,
+            failure_category=step1_cat,
             root_cause="no_patch_generated",
+            details=dict(agent_result.failure_details or {}),
         )
         _flush_diag(
             failure_summary={
@@ -395,6 +414,7 @@ def evaluate_single(
                 "failure_category": result.failure_category,
                 "root_cause": result.root_cause,
                 "error": result.error,
+                "step1_status": agent_result.status.value if hasattr(agent_result.status, "value") else str(agent_result.status),
             }
         )
         return result

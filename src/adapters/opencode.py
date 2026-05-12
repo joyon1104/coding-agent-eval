@@ -10,6 +10,12 @@ import time
 
 from src.adapters.base import AgentAdapter
 from src.core.models import AgentResult, TaskStatus, TokenUsage, Timestamps
+from src.evaluator.failure_classifier import (
+    CAT_INTERNAL_ERROR,
+    CAT_QUOTA_EXCEEDED,
+    CAT_TIMEOUT,
+    STAGE_AGENT_EXECUTION,
+)
 
 logger = logging.getLogger("coding-agent-eval")
 
@@ -77,6 +83,9 @@ class OpenCodeAdapter(AgentAdapter):
                         error_message=f"Timeout after {self.timeout}s (steps completed: {step_count})",
                         timestamps=Timestamps(task_start=t_start, task_end=t_end),
                         raw_output="".join(stdout_lines)[:50000],
+                        failure_stage=STAGE_AGENT_EXECUTION,
+                        failure_category=CAT_TIMEOUT,
+                        root_cause="agent_execution_timeout",
                     )
 
                 line = proc.stdout.readline()
@@ -114,6 +123,7 @@ class OpenCodeAdapter(AgentAdapter):
 
             if proc.returncode != 0:
                 error_msg = self._extract_error(stdout) or stderr[:2000]
+                cat, root = self._classify_opencode_error(error_msg)
                 return AgentResult(
                     instance_id=instance_id,
                     agent_name=self.name,
@@ -121,6 +131,9 @@ class OpenCodeAdapter(AgentAdapter):
                     error_message=error_msg,
                     timestamps=Timestamps(task_start=t_start, task_end=t_end),
                     raw_output=stdout[:5000],
+                    failure_stage=STAGE_AGENT_EXECUTION,
+                    failure_category=cat,
+                    root_cause=root,
                 )
 
             # Parse JSON events from output
@@ -129,6 +142,7 @@ class OpenCodeAdapter(AgentAdapter):
             # Check for API errors in events
             api_error = self._extract_error(stdout)
             if api_error:
+                cat, root = self._classify_opencode_error(api_error)
                 return AgentResult(
                     instance_id=instance_id,
                     agent_name=self.name,
@@ -136,6 +150,9 @@ class OpenCodeAdapter(AgentAdapter):
                     error_message=api_error,
                     timestamps=Timestamps(task_start=t_start, task_end=t_end),
                     raw_output=stdout[:5000],
+                    failure_stage=STAGE_AGENT_EXECUTION,
+                    failure_category=cat,
+                    root_cause=root,
                 )
 
             patch = self._extract_patch(repo_path, base_ref=base_sha)
@@ -179,6 +196,9 @@ class OpenCodeAdapter(AgentAdapter):
                 status=TaskStatus.ERROR,
                 error_message=str(e),
                 timestamps=Timestamps(task_start=t_start, task_end=t_end),
+                failure_stage=STAGE_AGENT_EXECUTION,
+                failure_category=CAT_INTERNAL_ERROR,
+                root_cause="subprocess_exception",
             )
 
     def _parse_events(self, stdout: str) -> list[dict]:
@@ -193,6 +213,23 @@ class OpenCodeAdapter(AgentAdapter):
             except json.JSONDecodeError:
                 continue
         return events
+
+    def _classify_opencode_error(self, error_msg: str) -> tuple[str, str]:
+        """Classify an OpenCode error message into (failure_category, root_cause).
+
+        Errors from upstream providers (Anthropic / Google / OpenAI) usually
+        surface as plain text in OpenCode's JSON ``error`` events.
+        """
+        low = (error_msg or "").lower()
+        if any(x in low for x in ("rate limit", "rate_limit", "quota", "429", "you've hit your limit")):
+            return CAT_QUOTA_EXCEEDED, "rate_limit_exceeded"
+        if "overloaded" in low or "529" in low:
+            return CAT_TIMEOUT, "api_overloaded"
+        if "timeout" in low or "timed out" in low:
+            return CAT_TIMEOUT, "api_timeout"
+        if "auth" in low or "unauthorized" in low or "401" in low or "403" in low:
+            return "configuration_error", "api_auth_failed"
+        return CAT_INTERNAL_ERROR, "api_error"
 
     def _extract_error(self, stdout: str) -> str:
         """Extract error message from OpenCode JSON events."""

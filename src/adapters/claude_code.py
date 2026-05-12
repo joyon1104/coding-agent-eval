@@ -10,6 +10,12 @@ import time
 
 from src.adapters.base import AgentAdapter
 from src.core.models import AgentResult, TaskStatus, TokenUsage, Timestamps
+from src.evaluator.failure_classifier import (
+    CAT_INTERNAL_ERROR,
+    CAT_TIMEOUT,
+    STAGE_AGENT_EXECUTION,
+    classify_claude_code_api_error,
+)
 
 logger = logging.getLogger("coding-agent-eval")
 
@@ -135,6 +141,9 @@ class ClaudeCodeAdapter(AgentAdapter):
                         error_message=f"Timeout after {self.timeout}s (tool calls so far: {tool_call_count})",
                         timestamps=Timestamps(task_start=t_start, task_end=t_end),
                         raw_output="".join(stdout_lines)[:5000],
+                        failure_stage=STAGE_AGENT_EXECUTION,
+                        failure_category=CAT_TIMEOUT,
+                        root_cause="agent_execution_timeout",
                     )
 
                 line = proc.stdout.readline()
@@ -179,20 +188,42 @@ class ClaudeCodeAdapter(AgentAdapter):
                 status=TaskStatus.ERROR,
                 error_message=str(e),
                 timestamps=Timestamps(task_start=t_start, task_end=t_end),
+                failure_stage=STAGE_AGENT_EXECUTION,
+                failure_category=CAT_INTERNAL_ERROR,
+                root_cause="subprocess_exception",
             )
 
         t_end = time.time()
         stdout = "".join(stdout_lines)
         stderr = proc.stderr.read() if proc.stderr else ""
 
-        if proc.returncode != 0:
+        # Detect API-level errors: Claude Code can exit non-zero OR exit zero
+        # while emitting a final ``result`` event with ``is_error: true``
+        # (e.g. rate limits return ``api_error_status: 429`` here). Parse the
+        # last event so we surface the real cause instead of a generic
+        # subprocess error with empty stderr.
+        last_event = self._parse_output(stdout)
+        is_api_error = bool(last_event.get("is_error"))
+        api_status = last_event.get("api_error_status")
+        api_msg = last_event.get("result", "") if isinstance(last_event.get("result"), str) else ""
+
+        if proc.returncode != 0 or is_api_error:
+            if is_api_error or api_status is not None:
+                cat, root = classify_claude_code_api_error(api_status, api_msg)
+                error_text = api_msg or stderr[:2000] or "Claude Code API error"
+            else:
+                cat, root = CAT_INTERNAL_ERROR, "subprocess_failed"
+                error_text = stderr[:2000] or stdout[-2000:] or "non-zero exit with empty output"
             return AgentResult(
                 instance_id=instance_id,
                 agent_name=self.name,
                 status=TaskStatus.ERROR,
-                error_message=stderr[:2000],
+                error_message=error_text,
                 timestamps=Timestamps(task_start=t_start, task_end=t_end),
                 raw_output=stdout[:5000],
+                failure_stage=STAGE_AGENT_EXECUTION,
+                failure_category=cat,
+                root_cause=root,
             )
 
         # _parse_output scans in reverse for the last JSON object, which is the

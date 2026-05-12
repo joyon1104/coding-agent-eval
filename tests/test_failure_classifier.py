@@ -3,10 +3,12 @@
 import pytest
 
 from src.evaluator.failure_classifier import (
+    CAT_CONFIG_ERROR,
     CAT_DEPENDENCY_FAILURE,
     CAT_DOCKER_FAILURE,
     CAT_MODEL_FAILURE,
     CAT_NETWORK_FAILURE,
+    CAT_QUOTA_EXCEEDED,
     CAT_REGISTRY_FAILURE,
     CAT_TIMEOUT,
     CAT_ENVIRONMENT_FAILURE,
@@ -16,6 +18,7 @@ from src.evaluator.failure_classifier import (
     STAGE_SANDBOX_SETUP,
     build_details,
     classify_agent_failure,
+    classify_claude_code_api_error,
     classify_container_failure,
     classify_dependency_failure,
     classify_patch_failure,
@@ -278,6 +281,48 @@ class TestBuildDetails:
 
 
 # ---------------------------------------------------------------------------
+# classify_claude_code_api_error
+# ---------------------------------------------------------------------------
+
+class TestClassifyClaudeCodeApiError:
+    def test_429_rate_limit(self):
+        cat, root = classify_claude_code_api_error(429, "You've hit your limit · resets 1:20pm")
+        assert cat == CAT_QUOTA_EXCEEDED
+        assert root == "rate_limit_exceeded"
+
+    def test_529_overloaded(self):
+        cat, root = classify_claude_code_api_error(529, "service overloaded")
+        assert cat == CAT_TIMEOUT
+        assert root == "api_overloaded"
+
+    def test_500_server_error(self):
+        cat, root = classify_claude_code_api_error(500, "internal server error")
+        assert cat == CAT_INTERNAL_ERROR
+        assert root == "api_server_error"
+
+    def test_401_auth(self):
+        cat, root = classify_claude_code_api_error(401, "unauthorized")
+        assert cat == CAT_CONFIG_ERROR
+        assert root == "api_auth_failed"
+
+    def test_text_only_quota(self):
+        # No HTTP code provided — fall back to text matching
+        cat, root = classify_claude_code_api_error(None, "You've hit your limit")
+        assert cat == CAT_QUOTA_EXCEEDED
+        assert root == "rate_limit_exceeded"
+
+    def test_text_only_overloaded(self):
+        cat, root = classify_claude_code_api_error(None, "Anthropic API overloaded")
+        assert cat == CAT_TIMEOUT
+        assert root == "api_overloaded"
+
+    def test_unknown(self):
+        cat, root = classify_claude_code_api_error(None, "weird API error")
+        assert cat == CAT_INTERNAL_ERROR
+        assert root == "api_error"
+
+
+# ---------------------------------------------------------------------------
 # is_infrastructure_failure
 # ---------------------------------------------------------------------------
 
@@ -292,6 +337,7 @@ class TestIsInfrastructureFailure:
         CAT_DOCKER_FAILURE,
         CAT_DEPENDENCY_FAILURE,
         CAT_TIMEOUT,
+        CAT_QUOTA_EXCEEDED,
         CAT_INTERNAL_ERROR,
     ])
     def test_infra_categories(self, cat):

@@ -36,6 +36,7 @@ CAT_REGISTRY_FAILURE = "registry_failure"
 CAT_DOCKER_FAILURE = "docker_failure"
 CAT_DEPENDENCY_FAILURE = "dependency_failure"
 CAT_TIMEOUT = "timeout"
+CAT_QUOTA_EXCEEDED = "quota_exceeded"
 CAT_CONFIG_ERROR = "configuration_error"
 CAT_INTERNAL_ERROR = "internal_error"
 
@@ -195,6 +196,40 @@ def classify_agent_failure(error_text: str) -> tuple[str, str]:
     return CAT_INTERNAL_ERROR, "agent_execution_failed"
 
 
+def classify_claude_code_api_error(
+    api_error_status: int | None, error_text: str = ""
+) -> tuple[str, str]:
+    """Classify a Claude Code stream-json API error.
+
+    The Claude Code CLI exits with non-zero (or emits a ``result`` event with
+    ``is_error: true``) when the upstream Anthropic API returns an error.
+    ``api_error_status`` is the HTTP status from that response.
+
+    Returns ``(failure_category, root_cause)``. The ``root_cause`` is the
+    underlying API cause; callers are expected to keep their own ``root_cause``
+    (e.g. ``"no_patch_generated"``) but lift this function's *category* into
+    ``failure_category`` so rate-limit / overload errors don't get bucketed
+    as model failures.
+    """
+    if api_error_status == 429:
+        return CAT_QUOTA_EXCEEDED, "rate_limit_exceeded"
+    if api_error_status == 529:
+        return CAT_TIMEOUT, "api_overloaded"
+    if api_error_status in (500, 502, 503, 504):
+        return CAT_INTERNAL_ERROR, "api_server_error"
+    if api_error_status == 401 or api_error_status == 403:
+        return CAT_CONFIG_ERROR, "api_auth_failed"
+
+    low = (error_text or "").lower()
+    if "you've hit your limit" in low or "rate limit" in low or "quota" in low:
+        return CAT_QUOTA_EXCEEDED, "rate_limit_exceeded"
+    if "overloaded" in low:
+        return CAT_TIMEOUT, "api_overloaded"
+    if "timeout" in low or "timed out" in low:
+        return CAT_TIMEOUT, "api_timeout"
+    return CAT_INTERNAL_ERROR, "api_error"
+
+
 def classify_sandbox_failure(error_text: str) -> tuple[str, str]:
     """Classify a sandbox/repo-clone failure (Step 1)."""
     lower = error_text.lower()
@@ -239,6 +274,7 @@ INFRA_CATEGORIES = {
     CAT_DOCKER_FAILURE,
     CAT_DEPENDENCY_FAILURE,
     CAT_TIMEOUT,
+    CAT_QUOTA_EXCEEDED,
     CAT_CONFIG_ERROR,
     CAT_INTERNAL_ERROR,
 }
