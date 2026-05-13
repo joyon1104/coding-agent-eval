@@ -21,9 +21,11 @@ import shlex
 import subprocess
 from typing import TYPE_CHECKING
 
+from src.evaluator.languages import corp_setup
 from src.evaluator.languages.profile import LanguageProfile, TestOutcome
 
 if TYPE_CHECKING:
+    from src.core.corp_env import CorpConfig
     from src.core.models import EvalTask
 
 
@@ -69,6 +71,9 @@ class RubyProfile(LanguageProfile):
             TestOutcome(name=t, passed=_check_ruby_test(output, t))
             for t in expected
         ]
+
+    def pre_test_hook(self, container_id: str, corp: "CorpConfig | None") -> None:
+        corp_setup.write_bundler_config(container_id, corp)
 
 
 class RubocopProfile(RubyProfile):

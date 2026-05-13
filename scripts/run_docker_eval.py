@@ -13,6 +13,8 @@ from datetime import datetime
 from pathlib import Path
 from rich.markup import escape as _esc
 
+from dotenv import load_dotenv
+
 from src.core.config import PROJECT_ROOT
 from src.core.corp_env import CorpConfigError, load as load_corp, raise_on_invalid as validate_corp
 from src.core.models import AgentResult, EvalTask
@@ -62,6 +64,11 @@ def _resolve_dataset(dataset_arg, run_dir):
                    "PIP_INDEX_URL at minimum.")
 def main(run_id, agent, dataset, timeout, corp):
     """Verify agent patches using Docker-based test execution."""
+
+    # Load .env so corp vars (HTTPS_PROXY, CORP_CA_BUNDLE_PATH, …) are in
+    # os.environ before load_corp() reads them.  run_eval.py does this via
+    # Config(), but this script only imports PROJECT_ROOT, so we do it here.
+    load_dotenv(PROJECT_ROOT / ".env")
 
     run_dir = PROJECT_ROOT / "results" / "runs" / run_id
     if not run_dir.exists():

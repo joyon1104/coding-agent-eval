@@ -142,3 +142,32 @@ def configure_composer(container_id: str, corp: "CorpConfig | None") -> None:
         timeout=60,
     )
     logger.info("  [corp_setup] composer repo configured")
+
+
+# ---------------------------------------------------------------------------
+# Ruby: bundler global config (~/.bundle/config via CLI)
+# ---------------------------------------------------------------------------
+
+def write_bundler_config(container_id: str, corp: "CorpConfig | None") -> None:
+    """Configure bundler gem mirror and (optionally) CA cert inside the container.
+
+    Uses ``bundle config --global`` rather than writing the YAML config file
+    directly, because the CLI form is version-independent and handles quoting.
+    ``BUNDLE_MIRROR__*`` env-var support was added in bundler 2.x and is not
+    reliable on all SWE-bench Ruby images.
+    """
+    if corp is None or not corp.enabled or not corp.gem_source:
+        return
+    _exec(
+        container_id,
+        f"bundle config --global mirror.https://rubygems.org {shlex.quote(corp.gem_source)}",
+        timeout=30,
+    )
+    # Point bundler at the mounted corp CA so TLS to the internal mirror works.
+    if corp.ca_bundle_host_path:
+        _exec(
+            container_id,
+            "bundle config --global ssl_ca_cert /etc/ssl/corp-ca.pem",
+            timeout=30,
+        )
+    logger.info("  [corp_setup] bundler config written")
