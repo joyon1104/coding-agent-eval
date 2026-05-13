@@ -80,6 +80,8 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             summary_path = run_dir / "summary.json"
             if summary_path.exists():
                 summary = json.loads(summary_path.read_text())
+                per_task = summary.get("per_task", [])
+                total_tokens = sum(t.get("tokens", 0) for t in per_task)
                 run_info.update({
                     "agent": summary.get("agent", ""),
                     "model": summary.get("model", ""),
@@ -87,6 +89,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                     "num_tasks": summary.get("num_tasks", 0),
                     "started_at": summary.get("started_at", ""),
                     "completed_at": summary.get("completed_at", ""),
+                    "total_tokens": total_tokens,
                     "metrics": {},
                 })
                 # Extract top-level metrics from first agent

@@ -97,7 +97,7 @@ function renderLeaderboard() {
             case 'agent': va = a.agent || ''; vb = b.agent || ''; break;
             case 'model': va = a.model || ''; vb = b.model || ''; break;
             case 'trr': va = getMetricValue(a, 'task_resolution_rate') ?? -1; vb = getMetricValue(b, 'task_resolution_rate') ?? -1; break;
-            case 'cost': va = getMetricValue(a, 'cost_per_resolved_task') ?? 9999; vb = getMetricValue(b, 'cost_per_resolved_task') ?? 9999; break;
+            case 'tokens': va = a.total_tokens ?? 0; vb = b.total_tokens ?? 0; break;
             case 'time': va = getMetricValue(a, 'e2e_time') ?? 9999; vb = getMetricValue(b, 'e2e_time') ?? 9999; break;
             case 'steps': va = getMetricValue(a, 'convergence_steps') ?? 9999; vb = getMetricValue(b, 'convergence_steps') ?? 9999; break;
             case 'started': va = a.started_at || ''; vb = b.started_at || ''; break;
@@ -131,7 +131,7 @@ function renderLeaderboard() {
         tr.addEventListener('click', () => showDetail(run.run_id));
 
         const trr = getMetricValue(run, 'task_resolution_rate');
-        const cost = getMetricValue(run, 'cost_per_resolved_task');
+        const totalTokens = run.total_tokens ?? null;
         const time = getMetricValue(run, 'e2e_time');
         const steps = getMetricValue(run, 'convergence_steps');
 
@@ -142,7 +142,7 @@ function renderLeaderboard() {
             <td><strong>${esc(run.agent)}</strong></td>
             <td>${esc(run.model)}</td>
             <td>${formatMetric(trr, 'rate', getMetricGrade(run, 'task_resolution_rate'))}</td>
-            <td>${formatMetric(cost, 'cost', getMetricGrade(run, 'cost_per_resolved_task'))}</td>
+            <td>${totalTokens !== null ? formatTokens(totalTokens) : '<span class="grade grade-F">N/A</span>'}</td>
             <td>${formatMetric(time, 'time', getMetricGrade(run, 'e2e_time'))}</td>
             <td>${formatMetric(steps, 'num', getMetricGrade(run, 'convergence_steps'))}</td>
             <td>${esc(run.tier)}</td>
@@ -202,11 +202,7 @@ function renderDetail(runId, summary) {
         if (sec >= 0 && isFinite(sec)) durationStr = formatDuration(sec);
     }
 
-    // Aggregate cost and tokens summed across all per-task entries.
-    // These let users see "한 평가 전체에서 얼마 들었나" alongside the
-    // per-task averages exposed in the metric cards.
     const perTask = summary.per_task || [];
-    const totalCost = perTask.reduce((s, t) => s + (t.cost_usd || 0), 0);
     const totalTokens = perTask.reduce((s, t) => s + (t.tokens || 0), 0);
 
     metaGrid.innerHTML = `
@@ -217,8 +213,7 @@ function renderDetail(runId, summary) {
         ${metaItem('Started', formatTime(started))}
         ${metaItem('Ended', ended ? formatTime(ended) : '-')}
         ${metaItem('Duration', durationStr)}
-        ${metaItem('Total Cost', perTask.length ? '$' + totalCost.toFixed(3) : '-')}
-        ${metaItem('Total Tokens', perTask.length ? formatTokens(totalTokens) : '-')}
+        ${metaItem('Tokens Used', perTask.length ? formatTokens(totalTokens) : '-')}
         ${metaItem('Environment', summary.environment || '')}
     `;
 
@@ -241,14 +236,15 @@ function renderDetail(runId, summary) {
 
     for (const [agentName, agentData] of Object.entries(summary.agents || {})) {
         for (const [key, m] of Object.entries(agentData.metrics || {})) {
+            if (key === 'cost_per_resolved_task') continue;
             const card = document.createElement('div');
             card.className = 'metric-card';
             const grade = m.grade || 'F';
             let valueStr;
             if (m.value === null) valueStr = 'N/A';
             else if (key.includes('rate')) valueStr = (m.value * 100).toFixed(1) + '%';
-            else if (key.includes('cost')) valueStr = '$' + m.value.toFixed(3);
             else if (key.includes('time')) valueStr = m.value.toFixed(1) + 's';
+            else if (key === 'token_efficiency') valueStr = formatTokens(m.value);
             else valueStr = m.value.toFixed(1) + ' ' + (m.unit || '');
 
             card.innerHTML = `
@@ -297,7 +293,6 @@ function renderDetail(runId, summary) {
             <td><code>${esc(task.instance_id)}</code></td>
             <td>${statusStr}</td>
             <td>${resolvedStr}</td>
-            <td>${task.cost_usd ? '$' + task.cost_usd.toFixed(3) : '-'}</td>
             <td>${task.tokens ? formatTokens(task.tokens) : '-'}</td>
             <td>${task.e2e_time ? task.e2e_time.toFixed(1) + 's' : '-'}</td>
             <td>${task.convergence_steps || '-'}</td>

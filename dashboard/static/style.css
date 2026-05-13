@@ -90,8 +90,8 @@ th.sortable:hover {
     color: #58a6ff;
 }
 
-th.sort-asc::after { content: " \u25B2"; font-size: 10px; }
-th.sort-desc::after { content: " \u25BC"; font-size: 10px; }
+th.sort-asc::after { content: " ▲"; font-size: 10px; }
+th.sort-desc::after { content: " ▼"; font-size: 10px; }
 
 tbody td {
     padding: 10px 14px;
