@@ -25,6 +25,7 @@ Grading thresholds (from `src/reporter/scorer.py`) — lower bound for each grad
 - Install: `pip install -r requirements.txt` (runtime) or `requirements-dev.txt` (adds `pytest`, `pytest-mock`).
 - `pip install -e .` is recommended — imports across the codebase use absolute `src.*` paths (e.g. `from src.core.config import Config`), so running from a directory other than the project root fails without an editable install.
 - Secrets live in `.env` (see `.env.example`). `src.core.config.Config()` loads it automatically via `python-dotenv`. Required: `ANTHROPIC_API_KEY` (Claude Code) or `OPENAI_API_KEY` (OpenCode). For vLLM mode: `CLAUDE_CODE_VLLM_BASE_URL`, `CLAUDE_CODE_VLLM_AUTH_TOKEN`, `CLAUDE_CODE_VLLM_MODEL`.
+- Optional `TMPDIR=/path/to/dir` in `.env` redirects host-side temp scratch (sandbox `cae_*` workdirs, patch/test temp files) off `/tmp` without touching the system shell environment. Applied at import time by `src/core/tmpdir.py`; falls back to `/tmp` if unset or unwritable. Container-side `/tmp` (inside SWE-bench Docker images) is **not** affected.
 
 ## Common commands
 
@@ -36,6 +37,9 @@ python scripts/run_eval.py --tier lite --agents claude-code --model sonnet \
 
 # Step 1 only (patch generation); --verify chains all 3 steps automatically
 python scripts/run_eval.py --tier lite --agents claude-code --run-id <id>
+
+# Dry-run (prints execution plan, no API calls)
+python scripts/run_eval.py --tier lite --agents claude-code --dry-run
 
 # Step 2 (Docker verification, on existing run)
 python scripts/run_docker_eval.py --run-id <id> --agent claude-code
@@ -56,6 +60,9 @@ python scripts/cleanup.py
 # Tests
 pytest
 pytest tests/test_ruby_profile.py::TestCheckRspecDesc   # single test class
+pytest tests/test_corp_env.py -v                         # corp-mode env var injection
+pytest tests/test_failure_classifier.py -v               # failure classification logic
+pytest tests/test_docker_evaluator_propagation.py -v     # corp vars propagated to docker run
 ```
 
 ### Subset and image utilities
@@ -98,10 +105,11 @@ The pipeline is intentionally split because patch generation and test verificati
 - `src/dataset/` — `loader.py` (HuggingFace online + local JSONL offline, dispatches on `--offline` flag), `sampler.py` (stratified sampling used by `scripts/swebench_sampler.py`).
 - `src/adapters/` — `AgentAdapter` ABC + concrete subprocess-based CLIs. Adding a new agent = new subclass implementing `run()` and `is_available()`, plus registration in `scripts/run_eval.py`'s `AGENT_REGISTRY`.
 - `src/runner/orchestrator.py` — drives Step 1. Clones repos via `DiskAwareSandbox`, calls the adapter, saves per-task JSON **immediately** after each task (enables resume). Repos are cloned once into `.repo_cache/` at the project root, then each task gets a fast `git clone --local` copy — avoids repeated full network clones for large repos (e.g. Django ~500 MB). Only workdirs prefixed `cae_*` are ever deleted, so sandbox cleanup is safe on shared machines.
-- `src/evaluator/` — `docker_evaluator.py` orchestrates the container lifecycle; `swebench_harness.py` wraps test execution; `patch_extractor.py` validates/normalizes patches. Language-specific behavior lives in `languages/`: `profile.py` defines the `LanguageProfile` ABC; `dispatch.py` maps repos to profiles; `python.py`, `ruby.py`, `go.py`, `java.py`, `javascript.py`, `rust.py`, `c.py`, `cpp.py`, `php.py` are the concrete implementations.
+- `src/evaluator/` — `docker_evaluator.py` orchestrates the container lifecycle; `swebench_harness.py` wraps test execution; `patch_extractor.py` validates/normalizes patches; `failure_classifier.py` assigns structured failure metadata (`failure_stage` / `failure_category` / `root_cause` / `details`) to every `AgentResult` / `EvalResult` so reports can separate model failures from infrastructure failures. Language-specific behavior lives in `languages/`: `profile.py` defines the `LanguageProfile` ABC; `dispatch.py` maps repos to profiles; `corp_setup.py` writes tooling config files (Maven `settings.xml`, Cargo `config.toml`, apt sources, etc.) inside containers when `--corp` is active; `python.py`, `ruby.py`, `go.py`, `java.py`, `javascript.py`, `rust.py`, `c.py`, `cpp.py`, `php.py` are the concrete implementations.
 - `src/metrics/` — one file per metric category (accuracy, cost, latency, process). `src/reporter/scorer.py` owns the S/A/B/C/D/F thresholds.
 - `config/` — `eval_config.yaml` (tiers, execution limits, model pricing for token→cost fallback); `environments/{common,wsl,native_linux}.yaml` (deep-merged in order: `common.yaml` first, then the env-specific file detected by `env_detect.py`, with later keys winning); `agents/<name>.yaml` (per-agent defaults — filename uses `_` even when CLI name uses `-`).
-- `plan/` — design documents (`multilingual_design.md`, `phase1.md`). Read these for intent behind architectural decisions before making structural changes.
+- `plan/` — design documents: `multilingual_design.md`, `phase1.md`, `failure_diagnostics.md` (failure classification design), `corp_network_design.md` (corporate-network mode design), `task.md` (past task specs for context). Read these for intent before making structural changes.
+- `docs/` — usage guides: `corp_env_usage.md` (corp-mode usage guide with `.env` variable reference).
 
 ## Multi-language support (multi tier)
 
@@ -138,3 +146,5 @@ The `multi` tier (`SWE-bench/SWE-bench_Multilingual`) covers 9 languages (C, C++
 - `_extract_patch()` in `base.py` does **not** `.strip()` the diff output intentionally — a blank context line in unified diff is literally `" \n"`, and stripping would corrupt hunk line counts.
 - When an agent auto-commits during its session (e.g. OpenCode), `base_sha` captured before the run must be passed to `_extract_patch()` as `base_ref`; otherwise `git diff` against the moved HEAD returns empty.
 - Docker image pulls use retryable logic in `src/evaluator/registry_utils.py:RETRYABLE` (exponential backoff on transient registry errors). Permanent failures (image not found, auth) are not retried and surface immediately.
+- Every `AgentResult` and `EvalResult` carries four failure fields: `failure_stage`, `failure_category`, `root_cause`, `details`. These must be populated by the caller — `failure_classifier.py` provides helper functions but does not auto-attach results. The report's "Failure Breakdown" section aggregates these; leaving them `None` causes tasks to be silently omitted from that breakdown.
+- `corp_setup.py` functions in `languages/` write config files inside the container. They no-op silently when the relevant `CorpConfig` value is empty, so it's safe to call them unconditionally from `pre_test_hook()` — but they must be called explicitly; they are not invoked automatically by the base `LanguageProfile`.

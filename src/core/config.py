@@ -9,6 +9,10 @@ from typing import Any
 import yaml
 from dotenv import load_dotenv
 
+# Side-effect import: setup_tmpdir() runs at module load so any tempfile usage
+# downstream (sandbox.mkdtemp, docker_evaluator NamedTemporaryFile, etc.) picks
+# up TMPDIR from .env. Must come before src.core.env_detect to be safe.
+from src.core import tmpdir as _tmpdir  # noqa: F401
 from src.core.env_detect import detect_environment, EnvironmentInfo
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent

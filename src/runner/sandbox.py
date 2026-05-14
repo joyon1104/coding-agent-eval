@@ -12,6 +12,7 @@ import time
 from pathlib import Path
 
 from src.core.config import Config, PROJECT_ROOT
+from src.core.tmpdir import get_tmpdir
 
 logger = logging.getLogger("coding-agent-eval")
 
@@ -152,9 +153,9 @@ class DiskAwareSandbox:
             self.cleanup(iid)
 
     def cleanup_stale_workdirs(self):
-        """Remove orphaned /tmp/cae_* directories from previous runs."""
+        """Remove orphaned cae_* directories under the configured tempdir."""
         count = 0
-        for d in glob.glob("/tmp/cae_*"):
+        for d in glob.glob(os.path.join(get_tmpdir(), "cae_*")):
             p = Path(d)
             if p.is_dir():
                 shutil.rmtree(p, ignore_errors=True)

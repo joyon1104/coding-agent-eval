@@ -4,14 +4,21 @@
 Only touches resources owned by this eval harness — never global prune.
 On shared servers, `docker container/image prune` would wipe other developers'
 stopped containers and dangling build layers. We only delete:
-  - /tmp/cae_*        (our sandbox workdirs)
+  - $TMPDIR/cae_*     (our sandbox workdirs; honors TMPDIR from .env)
   - cae_*  containers (our named eval containers)
   - ghcr.io/epoch-research/swe-bench.eval.* images (only with confirmation)
 """
 
+import os
+import sys
 import subprocess
 import shutil
 import glob
+
+# Make `src` importable so we can resolve the configured tempdir from .env.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from src.core.tmpdir import get_tmpdir  # noqa: E402
 
 
 def _list_cae_containers() -> list[str]:
@@ -28,7 +35,7 @@ def main():
     print("Coding-Agent-Eval Cleanup\n")
 
     # 1. Stale temp directories (our workdirs only)
-    stale = glob.glob("/tmp/cae_*")
+    stale = glob.glob(os.path.join(get_tmpdir(), "cae_*"))
     if stale:
         print(f"Removing {len(stale)} temp directories...")
         for d in stale:
