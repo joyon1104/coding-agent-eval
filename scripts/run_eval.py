@@ -20,6 +20,7 @@ from src.dataset.loader import load_dataset_for_tier, load_from_jsonl
 from src.dataset.sampler import sample_tasks
 from src.adapters.claude_code import ClaudeCodeAdapter
 from src.adapters.opencode import OpenCodeAdapter
+from src.adapters.opencode_omo import OpenCodeOMOAdapter
 from src.runner.logger import LoggingConsole, setup_logging
 from src.runner.orchestrator import Orchestrator
 
@@ -29,6 +30,7 @@ logger = logging.getLogger("coding-agent-eval")
 AGENT_REGISTRY = {
     "claude-code": ClaudeCodeAdapter,
     "opencode": OpenCodeAdapter,
+    "opencode-omo": OpenCodeOMOAdapter,
 }
 
 

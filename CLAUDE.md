@@ -48,6 +48,9 @@ python scripts/run_docker_eval.py --run-id <id> --agent claude-code
 python scripts/generate_report.py --run-id <id> --format markdown,json
 python scripts/generate_report.py --run-id merged --merge-dirs results/runs/a,results/runs/b
 
+# One-shot environment bootstrap (detects OS/disk, sets up venv, recommends tier)
+bash scripts/setup_env.sh
+
 # Mock-agent smoke test (no API key, no Docker)
 python scripts/create_test_data.py && python scripts/run_e2e_test.py
 
@@ -103,7 +106,7 @@ The pipeline is intentionally split because patch generation and test verificati
 
 - `src/core/` — `Config` (env-aware YAML merge + `.env`), `EvalTask` / `AgentResult` / `TokenUsage` dataclasses, environment auto-detection (`env_detect.py`: OS, disk, Docker, network → drives tier recommendation and config selection), `run_id.py` (`generate_run_id()` / `parse_run_id()` — format: `{agent}_{model_slug}_{YYYYMMDD-HHMMSS}`).
 - `src/dataset/` — `loader.py` (HuggingFace online + local JSONL offline, dispatches on `--offline` flag), `sampler.py` (stratified sampling used by `scripts/swebench_sampler.py`).
-- `src/adapters/` — `AgentAdapter` ABC + concrete subprocess-based CLIs. Adding a new agent = new subclass implementing `run()` and `is_available()`, plus registration in `scripts/run_eval.py`'s `AGENT_REGISTRY`.
+- `src/adapters/` — `AgentAdapter` ABC + concrete subprocess-based CLIs. Adding a new agent = new subclass implementing `run()` and `is_available()`, plus registration in `scripts/run_eval.py`'s `AGENT_REGISTRY`. Available agents: `claude-code`, `opencode`, `opencode-omo`. `opencode_omo.py` overrides only `_build_cmd()` to prepend `ulw` (oh-my-opencode workflow) and omit `--pure`; all JSON event parsing, token/cost/telemetry is inherited from `OpenCodeAdapter`. `OpenCodeAdapter` itself uses `--pure` to disable oh-my-opencode even when it is installed globally.
 - `src/runner/orchestrator.py` — drives Step 1. Clones repos via `DiskAwareSandbox`, calls the adapter, saves per-task JSON **immediately** after each task (enables resume). Repos are cloned once into `.repo_cache/` at the project root, then each task gets a fast `git clone --local` copy — avoids repeated full network clones for large repos (e.g. Django ~500 MB). Only workdirs prefixed `cae_*` are ever deleted, so sandbox cleanup is safe on shared machines.
 - `src/evaluator/` — `docker_evaluator.py` orchestrates the container lifecycle; `swebench_harness.py` wraps test execution; `patch_extractor.py` validates/normalizes patches; `failure_classifier.py` assigns structured failure metadata (`failure_stage` / `failure_category` / `root_cause` / `details`) to every `AgentResult` / `EvalResult` so reports can separate model failures from infrastructure failures. Language-specific behavior lives in `languages/`: `profile.py` defines the `LanguageProfile` ABC; `dispatch.py` maps repos to profiles; `corp_setup.py` writes tooling config files (Maven `settings.xml`, Cargo `config.toml`, apt sources, etc.) inside containers when `--corp` is active; `python.py`, `ruby.py`, `go.py`, `java.py`, `javascript.py`, `rust.py`, `c.py`, `cpp.py`, `php.py` are the concrete implementations.
 - `src/metrics/` — one file per metric category (accuracy, cost, latency, process). `src/reporter/scorer.py` owns the S/A/B/C/D/F thresholds.

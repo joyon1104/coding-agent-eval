@@ -33,19 +33,29 @@ class OpenCodeAdapter(AgentAdapter):
         except (FileNotFoundError, subprocess.TimeoutExpired):
             return False
 
-    def run(
-        self, problem_statement: str, repo_path: str, instance_id: str
-    ) -> AgentResult:
+    def _build_cmd(self, problem_statement: str, repo_path: str) -> list[str]:
+        """Build the CLI command list for this adapter.
+
+        Subclasses override this to change the invocation (e.g. prepend ulw
+        for oh-my-opencode) without duplicating the run() loop.
+        --pure disables external plugins (including oh-my-opencode) so that
+        this adapter always runs vanilla OpenCode regardless of what is installed.
+        """
         cmd = [
-            "opencode", "run", problem_statement,
+            "opencode", "run", "--pure", problem_statement,
             "--format", "json",
             "--dir", repo_path,
             "--dangerously-skip-permissions",
         ]
-
         model = self.config.get("model")
         if model:
             cmd.extend(["--model", model])
+        return cmd
+
+    def run(
+        self, problem_statement: str, repo_path: str, instance_id: str
+    ) -> AgentResult:
+        cmd = self._build_cmd(problem_statement, repo_path)
 
         # Starts from os.environ + corp-mode overrides (proxy/CA/mirrors).
         env = self.build_subprocess_env()
