@@ -62,6 +62,7 @@ class OpenCodeAdapter(AgentAdapter):
         if self.config.get("proxy"):
             env["HTTPS_PROXY"] = self.config["proxy"]
 
+        logger.info(f"  CMD: {' '.join(cmd)}")
         t_start = time.time()
         base_sha = self._capture_base_sha(repo_path)
 
@@ -77,7 +78,6 @@ class OpenCodeAdapter(AgentAdapter):
 
             stdout_lines = []
             step_count = 0
-            last_log_time = t_start
 
             while True:
                 # Check timeout
@@ -86,6 +86,10 @@ class OpenCodeAdapter(AgentAdapter):
                     proc.kill()
                     proc.wait()
                     t_end = time.time()
+                    logger.error(
+                        f"  Timeout after {self.timeout}s "
+                        f"(steps completed: {step_count})"
+                    )
                     return AgentResult(
                         instance_id=instance_id,
                         agent_name=self.name,
@@ -112,18 +116,55 @@ class OpenCodeAdapter(AgentAdapter):
                     try:
                         event = json.loads(line_stripped)
                         etype = event.get("type", "")
-                        now = time.time()
 
                         if etype == "step_start":
                             step_count += 1
+                            logger.info(f"    [{elapsed:.0f}s] step {step_count} started")
                         elif etype == "tool_use":
-                            tool = event.get("part", {}).get("tool", "")
-                            if now - last_log_time > 10:  # Log every 10s max
-                                logger.info(f"    [{elapsed:.0f}s] step {step_count}: {tool}")
-                                last_log_time = now
+                            tool = event.get("part", {}).get("tool", "unknown")
+                            tool_input = event.get("part", {}).get("input", {})
+                            detail = ""
+                            if isinstance(tool_input, dict):
+                                detail = tool_input.get("command") or tool_input.get("path") or ""
+                                if detail:
+                                    detail = f" ({str(detail)[:80]})"
+                            logger.info(
+                                f"    [{elapsed:.0f}s] step {step_count}: "
+                                f"tool_use → {tool}{detail}"
+                            )
+                        elif etype in ("step_done", "step_finish", "step-finish"):
+                            source = event
+                            if "part" in event and isinstance(event["part"], dict):
+                                part = event["part"]
+                                if "tokens" in part:
+                                    source = part
+                            tokens = source.get("tokens", {})
+                            tok_in = tokens.get("input", 0) if isinstance(tokens, dict) else 0
+                            tok_out = tokens.get("output", 0) if isinstance(tokens, dict) else 0
+                            cost_step = source.get("cost", 0.0)
+                            logger.info(
+                                f"    [{elapsed:.0f}s] step {step_count} done | "
+                                f"tokens in={tok_in} out={tok_out} | "
+                                f"cost=${cost_step:.4f}"
+                            )
                         elif etype == "error":
-                            err = event.get("error", {}).get("data", {}).get("message", "")
-                            logger.warning(f"    [{elapsed:.0f}s] error: {err[:200]}")
+                            # Log raw JSON first so nothing is lost, then
+                            # extract the human-readable message separately.
+                            logger.error(
+                                f"    [{elapsed:.0f}s] ERROR event (raw): "
+                                f"{line_stripped}"
+                            )
+                            err_data = event.get("error", {})
+                            err_msg = (
+                                err_data.get("data", {}).get("message")
+                                or err_data.get("message")
+                                or err_data.get("name")
+                                or str(err_data)
+                            )
+                            logger.error(
+                                f"    [{elapsed:.0f}s] ERROR event (message): "
+                                f"{err_msg}"
+                            )
                     except json.JSONDecodeError:
                         pass
 
@@ -131,8 +172,21 @@ class OpenCodeAdapter(AgentAdapter):
             stdout = "".join(stdout_lines)
             stderr = proc.stderr.read() if proc.stderr else ""
 
+            logger.info(
+                f"  Process exited: code={proc.returncode} | "
+                f"elapsed={t_end - t_start:.1f}s | steps={step_count}"
+            )
+
             if proc.returncode != 0:
-                error_msg = self._extract_error(stdout) or stderr[:2000]
+                error_msg = self._extract_error(stdout) or stderr or f"exit code {proc.returncode}"
+                logger.error(f"  Non-zero exit (code={proc.returncode}): {error_msg}")
+                if stderr.strip():
+                    logger.error(f"  STDERR (full):\n{stderr}")
+                if stdout_lines:
+                    logger.error(
+                        f"  STDOUT (full, {len(stdout_lines)} lines):\n"
+                        + "".join(stdout_lines)
+                    )
                 cat, root = self._classify_opencode_error(error_msg)
                 return AgentResult(
                     instance_id=instance_id,
@@ -140,18 +194,33 @@ class OpenCodeAdapter(AgentAdapter):
                     status=TaskStatus.ERROR,
                     error_message=error_msg,
                     timestamps=Timestamps(task_start=t_start, task_end=t_end),
-                    raw_output=stdout[:5000],
+                    raw_output=stdout[:50000],
                     failure_stage=STAGE_AGENT_EXECUTION,
                     failure_category=cat,
                     root_cause=root,
+                    failure_details={"exit_code": proc.returncode, "stderr": stderr},
                 )
 
             # Parse JSON events from output
             events = self._parse_events(stdout)
 
-            # Check for API errors in events
+            # Check for API errors in events — log raw lines that contained
+            # errors so the original payload is preserved in run.log.
             api_error = self._extract_error(stdout)
             if api_error:
+                logger.error(f"  API error in event stream: {api_error}")
+                error_raw_lines = [
+                    l.strip() for l in stdout_lines
+                    if l.strip().startswith("{")
+                    and '"type":"error"' in l.replace(" ", "")
+                ]
+                if error_raw_lines:
+                    logger.error(
+                        "  Error event(s) raw JSON:\n"
+                        + "\n".join(error_raw_lines)
+                    )
+                if stderr.strip():
+                    logger.error(f"  STDERR (full):\n{stderr}")
                 cat, root = self._classify_opencode_error(api_error)
                 return AgentResult(
                     instance_id=instance_id,
@@ -159,13 +228,18 @@ class OpenCodeAdapter(AgentAdapter):
                     status=TaskStatus.ERROR,
                     error_message=api_error,
                     timestamps=Timestamps(task_start=t_start, task_end=t_end),
-                    raw_output=stdout[:5000],
+                    raw_output=stdout[:50000],
                     failure_stage=STAGE_AGENT_EXECUTION,
                     failure_category=cat,
                     root_cause=root,
+                    failure_details={"source": "event_stream_error", "stderr": stderr},
                 )
 
             patch = self._extract_patch(repo_path, base_ref=base_sha)
+            if not patch:
+                logger.warning("  Patch is empty — agent made no file changes")
+            else:
+                logger.info(f"  Patch extracted: {patch.count(chr(10))} lines")
 
             # Extract usage info from events
             token_usage, cost, event_model = self._extract_usage(events)
@@ -179,7 +253,11 @@ class OpenCodeAdapter(AgentAdapter):
             else:
                 first_action = t_start + (t_end - t_start) * 0.1
 
-            logger.info(f"    Total steps: {num_turns}, elapsed: {t_end - t_start:.0f}s")
+            logger.info(
+                f"  Done: turns={num_turns} | "
+                f"tokens={token_usage.total_tokens} | "
+                f"cost=${cost:.4f} | model={model_name}"
+            )
 
             return AgentResult(
                 instance_id=instance_id,

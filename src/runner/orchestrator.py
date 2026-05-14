@@ -240,6 +240,16 @@ class Orchestrator:
                 f"Cost: ${result.total_cost_usd:.3f} | "
                 f"Time: {result.timestamps.e2e_time:.1f}s"
             )
+            if result.status == TaskStatus.ERROR:
+                logger.error(f"  Error message : {result.error_message}")
+                if result.failure_stage or result.failure_category:
+                    logger.error(
+                        f"  Failure detail: stage={result.failure_stage} | "
+                        f"category={result.failure_category} | "
+                        f"root_cause={result.root_cause}"
+                    )
+                if result.failure_details:
+                    logger.error(f"  Failure extra : {result.failure_details}")
         except Exception as e:
             err_text = str(e)
             logger.error(f"  Agent error: {err_text}")
