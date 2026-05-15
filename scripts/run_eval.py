@@ -207,8 +207,6 @@ def main(tier, agents, run_id, sample_size, offline, model, verify, dataset, dry
     raw_items = load_from_jsonl(dataset_path)
     full_tasks = [EvalTask.from_swebench(item) for item in raw_items]
 
-    logging.basicConfig(level=logging.INFO, format="%(message)s")
-
     for agent_name, agent_results in results.items():
         result_ids = {r.instance_id for r in agent_results}
         matching_tasks = [t for t in full_tasks if t.instance_id in result_ids]

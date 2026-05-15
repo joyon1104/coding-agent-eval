@@ -60,7 +60,12 @@ class PythonProfile(LanguageProfile):
             "fi; "
             "if [ -s /tmp/pytest_targets.txt ]; then "
             "  PYTEST=$(tr '\\n' ' ' < /tmp/pytest_targets.txt); "
-            "  python -m pytest $PYTEST -v --no-header 2>&1 || RC=$?; "
+            # --no-header was a cosmetic flag added in pytest 6.0 (2020).
+            # SWE-bench Lite/Verified include instances pinned to pytest 4.x
+            # and older, which reject it with exit code 4 (usage error) and
+            # skip every test, producing false-negative "all failed" outcomes.
+            # Removing it has no effect on output parsing.
+            "  python -m pytest $PYTEST -v 2>&1 || RC=$?; "
             "fi; "
             "exit $RC"
         )

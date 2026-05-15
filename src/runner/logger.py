@@ -39,6 +39,11 @@ def setup_logging(run_id: str, level: int = logging.INFO) -> Path:
 
     logger.setLevel(level)
     logger.handlers.clear()
+    # Stop propagation to the root logger. Otherwise any call to
+    # logging.basicConfig() elsewhere (e.g. inside a third-party library or
+    # an old code path) attaches a second StreamHandler at root level, and
+    # our messages get printed twice to stdout.
+    logger.propagate = False
 
     is_rerun = log_file.exists()
     fh = logging.FileHandler(log_file, mode="a")
