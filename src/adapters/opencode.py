@@ -62,7 +62,16 @@ class OpenCodeAdapter(AgentAdapter):
         if self.config.get("proxy"):
             env["HTTPS_PROXY"] = self.config["proxy"]
 
-        logger.info(f"  CMD: {' '.join(cmd)}")
+        # Sanitize the cmd for logging: the problem_statement (GitHub issue
+        # body) can be hundreds of lines including tracebacks that look like
+        # real errors. Replace it with a short metadata placeholder. Full text
+        # is preserved in patches/<instance_id>.json.
+        placeholder = f"<task:{instance_id}, len={len(problem_statement)} chars>"
+        sanitized_cmd = [
+            arg.replace(problem_statement, placeholder) if problem_statement in arg else arg
+            for arg in cmd
+        ]
+        logger.info(f"  CMD: {' '.join(sanitized_cmd)}")
         t_start = time.time()
         base_sha = self._capture_base_sha(repo_path)
 

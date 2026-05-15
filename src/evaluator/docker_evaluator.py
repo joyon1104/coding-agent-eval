@@ -29,6 +29,7 @@ import re
 import subprocess
 import tempfile
 import time
+import traceback
 from datetime import datetime
 from pathlib import Path
 
@@ -257,6 +258,18 @@ def _run_tests_in_container(
         raw_stderr = result.stderr or ""
         output = raw_stdout + raw_stderr
         logger.info(f"  Test exit code: {result.returncode}")
+        # On non-zero exit, the test runner itself failed (collection error,
+        # syntax error, import error, segfault, …) — show the full output so
+        # the root cause is visible in run.log, not just in artifacts.
+        if result.returncode != 0:
+            logger.error(
+                f"  Test runner exited non-zero ({result.returncode}). "
+                f"Dumping full output:"
+            )
+            if raw_stderr.strip():
+                logger.error(f"  TEST STDERR (full):\n{raw_stderr}")
+            if raw_stdout.strip():
+                logger.error(f"  TEST STDOUT (full):\n{raw_stdout}")
     except subprocess.TimeoutExpired as e:
         # Salvage whatever the runner wrote before we killed it — tests that
         # completed before the timeout still have valid results in the buffer.
@@ -268,9 +281,25 @@ def _run_tests_in_container(
             f"  Test execution timed out after {timeout}s; parsing {len(output)} "
             f"chars of partial output (completed tests keep real results; rest are False)"
         )
+        if raw_stderr.strip():
+            logger.error(f"  TEST STDERR (partial, full):\n{raw_stderr}")
+        if raw_stdout.strip():
+            logger.error(f"  TEST STDOUT (partial, full):\n{raw_stdout}")
 
-    logger.info(f"  Test output (last 500 chars): {output[-500:]}")
     outcomes = profile.parse_test_output(output, "", test_names)
+    passed = sum(1 for o in outcomes if o.passed)
+    failed_names = [o.name for o in outcomes if not o.passed]
+    logger.info(f"  Test results: {passed}/{len(outcomes)} passed")
+    if failed_names:
+        # Truncate when there are very many (e.g. Django P2P with hundreds)
+        # but log every name when the count is manageable.
+        if len(failed_names) <= 30:
+            for n in failed_names:
+                logger.warning(f"    FAIL: {n}")
+        else:
+            for n in failed_names[:30]:
+                logger.warning(f"    FAIL: {n}")
+            logger.warning(f"    ... and {len(failed_names) - 30} more failed")
     return {o.name: o.passed for o in outcomes}, raw_stdout, raw_stderr
 
 
@@ -510,6 +539,13 @@ def evaluate_single(
         # --- Environment check (before touching the repo) ---
         env_check = _check_container_environment(container_id)
         _log(f"[env_check] all_ok={env_check.get('all_ok', False)}")
+        if not env_check.get("all_ok", True):
+            for check_name, check_data in env_check.get("checks", {}).items():
+                if isinstance(check_data, dict) and not check_data.get("available", True):
+                    _log(
+                        f"[env_check] FAIL: {check_name} "
+                        f"(output: {str(check_data.get('output', ''))[:300]})"
+                    )
 
         # --- Corp-mode bootstrap (no-op when corp is off) ---
         # apt mirror is universal; language config files are profile-specific.
@@ -584,6 +620,14 @@ def evaluate_single(
         if result_proc.returncode != 0:
             detail_text = _format_apply_failure(result_proc, agent_result.patch)
             cat, root = classify_patch_failure(detail_text)
+            logger.error(
+                f"  Agent patch apply FAILED after all fallbacks "
+                f"(strict / --3way / --ignore-whitespace). exit={result_proc.returncode}"
+            )
+            if result_proc.stderr:
+                logger.error(f"  git apply STDERR (full):\n{result_proc.stderr}")
+            if result_proc.stdout:
+                logger.error(f"  git apply STDOUT (full):\n{result_proc.stdout}")
             result = EvalResult(
                 instance_id=task.instance_id,
                 agent_name=agent_result.agent_name,
@@ -658,9 +702,14 @@ def evaluate_single(
                 )
             Path(patch_path).unlink(missing_ok=True)
             if result_proc.returncode != 0:
-                detail = (result_proc.stderr.strip() or result_proc.stdout.strip()
-                          or "(no output)")[:300]
-                logger.error(f"  test_patch apply failed: {detail}")
+                logger.error(
+                    f"  test_patch apply FAILED after fallbacks. "
+                    f"exit={result_proc.returncode}"
+                )
+                if result_proc.stderr:
+                    logger.error(f"  test_patch STDERR (full):\n{result_proc.stderr}")
+                if result_proc.stdout:
+                    logger.error(f"  test_patch STDOUT (full):\n{result_proc.stdout}")
 
         # --- 6. Post-patch hook ---
         profile.post_patch_hook(container_name)
@@ -727,15 +776,18 @@ def evaluate_single(
         )
         return result
     except Exception as e:
+        tb = traceback.format_exc()
+        logger.error(f"  Unexpected exception during evaluation: {type(e).__name__}: {e}")
+        logger.error(f"  Traceback:\n{tb}")
         result = EvalResult(
             instance_id=task.instance_id,
             agent_name=agent_result.agent_name,
             eval_status="error",
-            error=str(e),
+            error=f"{type(e).__name__}: {e}",
             failure_stage=STAGE_TEST_EXECUTION,
             failure_category="internal_error",
             root_cause="unexpected_exception",
-            details=build_details(stderr_snippet=str(e)[:400]),
+            details=build_details(stderr_snippet=tb[:1000]),
         )
         _flush_diag(
             env_check=env_check,
@@ -806,9 +858,29 @@ def evaluate_batch(
         status = "RESOLVED" if eval_result.resolved else "NOT RESOLVED"
         logger.info(
             f"  Result: {status} | "
+            f"eval_status={eval_result.eval_status} | "
             f"F2P: {eval_result.fail_to_pass_rate:.0%} | "
             f"P2P: {eval_result.pass_to_pass_rate:.0%}"
         )
+        # When a task is NOT RESOLVED, surface why directly in run.log so the
+        # user does not have to open eval/<id>/failure_summary.json.
+        if not eval_result.resolved:
+            if eval_result.error:
+                logger.error(f"    Error  : {eval_result.error}")
+            if eval_result.failure_stage or eval_result.failure_category:
+                logger.error(
+                    f"    Detail : stage={eval_result.failure_stage} | "
+                    f"category={eval_result.failure_category} | "
+                    f"root_cause={eval_result.root_cause}"
+                )
+            if eval_result.details:
+                logger.error(f"    Extra  : {eval_result.details}")
+            failed_f2p = [n for n, p in eval_result.fail_to_pass_results.items() if not p]
+            failed_p2p = [n for n, p in eval_result.pass_to_pass_results.items() if not p]
+            if failed_f2p:
+                logger.error(f"    F2P fail ({len(failed_f2p)}): {failed_f2p[:10]}")
+            if failed_p2p:
+                logger.error(f"    P2P fail ({len(failed_p2p)}): {failed_p2p[:10]}")
 
         eval_results.append(eval_result)
 
