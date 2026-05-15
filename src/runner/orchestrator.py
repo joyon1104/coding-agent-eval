@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 import time
+import traceback
 from datetime import datetime
 from pathlib import Path
 
@@ -251,8 +252,10 @@ class Orchestrator:
                 if result.failure_details:
                     logger.error(f"  Failure extra : {result.failure_details}")
         except Exception as e:
-            err_text = str(e)
+            err_text = f"{type(e).__name__}: {e}"
+            tb = traceback.format_exc()
             logger.error(f"  Agent error: {err_text}")
+            logger.error(f"  Traceback:\n{tb}")
             cat, root = classify_agent_failure(err_text)
             result = AgentResult(
                 instance_id=task.instance_id,
@@ -262,6 +265,7 @@ class Orchestrator:
                 failure_stage=STAGE_AGENT_EXECUTION,
                 failure_category=cat,
                 root_cause=root,
+                failure_details={"traceback": tb},
             )
         finally:
             if self.sandbox.clean_after:

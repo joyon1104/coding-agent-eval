@@ -243,7 +243,7 @@ class OpenCodeAdapter(AgentAdapter):
 
             # Extract usage info from events
             token_usage, cost, event_model = self._extract_usage(events)
-            model_name = model or event_model
+            model_name = self.config.get("model") or event_model
             num_turns = self._count_turns(events)
 
             # Estimate first action time
