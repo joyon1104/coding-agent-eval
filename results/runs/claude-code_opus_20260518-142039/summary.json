@@ -1,0 +1,116 @@
+{
+  "run_id": "claude-code_opus_20260518-142039",
+  "agent": "claude-code",
+  "model": "opus",
+  "tier": "lite",
+  "num_tasks": 3,
+  "started_at": "2026-05-18T14:20:41.319719",
+  "completed_at": "2026-05-18T14:25:56.371621",
+  "environment": "OS: wsl | Network: external | Disk: 736.1GB | RAM: 15.5GB | Docker: Yes | Tier: full",
+  "agents": {
+    "claude-code": {
+      "metrics": {
+        "task_resolution_rate": {
+          "value": 0.6666666666666666,
+          "unit": "%",
+          "grade": "S"
+        },
+        "token_efficiency": {
+          "value": 736578.0,
+          "unit": "tokens/task",
+          "grade": "D"
+        },
+        "cost_per_resolved_task": {
+          "value": 0.95650725,
+          "unit": "USD",
+          "grade": "A"
+        },
+        "e2e_time": {
+          "value": 102.82115681966145,
+          "unit": "sec",
+          "grade": "A"
+        },
+        "time_to_first_action": {
+          "value": 7.065076033274333,
+          "unit": "sec",
+          "grade": "B"
+        },
+        "convergence_steps": {
+          "value": 21.0,
+          "unit": "steps",
+          "grade": "C"
+        }
+      }
+    }
+  },
+  "task_counts": {
+    "success": 3,
+    "fail": 0,
+    "error": 0,
+    "resolved": 2,
+    "evaluable": 3,
+    "resolution_rate_pct": 66.7
+  },
+  "failure_breakdown": {
+    "by_category": {},
+    "model_failures": 0,
+    "infrastructure_failures": 0
+  },
+  "per_task": [
+    {
+      "instance_id": "django__django-10914",
+      "agent": "claude-code",
+      "status": "success",
+      "step1_status": "success",
+      "patch_generated": true,
+      "cost_usd": 0.6497937499999998,
+      "e2e_time": 106.82493805885315,
+      "tokens": 793610,
+      "convergence_steps": 24,
+      "model": "",
+      "resolved": false,
+      "fail_to_pass_total": 1,
+      "fail_to_pass_passed": 1,
+      "pass_to_pass_total": 98,
+      "pass_to_pass_passed": 0,
+      "eval_detail": "eval/django__django-10914.json"
+    },
+    {
+      "instance_id": "django__django-11001",
+      "agent": "claude-code",
+      "status": "success",
+      "step1_status": "success",
+      "patch_generated": true,
+      "cost_usd": 1.1372655000000003,
+      "e2e_time": 187.3294153213501,
+      "tokens": 1364692,
+      "convergence_steps": 35,
+      "model": "",
+      "resolved": true,
+      "fail_to_pass_total": 2,
+      "fail_to_pass_passed": 2,
+      "pass_to_pass_total": 118,
+      "pass_to_pass_passed": 118,
+      "eval_detail": "eval/django__django-11001.json"
+    },
+    {
+      "instance_id": "django__django-11099",
+      "agent": "claude-code",
+      "status": "success",
+      "step1_status": "success",
+      "patch_generated": true,
+      "cost_usd": 0.12595525000000002,
+      "e2e_time": 14.309117078781128,
+      "tokens": 108464,
+      "convergence_steps": 4,
+      "model": "",
+      "resolved": true,
+      "fail_to_pass_total": 3,
+      "fail_to_pass_passed": 3,
+      "pass_to_pass_total": 19,
+      "pass_to_pass_passed": 19,
+      "eval_detail": "eval/django__django-11099.json"
+    }
+  ],
+  "generated_at": "2026-05-18T14:26:06.028930"
+}
