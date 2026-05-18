@@ -1,0 +1,25 @@
+{
+  "instance_id": "sympy__sympy-16766",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "test_PythonCodePrinter": false
+  },
+  "pass_to_pass_results": {
+    "test_MpmathPrinter": false,
+    "test_NumPyPrinter": false,
+    "test_SciPyPrinter": false,
+    "test_pycode_reserved_words": false,
+    "test_printmethod": false,
+    "test_codegen_ast_nodes": false,
+    "test_issue_14283": false
+  },
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 0.0,
+  "error": "",
+  "failure_stage": "",
+  "failure_category": "",
+  "root_cause": "",
+  "details": {}
+}

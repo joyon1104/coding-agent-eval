@@ -1,0 +1,20 @@
+{
+  "instance_id": "scikit-learn__scikit-learn-14141",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "sklearn/utils/tests/test_show_versions.py::test_get_deps_info": true
+  },
+  "pass_to_pass_results": {
+    "sklearn/utils/tests/test_show_versions.py::test_get_sys_info": true,
+    "sklearn/utils/tests/test_show_versions.py::test_show_versions_with_blas": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": "",
+  "failure_stage": "",
+  "failure_category": "",
+  "root_cause": "",
+  "details": {}
+}

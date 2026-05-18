@@ -1,0 +1,26 @@
+{
+  "instance_id": "django__django-15268",
+  "agent_name": "claude-code",
+  "patch": "",
+  "status": "error",
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 0
+  },
+  "timestamps": {
+    "task_start": 1778839310.8362849,
+    "task_end": 1778839312.7053287,
+    "first_action": 0.0
+  },
+  "total_cost_usd": 0.0,
+  "convergence_steps": 0,
+  "error_message": "You've hit your limit · resets 9:30pm (Asia/Seoul)",
+  "raw_output": "{\"type\":\"system\",\"subtype\":\"init\",\"cwd\":\"/tmp/cae_django__django-15268_lty0xmsp/repo\",\"session_id\":\"cd54e7d8-1e7a-4a46-9f1b-25a5e0b6cada\",\"tools\":[\"Task\",\"AskUserQuestion\",\"Bash\",\"CronCreate\",\"CronDelete\",\"CronList\",\"Edit\",\"EnterPlanMode\",\"EnterWorktree\",\"ExitPlanMode\",\"ExitWorktree\",\"Glob\",\"Grep\",\"Monitor\",\"NotebookEdit\",\"PushNotification\",\"Read\",\"RemoteTrigger\",\"ScheduleWakeup\",\"Skill\",\"TaskOutput\",\"TaskStop\",\"TodoWrite\",\"ToolSearch\",\"WebFetch\",\"WebSearch\",\"Write\",\"mcp__claude_ai_Google_Drive__authenticate\",\"mcp__claude_ai_Google_Drive__complete_authentication\"],\"mcp_servers\":[{\"name\":\"claude.ai Google Drive\",\"status\":\"needs-auth\"}],\"model\":\"claude-opus-4-7\",\"permissionMode\":\"bypassPermissions\",\"slash_commands\":[\"update-config\",\"debug\",\"simplify\",\"batch\",\"fewer-permission-prompts\",\"loop\",\"schedule\",\"claude-api\",\"clear\",\"compact\",\"context\",\"heapdump\",\"init\",\"review\",\"security-review\",\"extra-usage\",\"usage\",\"insights\",\"goal\",\"team-onboarding\"],\"apiKeySource\":\"none\",\"claude_code_version\":\"2.1.139\",\"output_style\":\"default\",\"agents\":[\"claude\",\"Explore\",\"general-purpose\",\"Plan\",\"statusline-setup\"],\"skills\":[\"update-config\",\"debug\",\"simplify\",\"batch\",\"fewer-permission-prompts\",\"loop\",\"schedule\",\"claude-api\"],\"plugins\":[],\"analytics_disabled\":false,\"uuid\":\"d49c7b10-c4b1-4c24-bc55-4c8507c426b3\",\"memory_paths\":{\"auto\":\"/home/going114kim/.claude/projects/-tmp-cae-django--django-15268-lty0xmsp-repo/memory/\"},\"fast_mode_state\":\"off\"}\n{\"type\":\"rate_limit_event\",\"rate_limit_info\":{\"status\":\"rejected\",\"resetsAt\":1778848200,\"rateLimitType\":\"five_hour\",\"overageStatus\":\"rejected\",\"overageDisabledReason\":\"org_level_disabled\",\"isUsingOverage\":false},\"uuid\":\"7bb85301-2906-42f0-845b-b9dc5728edbe\",\"session_id\":\"cd54e7d8-1e7a-4a46-9f1b-25a5e0b6cada\"}\n{\"type\":\"assistant\",\"message\":{\"id\":\"b84daa0e-b966-4a7a-bd03-f7fce96d816d\",\"container\":null,\"model\":\"<synthetic>\",\"role\":\"assistant\",\"stop_details\":null,\"stop_reason\":\"stop_sequence\",\"stop_sequence\":\"\",\"type\":\"message\",\"usage\":{\"input_tokens\":0,\"output_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":null,\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":null,\"iterations\":null,\"speed\":null},\"content\":[{\"type\":\"text\",\"text\":\"You've hit your limit · resets 9:30pm (Asia/Seoul)\"}],\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"cd54e7d8-1e7a-4a46-9f1b-25a5e0b6cada\",\"uuid\":\"fc5303b9-4322-4af4-b9e8-034a20a7fa48\",\"error\":\"rate_limit\"}\n{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":true,\"api_error_status\":429,\"duration_ms\":412,\"duration_api_ms\":0,\"num_turns\":1,\"result\":\"You've hit your limit · resets 9:30pm (Asia/Seoul)\",\"stop_reason\":\"stop_sequence\",\"session_id\":\"cd54e7d8-1e7a-4a46-9f1b-25a5e0b6cada\",\"total_cost_usd\":0,\"usage\":{\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[],\"speed\":\"standard\"},\"modelUsage\":{},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"52adcebf-8769-4ba8-8fba-3a3cd1cd6b8e\"}\n",
+  "model_name": "",
+  "failure_stage": "agent_execution",
+  "failure_category": "quota_exceeded",
+  "root_cause": "rate_limit_exceeded",
+  "failure_details": {}
+}

@@ -1,0 +1,22 @@
+{
+  "run_id": "claude-code_opus_20260515-155330",
+  "agent": "claude-code",
+  "model": "opus",
+  "tier": "verified",
+  "started_at": "2026-05-15T15:53:31.934608",
+  "completed_at": "2026-05-15T19:01:52.867885",
+  "num_tasks": 50,
+  "agents": [
+    "claude-code"
+  ],
+  "environment": "OS: wsl | Network: external | Disk: 736.3GB | RAM: 15.5GB | Docker: Yes | Tier: full",
+  "results_summary": {
+    "claude-code": {
+      "total": 50,
+      "success": 47,
+      "error": 3
+    }
+  },
+  "claude_code_backend": "default",
+  "corp_mode": false
+}
