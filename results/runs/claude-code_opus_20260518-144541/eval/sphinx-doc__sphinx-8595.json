@@ -1,0 +1,17 @@
+{
+  "instance_id": "sphinx-doc__sphinx-8595",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "tests/test_ext_autodoc_automodule.py::test_empty_all": false
+  },
+  "pass_to_pass_results": {},
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 1.0,
+  "error": "",
+  "failure_stage": "",
+  "failure_category": "",
+  "root_cause": "",
+  "details": {}
+}

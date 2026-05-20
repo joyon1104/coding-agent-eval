@@ -1,0 +1,15 @@
+{
+  "instance_id": "pylint-dev__pylint-7114",
+  "agent_name": "claude-code",
+  "resolved": false,
+  "eval_status": "fail",
+  "fail_to_pass_results": {},
+  "pass_to_pass_results": {},
+  "fail_to_pass_rate": 0.0,
+  "pass_to_pass_rate": 1.0,
+  "error": "Claude Code API error",
+  "failure_stage": "agent_execution",
+  "failure_category": "internal_error",
+  "root_cause": "no_patch_generated",
+  "details": {}
+}

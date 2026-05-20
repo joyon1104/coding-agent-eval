@@ -1,0 +1,26 @@
+{
+  "instance_id": "django__django-11049",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "test_invalid_string (model_fields.test_durationfield.TestValidation)": true
+  },
+  "pass_to_pass_results": {
+    "test_dumping (model_fields.test_durationfield.TestSerialization)": true,
+    "test_loading (model_fields.test_durationfield.TestSerialization)": true,
+    "test_formfield (model_fields.test_durationfield.TestFormField)": true,
+    "test_exact (model_fields.test_durationfield.TestQuerying)": true,
+    "test_gt (model_fields.test_durationfield.TestQuerying)": true,
+    "test_create_empty (model_fields.test_durationfield.TestSaveLoad)": true,
+    "test_fractional_seconds (model_fields.test_durationfield.TestSaveLoad)": true,
+    "test_simple_roundtrip (model_fields.test_durationfield.TestSaveLoad)": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": "",
+  "failure_stage": "",
+  "failure_category": "",
+  "root_cause": "",
+  "details": {}
+}

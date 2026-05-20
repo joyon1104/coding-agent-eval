@@ -1,0 +1,36 @@
+{
+  "instance_id": "pallets__flask-4992",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "tests/test_config.py::test_config_from_file_toml": true
+  },
+  "pass_to_pass_results": {
+    "tests/test_config.py::test_config_from_pyfile": true,
+    "tests/test_config.py::test_config_from_object": true,
+    "tests/test_config.py::test_config_from_file_json": true,
+    "tests/test_config.py::test_from_prefixed_env": true,
+    "tests/test_config.py::test_from_prefixed_env_custom_prefix": true,
+    "tests/test_config.py::test_from_prefixed_env_nested": true,
+    "tests/test_config.py::test_config_from_mapping": true,
+    "tests/test_config.py::test_config_from_class": true,
+    "tests/test_config.py::test_config_from_envvar": true,
+    "tests/test_config.py::test_config_from_envvar_missing": true,
+    "tests/test_config.py::test_config_missing": true,
+    "tests/test_config.py::test_config_missing_file": true,
+    "tests/test_config.py::test_custom_config_class": true,
+    "tests/test_config.py::test_session_lifetime": true,
+    "tests/test_config.py::test_get_namespace": true,
+    "tests/test_config.py::test_from_pyfile_weird_encoding[utf-8]": true,
+    "tests/test_config.py::test_from_pyfile_weird_encoding[iso-8859-15]": true,
+    "tests/test_config.py::test_from_pyfile_weird_encoding[latin-1]": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": "",
+  "failure_stage": "",
+  "failure_category": "",
+  "root_cause": "",
+  "details": {}
+}

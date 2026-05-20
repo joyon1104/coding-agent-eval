@@ -1,0 +1,26 @@
+{
+  "instance_id": "astropy__astropy-14365",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "astropy/io/ascii/tests/test_qdp.py::test_roundtrip[True]": true
+  },
+  "pass_to_pass_results": {
+    "astropy/io/ascii/tests/test_qdp.py::test_get_tables_from_qdp_file": true,
+    "astropy/io/ascii/tests/test_qdp.py::test_roundtrip[False]": true,
+    "astropy/io/ascii/tests/test_qdp.py::test_read_example": true,
+    "astropy/io/ascii/tests/test_qdp.py::test_roundtrip_example": true,
+    "astropy/io/ascii/tests/test_qdp.py::test_roundtrip_example_comma": true,
+    "astropy/io/ascii/tests/test_qdp.py::test_read_write_simple": true,
+    "astropy/io/ascii/tests/test_qdp.py::test_read_write_simple_specify_name": true,
+    "astropy/io/ascii/tests/test_qdp.py::test_get_lines_from_qdp": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": "",
+  "failure_stage": "",
+  "failure_category": "",
+  "root_cause": "",
+  "details": {}
+}

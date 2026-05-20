@@ -1,0 +1,30 @@
+{
+  "instance_id": "astropy__astropy-6938",
+  "agent_name": "claude-code",
+  "resolved": true,
+  "eval_status": "success",
+  "fail_to_pass_results": {
+    "astropy/io/fits/tests/test_checksum.py::TestChecksumFunctions::test_ascii_table_data": true,
+    "astropy/io/fits/tests/test_table.py::TestTableFunctions::test_ascii_table": true
+  },
+  "pass_to_pass_results": {
+    "astropy/io/fits/tests/test_checksum.py::TestChecksumFunctions::test_sample_file": true,
+    "astropy/io/fits/tests/test_checksum.py::TestChecksumFunctions::test_image_create": true,
+    "astropy/io/fits/tests/test_checksum.py::TestChecksumFunctions::test_scaled_data": true,
+    "astropy/io/fits/tests/test_checksum.py::TestChecksumFunctions::test_scaled_data_auto_rescale": true,
+    "astropy/io/fits/tests/test_checksum.py::TestChecksumFunctions::test_uint16_data": true,
+    "astropy/io/fits/tests/test_checksum.py::TestChecksumFunctions::test_groups_hdu_data": true,
+    "astropy/io/fits/tests/test_checksum.py::TestChecksumFunctions::test_open_with_no_keywords": true,
+    "astropy/io/fits/tests/test_checksum.py::TestChecksumFunctions::test_writeto_convenience": true,
+    "astropy/io/fits/tests/test_checksum.py::TestChecksumFunctions::test_hdu_writeto": true,
+    "astropy/io/fits/tests/test_checksum.py::TestChecksumFunctions::test_datasum_only": true,
+    "astropy/io/fits/tests/test_table.py::test_regression_scalar_indexing": true
+  },
+  "fail_to_pass_rate": 1.0,
+  "pass_to_pass_rate": 1.0,
+  "error": "",
+  "failure_stage": "",
+  "failure_category": "",
+  "root_cause": "",
+  "details": {}
+}
